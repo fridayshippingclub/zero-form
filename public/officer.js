@@ -2,12 +2,13 @@
 // ?mock=1 | ?mock=tamper | ?mock=revision | ?mock=approved | ?mock=v2 renders a sample payload (no server needed).
 import { FORMS, money, rocDate } from '/schema.js';
 import { sourceLabel, verificationLabel, verificationDetail, evidenceKind, evidenceField, evidenceStatus } from '/labels.js';
+import { t, mountLanguageSwitch } from '/language.js';
 
 const $root = document.getElementById('root');
 const $live = document.getElementById('live');
 const MOCK = new URLSearchParams(location.search).get('mock');
-const ORDER = ['company.name', 'company.items', 'company.address', 'company.capital', 'company.articles_date', 'person.name', 'person.nationalId', 'person.phone', 'person.address', 'owner.name', 'app.date'];
-const STATUS = { submitted: '已送出 · Submitted', revision: '待修正 · Change requested', approved: '已核准 · Approved', rejected: '已駁回 · Rejected', draft: '草稿 · Draft' };
+const ORDER = ['company.name', 'company.reservation_no', 'company.items', 'company.address', 'company.capital', 'company.articles_date', 'person.name', 'person.nationalId', 'person.phone', 'person.address', 'owner.name', 'app.date'];
+const STATUS = { submitted: ['已送出', 'Submitted'], revision: ['待修正', 'Change requested'], approved: ['已核准', 'Approved'], rejected: ['已駁回', 'Rejected'], draft: ['草稿', 'Draft'] };
 const TOTAL_FORMS = FORMS.length;
 
 const st = { payload: null, key: '', sel: null, note: '', busy: false, prevData: null, prevV: null, lastV: null };
@@ -28,10 +29,10 @@ const ICON = {
   doc: '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 5h8M4 8h8M4 11h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
   shield: '<svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5l3 3 6-7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 };
-const fieldName = (fields, k) => (fields[k] ? `${fields[k].label} · ${fields[k].en}` : k);
+const fieldName = (fields, k) => (fields[k] ? t(fields[k].label, fields[k].en) : k);
 const checkValue = (value, fallback = '—') => {
-  if (value?.on_or_before) return esc(`不晚於 / On or before ${value.on_or_before}`);
-  const label = { provided: '已提供 · Provided', approved: '已核准 · Approved', rejected: '已駁回 · Rejected', 'valid issue date': '有效日期 · Valid date' }[value];
+  if (value?.on_or_before) return esc(`${t('不晚於', 'On or before')} ${value.on_or_before}`);
+  const label = { provided: t('已提供', 'Provided'), approved: t('已核准', 'Approved'), rejected: t('已駁回', 'Rejected'), 'valid issue date': t('有效日期', 'Valid date') }[value];
   return esc(value == null ? fallback : label ?? (typeof value === 'object' ? JSON.stringify(value) : value));
 };
 
@@ -62,8 +63,8 @@ async function poll() {
 function render() {
   const p = st.payload;
   if (!p?.app) {
-    $root.innerHTML = `<div class="empty"><div class="ring"></div><h1>等待申請送出…<br>Waiting for a submission…</h1>
-      <p>申請人以簡訊代碼確認後，案件與即時核對結果會顯示於此。<br>Applications appear here after text-code confirmation, with live checks.</p></div>`;
+    $root.innerHTML = `<div class="empty"><div class="ring"></div><h1>${t('等待申請送出…', 'Waiting for a submission…', '<br>')}</h1>
+      <p>${t('申請人以簡訊代碼確認後，案件與即時核對結果會顯示於此。', 'Applications appear here after text-code confirmation, with live checks.', '<br>')}</p></div>`;
     return;
   }
   const { app, verify, fields } = p;
@@ -80,7 +81,7 @@ function render() {
   $root.innerHTML = `
   <div class="head">
     <div>
-      <div class="ref"><span class="mono">${esc(app.id)}</span><span class="pill ${esc(app.status)}">${esc(STATUS[app.status] ?? app.status)}</span></div>
+      <div class="ref"><span class="mono">${esc(app.id)}</span><span class="pill ${esc(app.status)}">${esc(STATUS[app.status] ? t(...STATUS[app.status]) : app.status)}</span></div>
       <h1>${esc(company)}</h1>
     </div>
     <div class="snap">
@@ -95,7 +96,7 @@ function render() {
         : changed.length && app.status === 'submitted' ? `<div class="banner good">${ICON.ok}<div><b>已修正並再次確認 / Re-signed — v${app.v} replaces v${app.v - 1}</b><span>已修改 ${changed.length} 欄 / Fields changed: ${esc(changed.map((k) => fields[k]?.en ?? k).join(', '))}. 其餘不變 / Everything else is identical.</span></div></div>` : ''}
 
       <section>
-        <h3 class="section-title">核對結果 · Verification <span class="muted">依確認版本即時核對 · Live checks</span></h3>
+        <h3 class="section-title">${t('核對結果', 'Verification')} <span class="muted">${t('依確認版本即時核對', 'Live checks')}</span></h3>
         <div class="checks">
           ${verify.checks.map((c) => `<div class="card check ${c.ok ? '' : 'bad'}" data-check="${esc(c.key)}">
             <div class="ic">${c.ok ? ICON.ok : ICON.bad}</div><div class="lbl">${esc(verificationLabel(c))}</div><div class="det">${esc(verificationDetail(c))}</div></div>`).join('')}
@@ -103,10 +104,10 @@ function render() {
       </section>
 
       <section>
-        <h3 class="section-title">資料事實 · Facts <span class="muted">${keys.length} 項 → ${TOTAL_FORMS} 份表單 · Facts → forms<br>點選欄位要求修正 · Select a row to request a change</span></h3>
+        <h3 class="section-title">${t('資料事實', 'Facts')} <span class="muted">${t(`${keys.length} 項 → ${TOTAL_FORMS} 份表單`, `${keys.length} facts → ${TOTAL_FORMS} forms`)}<br>${t('點選欄位要求修正', 'Select a row to request a change')}</span></h3>
         <div class="card">
           <table class="facts data-facts">
-            <thead><tr><th style="width:21%">欄位 · Field</th><th style="width:29%">內容 · Value</th><th>來源 · Source</th><th style="width:130px">沿用 · Used in</th></tr></thead>
+            <thead><tr><th style="width:21%">${t('欄位', 'Field')}</th><th style="width:29%">${t('內容', 'Value')}</th><th>${t('來源', 'Source')}</th><th style="width:130px">${t('沿用', 'Used in')}</th></tr></thead>
             <tbody>
               ${keys.map((k) => {
                 const f = fields[k] ?? { label: k, en: '' };
@@ -115,10 +116,10 @@ function render() {
                 const req = app.status === 'revision' && app.decision?.field === k;
                 const isChanged = changed.includes(k);
                 return `<tr data-k="${esc(k)}" class="${st.sel === k ? 'sel' : ''} ${req ? 'req' : ''}">
-                  <td><div class="fz">${esc(f.label)}</div><div class="fe">${esc(f.en)}</div></td>
-                  <td class="val">${fmt(k, app.data[k], f)} ${isChanged ? '<span class="badge warn">已修改 · Changed</span>' : ''}</td>
-                  <td><div class="src">${esc(sourceLabel(pv.source))} ${pv.verified ? `<span class="badge ok">${ICON.shield} 已核對 · Verified</span>` : '<span class="badge self">自行填寫 · Self-declared</span>'}</div></td>
-                  <td class="used"><span class="bar"><i style="width:${Math.round((n / TOTAL_FORMS) * 100)}%"></i></span>${n}/${TOTAL_FORMS} 份 · forms</td>
+                  <td><div class="fz">${t(esc(f.label), esc(f.en), '<br>')}</div></td>
+                  <td class="val">${fmt(k, app.data[k], f)} ${isChanged ? `<span class="badge warn">${t('已修改', 'Changed')}</span>` : ''}</td>
+                  <td><div class="src">${esc(sourceLabel(pv.source))} ${pv.verified ? `<span class="badge ok">${ICON.shield} ${t('已核對', 'Verified')}</span>` : `<span class="badge self">${t('自行填寫', 'Self-declared')}</span>`}</div></td>
+                  <td class="used"><span class="bar"><i style="width:${Math.round((n / TOTAL_FORMS) * 100)}%"></i></span>${n}/${TOTAL_FORMS} ${t('份', 'forms')}</td>
                 </tr>`;
               }).join('')}
             </tbody>
@@ -127,30 +128,30 @@ function render() {
       </section>
 
       <section>
-        <h3 class="section-title">產出文件 · Generated documents <span class="muted">版本 / Snapshot v${app.v} · ${verify.docs.filter((d) => d.ok).length}/${verify.docs.length} 相符 · match</span></h3>
+        <h3 class="section-title">${t('產出文件', 'Generated documents')} <span class="muted">${t('版本', 'Snapshot')} v${app.v} · ${verify.docs.filter((d) => d.ok).length}/${verify.docs.length} ${t('相符', 'match')}</span></h3>
         <div class="docs">
           ${verify.docs.map((d) => {
             const en = FORMS.find((f) => f.id === d.id)?.en ?? d.id;
             return `<a class="card doc ${d.ok ? '' : 'bad'}" href="/doc/${app.v}/${encodeURIComponent(d.id)}" target="_blank" rel="noopener">
-              <span class="fi">${ICON.doc}</span><span><div class="nm">${esc(d.name)}</div><div class="en">${esc(en)}</div></span>
-              <span class="st">${d.ok ? `<span class="badge ok">${ICON.shield} 相符 · Match</span>` : '<span class="badge" style="background:var(--danger-soft);color:var(--danger)">不符 · Mismatch</span>'}</span></a>`;
+              <span class="fi">${ICON.doc}</span><span><div class="nm">${t(esc(d.name), esc(en), '<br>')}</div></span>
+              <span class="st">${d.ok ? `<span class="badge ok">${ICON.shield} ${t('相符', 'Match')}</span>` : `<span class="badge" style="background:var(--danger-soft);color:var(--danger)">${t('不符', 'Mismatch')}</span>`}</span></a>`;
           }).join('')}
         </div>
       </section>
       ${externalReview ? `<section>
-        <h3 class="section-title">佐證附件 · Supporting evidence <span class="muted">與確認資料比對 · Compared with signed facts</span></h3>
-        <div class="card evidence-table" tabindex="0" aria-label="佐證核對表，可橫向捲動 / Evidence checks, scroll horizontally"><table class="facts evidence-facts"><thead><tr><th>項目 · Check</th><th>預期 · Expected</th><th>文件內容 · In document</th><th>結果／來源 · Result / source</th></tr></thead><tbody>
+        <h3 class="section-title">${t('佐證附件', 'Supporting evidence')} <span class="muted">${t('與確認資料比對', 'Compared with signed facts')}</span></h3>
+        <div class="card evidence-table" tabindex="0" aria-label="${t('佐證核對表，可橫向捲動', 'Evidence checks, scroll horizontally')}"><table class="facts evidence-facts"><thead><tr><th>${t('項目', 'Check')}</th><th>${t('預期', 'Expected')}</th><th>${t('文件內容', 'In document')}</th><th>${t('結果／來源', 'Result / source')}</th></tr></thead><tbody>
           ${externalReview.checks.slice().sort((a, b) => Number(a.status === 'passed') - Number(b.status === 'passed')).map((check) => `<tr><td><div class="fe">${esc(evidenceKind(check.kind))}</div><div>${esc(evidenceField(check.field))}</div></td>
-            <td class="val">${checkValue(check.expected)}</td><td class="val">${checkValue(check.actual, '未提供 / Not available')}</td>
-            <td><span class="badge ${check.status === 'passed' ? 'ok' : 'warn'}">${esc(evidenceStatus(check.status))}</span>${check.source ? `<div style="margin-top:6px"><a href="${esc(check.source.url)}" target="_blank" rel="noopener">來源 · 第 ${esc(check.source.page)} 頁<br>Source · page ${esc(check.source.page)}</a></div>` : ''}</td></tr>`).join('')}
+            <td class="val">${checkValue(check.expected)}</td><td class="val">${checkValue(check.actual, t('未提供', 'Not available'))}</td>
+            <td><span class="badge ${check.status === 'passed' ? 'ok' : 'warn'}">${esc(evidenceStatus(check.status))}</span>${check.source ? `<div style="margin-top:6px"><a href="${esc(check.source.url)}" target="_blank" rel="noopener">${t(`來源 · 第 ${esc(check.source.page)} 頁`, `Source · page ${esc(check.source.page)}`, '<br>')}</a></div>` : ''}</td></tr>`).join('')}
         </tbody></table></div>
-        <p class="muted" style="font-size:12px">展示規則：查核簽證日＝章程訂立日，且章程日不晚於申請日。<br>Demo rule: certification matches the articles date, which is on or before the application date.</p>
+        <p class="muted" style="font-size:12px">${t('展示規則：查核簽證日＝章程訂立日，且章程日不晚於申請日。', 'Demo rule: certification matches the articles date, which is on or before the application date.', '<br>')}</p>
       </section>` : ''}
     </div>
 
     <aside class="side">
       <div class="card decision">${decisionPanel(app, fields, failed, evidenceReady)}</div>
-      <div class="demo"><button id="tamper">模擬竄改 · Simulate tampering</button><span class="sep">·</span><button id="reset">重設展示 · Reset demo</button></div>
+      <div class="demo"><button id="tamper">${t('模擬竄改', 'Simulate tampering')}</button><span class="sep">·</span><button id="reset">${t('重設展示', 'Reset demo')}</button></div>
     </aside>
   </div>`;
 
@@ -159,33 +160,33 @@ function render() {
 
 function decisionPanel(app, fields, failed, evidenceReady = true) {
   const d = app.decision;
-  const pkg = `<div class="pkg"><span>確認資料 · Signed package</span><a href="/api/package/${app.v}" target="_blank" rel="noopener">查看 JSON · View JSON ↗</a></div>`;
+  const pkg = `<div class="pkg"><span>${t('確認資料', 'Signed package')}</span><a href="/api/package/${app.v}" target="_blank" rel="noopener">${t('查看 JSON', 'View JSON')} ↗</a></div>`;
   if (app.status === 'revision') {
-    return `<h2>審查決定 · Decision</h2><p class="sub">已請申請人修正一項資料。<br>One field change requested.</p>
-      <div class="outcome revision"><div class="t">待修正 · Change requested</div><div class="d">${esc(fieldName(fields, d?.field))}</div>
+    return `<h2>${t('審查決定', 'Decision')}</h2><p class="sub">${t('已請申請人修正一項資料。', 'One field change requested.', '<br>')}</p>
+      <div class="outcome revision"><div class="t">${t('待修正', 'Change requested')}</div><div class="d">${esc(fieldName(fields, d?.field))}</div>
       ${d?.note ? `<div class="note">“${esc(d.note)}”</div>` : ''}</div>
-      <div class="waiting"><span class="ring"></span>等待申請人再次確認，僅開放指定欄位。<br>Waiting for re-signing; only this field is reopened.</div>${pkg}`;
+      <div class="waiting"><span class="ring"></span>${t('等待申請人再次確認，僅開放指定欄位。', 'Waiting for re-signing; only this field is reopened.', '<br>')}</div>${pkg}`;
   }
   if (app.status === 'approved' || app.status === 'rejected') {
     const ok = app.status === 'approved';
-    return `<h2>審查決定 · Decision</h2><p class="sub">${ok ? '已通知申請人。 Applicant notified.' : '已通知申請人。 Applicant notified.'}</p>
-      <div class="outcome ${app.status}"><div class="t">${ok ? '已核准 · Approved' : '已駁回 · Rejected'}</div>
+    return `<h2>${t('審查決定', 'Decision')}</h2><p class="sub">${t('已通知申請人。', 'Applicant notified.')}</p>
+      <div class="outcome ${app.status}"><div class="t">${ok ? t('已核准', 'Approved') : t('已駁回', 'Rejected')}</div>
       <div class="d">確認版本 / Snapshot v${app.v} · ${esc(when(d?.at))}</div>${d?.note ? `<div class="note">“${esc(d.note)}”</div>` : ''}</div>${pkg}`;
   }
   const sel = st.sel && fields[st.sel] ? st.sel : null;
-  const selLabel = sel ? fields[sel].en : null;
-  return `<h2>審查決定 · Decision</h2><p class="sub">${failed.length ? '核對未通過，請要求修正或駁回。<br>Checks failed. Request a change or reject.' : !evidenceReady ? '仍需佐證附件，請申請人上傳展示 PDF。<br>Supporting evidence is needed. Upload the demo PDFs.' : '核對均通過，請檢視資料後決定。<br>All checks passed. Review and decide.'}</p>
+  const selLabel = sel ? fieldName(fields, sel) : null;
+  return `<h2>${t('審查決定', 'Decision')}</h2><p class="sub">${failed.length ? t('核對未通過，請要求修正或駁回。', 'Checks failed. Request a change or reject.', '<br>') : !evidenceReady ? t('佐證仍需核對，請檢視下方結果。', 'Supporting evidence needs review. Check the results.', '<br>') : t('核對均通過，請檢視資料後決定。', 'All checks passed. Review and decide.', '<br>')}</p>
     <div class="field-pick ${sel ? 'on' : ''}">
-      ${sel ? `<div class="row"><div><div class="k">待修正欄位 · Field to change</div><div>${esc(fields[sel].label)} · ${esc(fields[sel].en)}</div></div><button class="x" id="clear" title="清除 · Clear">×</button></div>`
-        : '點選表格欄位以要求修正。<br>Select a field to request a change.'}
+      ${sel ? `<div class="row"><div><div class="k">${t('待修正欄位', 'Field to change')}</div><div>${esc(selLabel)}</div></div><button class="x" id="clear" title="${t('清除', 'Clear')}">×</button></div>`
+        : t('點選表格欄位以要求修正。', 'Select a field to request a change.', '<br>')}
     </div>
-    <textarea id="note" placeholder="${sel ? `請說明修正內容 / What should change in “${esc(selLabel)}”?` : '給申請人的說明（選填） / Note to applicant (optional)'}">${esc(st.note)}</textarea>
+    <textarea id="note" placeholder="${sel ? t('請說明修正內容', `What should change in “${esc(selLabel)}”?`) : t('給申請人的說明（選填）', 'Note to applicant (optional)')}">${esc(st.note)}</textarea>
     <div class="btns">
-      <button class="btn primary" id="approve" ${failed.length || !evidenceReady || st.busy ? 'disabled' : ''}>核准 · Approve</button>
-      <button class="btn" id="revise" ${!sel || st.busy ? 'disabled' : ''}>${sel ? `要求修正 · Change ${esc(selLabel)}` : '要求修正 · Request change'}</button>
-      <button class="btn danger" id="reject" ${st.busy ? 'disabled' : ''}>駁回 · Reject</button>
+      <button class="btn primary" id="approve" ${failed.length || !evidenceReady || st.busy ? 'disabled' : ''}>${t('核准', 'Approve')}</button>
+      <button class="btn" id="revise" ${!sel || st.busy ? 'disabled' : ''}>${sel ? t(`要求修正 ${esc(fields[sel].label)}`, `Change ${esc(fields[sel].en)}`) : t('要求修正', 'Request change')}</button>
+      <button class="btn danger" id="reject" ${st.busy ? 'disabled' : ''}>${t('駁回', 'Reject')}</button>
     </div>
-    ${failed.length ? `<div class="hint bad">暫不能核准：${failed.length} 項未通過。<br>Approval blocked: ${failed.length} failed checks.</div>` : !evidenceReady ? '<div class="hint bad">佐證核對全部通過後才能核准。<br>Approval waits for all evidence checks.</div>' : ''}${pkg}`;
+    ${failed.length ? `<div class="hint bad">${t(`暫不能核准：${failed.length} 項未通過。`, `Approval blocked: ${failed.length} failed checks.`, '<br>')}</div>` : !evidenceReady ? `<div class="hint bad">${t('佐證核對全部通過後才能核准。', 'Approval waits for all evidence checks.', '<br>')}</div>` : ''}${pkg}`;
 }
 
 // ---------- interactions ----------
@@ -276,5 +277,6 @@ async function mockApi(path, opts) {
   return {};
 }
 
+mountLanguageSwitch(render);
 poll();
 setInterval(poll, 2000);

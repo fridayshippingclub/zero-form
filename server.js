@@ -29,12 +29,20 @@ const SEED_PROFILE = {
   'person.address': { value: '臺北市大安區仁愛路四段 1 號', source: 'Household registration', verified: true },
 };
 // Simulated external registries
-const NAME_RESERVATIONS = { '113045678': { 'company.name': '大大科技', 'company.items': 'F119010 電子材料批發業、F113050 事務性機器設備批發業' } };
+const NAME_RESERVATIONS = { '113045678': { 'company.reservation_no': '113045678', 'company.name': '大大科技', 'company.items': 'F119010 電子材料批發業、F113050 事務性機器設備批發業' } };
 const HOUSEHOLD_REGISTRY = { A123456789: { name: '陳大文', address: '臺北市大安區仁愛路四段 1 號' } };
 
 const fresh = () => ({ profile: structuredClone(SEED_PROFILE), app: null });
 let db = fs.existsSync(DB_FILE) ? JSON.parse(fs.readFileSync(DB_FILE, 'utf8')) : fresh();
 const save = () => { fs.mkdirSync(DATA, { recursive: true }); fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2)); };
+
+// Only the seeded demo reservation can supply this missing draft fact; signed snapshots stay immutable.
+const seededReservation = NAME_RESERVATIONS['113045678'];
+if (db.app?.draft && !db.app.draft['company.reservation_no'] &&
+    ['company.name', 'company.items'].every(key => db.app.draft[key]?.value === seededReservation[key] && db.app.draft[key]?.source === 'Name reservation 預查 #113045678')) {
+  db.app.draft['company.reservation_no'] = { value: '113045678', source: 'Name reservation 預查 #113045678', verified: true };
+  save();
+}
 
 let serverKey;
 if (fs.existsSync(`${DATA}/server.key`)) serverKey = crypto.createPrivateKey(fs.readFileSync(`${DATA}/server.key`));
@@ -80,7 +88,7 @@ async function externalReview(snap, attachments = db.app.attachments || {}, revi
 const draftData = application => Object.fromEntries(Object.entries(application.draft).map(([key, fact]) => [key, fact.value]));
 const draftHash = application => sha256(canonical({ applicationId: application.id, data: draftData(application), roles: ROLE_BINDINGS })).toString('hex');
 const reviewCurrent = application => application.selfReview?.draft_hash === draftHash(application) && application.selfReview.evidence_revision === (application.evidenceRevision || 0);
-const selfReviewReady = application => reviewCurrent(application) && application.selfReview.recommendation === 'ready_to_submit';
+const selfReviewReady = application => !!application && missing(application).length === 0 && ATTACHMENT_KINDS.every(kind => application.attachments?.[kind]) && reviewCurrent(application) && application.selfReview.recommendation === 'ready_to_submit';
 async function extractionCLI(args) {
   const { stdout } = await execute('python3', ['demo/evidence_extract.py', ...args], { cwd: ROOT, timeout: 90000, maxBuffer: 4 * 1024 * 1024 });
   return JSON.parse(stdout);
@@ -95,7 +103,7 @@ function newApp() {
   draft['app.date'] = { value: new Date().toISOString().slice(0, 10), source: 'System', verified: true };
   return { id: 'TPE-2026-' + crypto.randomInt(100000, 999999), status: 'draft', draft, snapshots: [], decision: null, reopen: null };
 }
-const missing = (app) => allFieldKeys().filter((k) => !app.draft[k]?.value || (app.reopen && app.reopen === k));
+const missing = (app) => allFieldKeys().filter((k) => !app.draft[k]?.value || (app.reopen === k && app.reopenAcknowledged !== k));
 
 function snapshotBody(app) {
   const data = {}, provenance = {};
@@ -133,7 +141,7 @@ async function verifySnapshot(snap) {
     const file = snap.pdfs?.[f.id]?.path;
     if (!file || !fs.existsSync(file) || sha256(fs.readFileSync(file)).toString('hex') !== snap.docs[f.id]) return { id: f.id, name: f.name, ok: false };
     const text = (await pdfText(file).catch(() => '')).replace(/\s+/g, '');
-    return { id: f.id, name: f.name, ok: f.fields.every((k) => text.includes(String(snap.data[k] ?? '').replace(/\s+/g, ''))) };
+    return { id: f.id, name: f.name, ok: f.fields.filter(k => Object.hasOwn(snap.data, k)).every((k) => text.includes(String(snap.data[k] ?? '').replace(/\s+/g, ''))) };
   }));
   const res = NAME_RESERVATIONS['113045678'];
   const evidence = res['company.name'] === snap.data['company.name'];
@@ -177,7 +185,7 @@ const publicState = () => {
     phone: mask(db.profile['person.phone'].value),
     profile: db.profile,
     app: a && { id: a.id, status: a.status, draft: a.draft, missing: missing(a), decision: a.decision, reopen: a.reopen,
-      selfReview: reviewCurrent(a) ? a.selfReview : null, selfReviewRequired: !!a.selfReviewRequired,
+      selfReview: reviewCurrent(a) ? a.selfReview : null,
       attachments: Object.values(a.attachments || {}).map(({path: _path, ...item}) => item), evidenceRevision: a.evidenceRevision || 0,
       snapshot: a.snapshots.at(-1) && { v: a.snapshots.at(-1).v, hash: a.snapshots.at(-1).hash, prev: a.snapshots.at(-1).prev, signedAt: a.snapshots.at(-1).signedAt, to: mask(a.snapshots.at(-1).confirmation.to) } },
   };
@@ -198,9 +206,11 @@ const setFacts = (values, source) => {
   db.app.selfReview = null;
   for (const [k, value] of Object.entries(values)) {
     if (!FIELDS[k]) continue;
+    if (FIELDS[k].readOnly) { errors[k] = 'Read-only demo reservation record'; continue; }
     const err = validate(k, value);
     if (err) { errors[k] = err; continue; }
     db.app.draft[k] = { value: String(value).trim(), source, verified: false };
+    if (db.app.reopen === k) db.app.reopenAcknowledged = source === 'Applicant' ? k : null;
   }
   save();
   return errors;
@@ -233,7 +243,7 @@ app.get('/api/agent/review', async (_q, r) => {
     const documents = FORMS.filter(f => !f.onFile).map(form => ({
       id: form.id, name: form.name, sha256: snap.docs[form.id],
       url: `/doc/${snap.v}/${form.id}?snapshotHash=${snap.hash}`,
-      bindings: formBindings(form), source: 'generated',
+      bindings: formBindings(form).filter(binding => Object.hasOwn(snap.data, binding.key)), source: 'generated',
       confidence: verification.docs.find(d => d.id === form.id)?.ok ? 'verified_render' : 'verification_failed',
     }));
     const attachments = Object.values(application.attachments || {}).map(item => ({
@@ -277,7 +287,7 @@ app.get('/api/self-review/readiness', async (_q, r) => {
 app.post('/api/self-review', async (_q, r) => {
   const application = db.app;
   if (!application || !['draft', 'revision'].includes(application.status)) return r.status(409).json({ error: 'Self-review requires an editable draft.' });
-  application.selfReviewRequired = true; application.selfReview = null; save();
+  application.selfReview = null; save();
   const hash = draftHash(application), revision = application.evidenceRevision || 0;
   const evidence = structuredClone(application.attachments || {}), data = draftData(application);
   const extraction = [];
@@ -316,7 +326,7 @@ app.post('/api/self-review', async (_q, r) => {
 app.post('/api/sign/send', (_q, r) => {
   const a = db.app;
   if (!a) return r.status(400).json({ error: 'No application.' });
-  if (a.selfReviewRequired && !selfReviewReady(a)) return r.status(409).json({ error: 'Complete a current self-review before signing.' });
+  if (!selfReviewReady(a)) return r.status(409).json({ error: 'Complete a current self-review before signing.' });
   if (missing(a).filter((k) => k !== a.reopen).length) return r.status(400).json({ error: 'incomplete' });
   const body = snapshotBody(a);
   const hash = sha256(canonical(body)).toString('hex');
@@ -327,18 +337,18 @@ app.post('/api/sign/verify', async (q, r) => {
   if (!checkOtp('sign', q.body.code)) return r.status(400).json({ error: 'That code is not right. Try again.' });
   const target = db.app;
   const { body, hash, evidenceRevision } = pendingOtp;
-  if (target?.selfReviewRequired && (!selfReviewReady(target) || evidenceRevision !== (target.evidenceRevision || 0))) return r.status(409).json({ error: 'Evidence changed. Repeat self-review and confirmation.' });
+  if (!selfReviewReady(target) || evidenceRevision !== (target.evidenceRevision || 0)) return r.status(409).json({ error: 'Evidence changed. Repeat self-review and confirmation.' });
   if (!target || sha256(canonical(snapshotBody(target))).toString('hex') !== hash) return r.status(409).json({ error: 'Application changed. Confirm the updated version.' });
   generating = true;
   try {
     const generated = await renderCore(body, hash);
-    if (db.app !== target || (target.selfReviewRequired && (!selfReviewReady(target) || evidenceRevision !== (target.evidenceRevision || 0))) || sha256(canonical(snapshotBody(target))).toString('hex') !== hash) return r.status(409).json({ error: 'Application changed during generation. Confirm again.' });
+    if (db.app !== target || (!selfReviewReady(target) || evidenceRevision !== (target.evidenceRevision || 0)) || sha256(canonical(snapshotBody(target))).toString('hex') !== hash) return r.status(409).json({ error: 'Application changed during generation. Confirm again.' });
     pendingOtp = null;
     const confirmation = { method: 'demo-sms-otp', to: db.profile['person.phone'].value, hash, at: new Date().toISOString() };
     const serverSig = crypto.sign(null, Buffer.from(canonical({ hash, confirmation })), serverKey).toString('base64');
     const docs = Object.fromEntries(Object.entries(generated.documents).map(([id, file]) => [id, file.sha256]));
     target.snapshots.push({ ...body, hash, confirmation, serverSig, docs, pdfs: generated.documents, coreSnapshotHash: generated.snapshot_hash, signedAt: confirmation.at, mode: 'demo_only' });
-    target.status = 'submitted'; target.reopen = null; target.decision = null;
+    target.status = 'submitted'; target.reopen = null; target.reopenAcknowledged = null; target.decision = null;
     target.evidenceRevision = (target.evidenceRevision || 0) + 1;
     for (const k of Object.keys(body.data)) if (!k.startsWith('app.')) db.profile[k] = { ...target.draft[k] };
     save(); r.json(publicState());
@@ -380,7 +390,7 @@ app.post('/api/officer/decide', async (q, r) => {
   if (decision === 'approve' && (!verification.checks.every(c => c.ok) || verification.externalReview.recommendation !== 'approve')) return r.status(409).json({ error: 'Resolve document checks before approving.', verify: verification });
   a.decision = { decision, field, note, at: new Date().toISOString(), evidenceRevision: a.evidenceRevision || 0, snapshotHash: a.snapshots.at(-1).hash };
   a.status = decision === 'approve' ? 'approved' : decision === 'reject' ? 'rejected' : 'revision';
-  if (decision === 'revise') a.reopen = field;
+  if (decision === 'revise') { a.reopen = field; a.reopenAcknowledged = null; a.selfReview = null; }
   save();
   r.json({ ok: true });
 });
@@ -399,7 +409,6 @@ app.post('/api/attachments', express.raw({ type: 'application/pdf', limit: '10mb
     const attachment = { id, kind, fields, sha256: sha256(q.body).toString('hex'), path: file, url: '/api/attachments/' + id };
     target.attachments ||= {}; target.attachments[kind] = attachment;
     target.evidenceRevision = (target.evidenceRevision || 0) + 1; target.decision = null; target.selfReview = null;
-    if (!target.snapshots.length || target.status === 'revision') target.selfReviewRequired = true;
     if (['approved', 'rejected'].includes(target.status)) target.status = 'submitted';
     save(); r.status(201).json({ attachment: { ...attachment, path: undefined }, review: target.snapshots.length ? await externalReview(target.snapshots.at(-1)) : null });
   } catch (error) { fs.rmSync(file, { force: true }); r.status(422).json({ error: 'Could not read marked demo evidence.', detail: error.stderr?.slice(-500) }); }

@@ -39,13 +39,13 @@ OFFICIAL_IDS = {'app': 't70433', **{key:key for key in ('t70126','t70130','t7013
 # Only existing blank regions are populated. Unsupported facts get an appendix,
 # preserving original statutory notes and leaving signatures/seals unfilled.
 OFFICIAL_SLOTS = {
-    'app': {'company.name': (1,218,201,130,18), 'company.address': (1,241,271,150,25)},
+    'app': {'company.reservation_no': (1,220,119,320,14), 'company.name': (1,218,201,130,18), 'company.address': (1,241,271,150,25)},
     't70126': {'company.name': (1,318,184,28,10), 'company.capital': (1,259,345,32,10),
                'company.items': (1,163,231,300,12)},
     't70130': {'company.name': (1,244,91,85,12), 'person.name:applicant': (1,89,396,174,12)},
     't70132': {'company.name': (1,247,150,112,24), 'person.name:director': (1,341,262,150,24)},
     't70124': {},
-    't70135': {'company.name': (1,196,210,290,19), 'company.address': (1,240,273,300,15),
+    't70135': {'company.reservation_no': (1,356,99,180,14), 'company.name': (1,196,210,290,19), 'company.address': (1,240,273,300,15),
                'company.capital': (1,240,294,235,17), 'person.name:representative': (1,346,314,65,17),
                'person.phone': (1,400,137,138,16)},
 }
