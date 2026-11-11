@@ -1,7 +1,7 @@
 import express from 'express';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
-import { FIELDS, FORMS, allFieldKeys, validate, rocDate, money } from './public/schema.js';
+import { FIELDS, FORMS, allFieldKeys, validate, docBody } from './public/schema.js';
 
 const PORT = Number(process.env.PORT) || 5173;
 const ORIGIN = `http://localhost:${PORT}`;
@@ -56,18 +56,6 @@ function snapshotBody(app) {
 }
 
 // ---------- documents: one renderer, every form ----------
-const SENTENCES = {
-  app: (d) => `茲申請 ${d['company.name']}有限公司 設立登記，檢附相關文件，請 鑒核。`,
-  t70126: (d) => `第一條 本公司依照公司法規定組織之，定名為 ${d['company.name']}有限公司。第二條 本公司所營事業如下：${d['company.items']}。第三條 本公司設於 ${d['company.address']}。第四條 本公司資本總額為新臺幣 ${money(d['company.capital'])} 元。`,
-  t70130: (d) => `茲同意設立 ${d['company.name']}有限公司，訂定公司章程，並選任 ${d['person.name']}、${d['director2.name']} 為董事。`,
-  t70132: (d) => `本人同意擔任 ${d['company.name']}有限公司董事。　立同意書人：${d['director2.name']}`,
-  t70124: (d) => `本人（房屋所有權人 ${d['owner.name']}）所有座落於 ${d['company.address']} 之房屋，同意 ${d['company.name']}有限公司 登記為所在地。`,
-};
-const fmt = (k, v) => k === 'company.capital' ? `NT$ ${money(v)}` : k === 'app.date' ? rocDate(v) : k === 'company.name' ? `${v}有限公司` : v;
-function docBody(form, d) {
-  const rows = form.fields.map((k) => `<tr><th>${FIELDS[k].label}</th><td>${fmt(k, d[k])}</td></tr>`).join('');
-  return `<h1>${form.name}</h1>${SENTENCES[form.id] ? `<p class="s">${SENTENCES[form.id](d)}</p>` : ''}<table>${rows}</table>`;
-}
 const docHash = (form, d) => sha256(docBody(form, d)).toString('hex');
 const docHtml = (form, snap) => `<!doctype html><meta charset="utf-8"><title>${form.name}</title>
 <style>body{font-family:"Noto Serif TC","PingFang TC",serif;background:#eee;margin:0;padding:32px}.page{background:#fff;max-width:720px;margin:auto;padding:64px;box-shadow:0 1px 4px #0002;min-height:900px;position:relative}

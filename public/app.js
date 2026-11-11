@@ -1,4 +1,4 @@
-import { FIELDS, FORMS, validate, money, rocDate } from '/schema.js';
+import { FIELDS, FORMS, validate, money, rocDate, docBody } from '/schema.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -37,9 +37,31 @@ function render() {
   const s = screen();
   const pct = s === 'q' ? 15 + (75 * ui.i) / Math.max(ui.qs.length, 1) : progress[s];
   $('progress').style.width = pct + '%';
-  $('app').innerHTML = `<section class="screen">${VIEWS[s]()}</section>`;
+  const packet = !!S?.app && ['known', 'q', 'review', 'otp'].includes(s);
+  $('app').className = packet ? 'with-packet' : '';
+  $('app').innerHTML = `<section class="screen">${VIEWS[s]()}</section>${packet ? '<aside class="packet" id="packet"></aside>' : ''}`;
+  if (packet) renderPacket();
   const inp = document.querySelector('input'); if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
 }
+
+// Live packet: every document re-rendered from the same facts as you type.
+function liveData() {
+  const d = Object.fromEntries(Object.entries(S.app.draft).map(([k, f]) => [k, f.value]));
+  if (ui.step === 'q' && ui.live !== undefined) d[ui.qs[ui.i]] = ASK[ui.qs[ui.i]]?.num ? ui.live.replace(/[,\s]/g, '') : ui.live;
+  return d;
+}
+function renderPacket() {
+  const el = $('packet'); if (!el) return;
+  const d = liveData(), cur = ui.step === 'q' ? ui.qs[ui.i] : null;
+  const filled = FORMS.reduce((n, f) => n + f.fields.filter((k) => d[k]).length, 0);
+  const total = FORMS.reduce((n, f) => n + f.fields.length, 0);
+  const typed = Object.values(S.app.draft).filter((f) => ['Applicant', 'Agent draft'].includes(f.source)).length;
+  const wrap = (k, t) => `<mark class="${k === cur ? 'on' : t ? '' : 'empty'}">${t ? esc(t) : '　　　'}</mark>`;
+  el.innerHTML = `
+    <div class="ph"><b>Your forms, filling live</b><span><b>${filled}</b> of ${total} fields filled · you typed <b>${typed}</b></span></div>
+    <div class="pgrid">${DOCS.map((f) => `<div class="mini ${cur && f.fields.includes(cur) ? 'hit' : ''}"><div class="mt zh">${f.en}</div><div class="doc zh">${docBody(f, d, wrap)}</div></div>`).join('')}</div>`;
+}
+document.addEventListener('input', (e) => { if (e.target.id === 'qi' && ui.step === 'q') { ui.live = e.target.value; renderPacket(); } });
 
 const source = (f) => !f ? '' : f.source === 'Applicant' ? '<span class="tag you">You</span>'
   : f.source === 'Agent draft' ? '<span class="tag agent">✦ Agent draft</span>'
@@ -166,7 +188,7 @@ const ACTIONS = {
     } catch (e) { ui.err = e.message; ui.draftVal = code; }
     ui.busy = false; render();
   },
-  confirmKnown() { ui.step = ui.qs.length ? 'q' : 'review'; ui.i = 0; render(); },
+  confirmKnown() { ui.live = undefined; ui.step = ui.qs.length ? 'q' : 'review'; ui.i = 0; render(); },
   async answer() {
     const k = ui.qs[ui.i];
     let v = $('qi').value.trim();
@@ -176,21 +198,21 @@ const ACTIONS = {
     if (err) { ui.err = err; ui.draftVal = $('qi').value; return render(); }
     ui.busy = true;
     try { S = await api('/api/answer', { values: { [k]: v } }); } catch (e) { ui.err = Object.values(e.errors || {})[0] || e.message; ui.busy = false; return render(); }
-    ui.busy = false; ui.err = ''; ui.draftVal = null;
+    ui.busy = false; ui.err = ''; ui.draftVal = null; ui.live = undefined;
     if (ui.returnTo) { ui.step = ui.returnTo; ui.returnTo = null; }
     else if (ui.i < ui.qs.length - 1) ui.i++;
     else ui.step = 'review';
     render();
   },
-  back() {
+  back() { ui.live = undefined;
     ui.err = ''; ui.draftVal = null;
     if (ui.returnTo) { ui.step = ui.returnTo; ui.returnTo = null; }
     else if (ui.i > 0) ui.i--;
     else ui.step = S.app.status === 'revision' ? 'fixintro' : 'known';
     render();
   },
-  edit(k) { ui.qs = ui.qs.includes(k) ? ui.qs : ORDER; ui.i = ui.qs.indexOf(k); ui.step = 'q'; ui.returnTo = 'review'; render(); },
-  fix() { ui.qs = [S.app.reopen]; ui.i = 0; ui.step = 'q'; render(); },
+  edit(k) { ui.live = undefined; ui.qs = ui.qs.includes(k) ? ui.qs : ORDER; ui.i = ui.qs.indexOf(k); ui.step = 'q'; ui.returnTo = 'review'; render(); },
+  fix() { ui.live = undefined; ui.qs = [S.app.reopen]; ui.i = 0; ui.step = 'q'; render(); },
   async sign() {
     try { ui.otp = { purpose: 'sign', ...(await api('/api/sign/send', {})) }; ui.step = 'otp'; ui.err = ''; }
     catch (e) { ui.err = e.message; }

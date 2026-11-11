@@ -39,7 +39,7 @@
         opacity: 0; pointer-events: none; transition: opacity .25s ease; }
       :host([data-open]) .scrim { opacity: 1; pointer-events: auto; }
 
-      .drawer { position: fixed; top: 0; right: 0; bottom: 0; z-index: 2; width: 460px; max-width: 100vw;
+      .drawer { position: fixed; top: 0; right: 0; bottom: 0; z-index: 2; width: min(1000px, 74vw); max-width: 100vw;
         background: #fff; display: flex; flex-direction: column;
         box-shadow: -24px 0 60px rgba(14,17,22,.22), -2px 0 8px rgba(14,17,22,.08);
         transform: translateX(105%); transition: transform .32s cubic-bezier(.2,.8,.2,1); visibility: hidden; }
