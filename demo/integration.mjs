@@ -34,5 +34,5 @@ try {
  assert.equal(officer.verify.externalReview.recommendation,'approve');
  await request('/api/officer/decide',{decision:'approve',note:'Matching demo evidence'});
  assert.equal((await request('/api/state')).app.status,'approved');
- console.log('PASS: confirmed inputs -> 6 native PDFs -> 3 uploaded matching PDFs -> officer approval');
+ console.log('PASS: confirmed inputs -> 7 native PDFs -> 3 uploaded matching PDFs -> officer approval');
 } finally { if(server.exitCode === null) { server.kill(); await new Promise(resolve=>server.once('exit',resolve)); } fs.rmSync(dir,{recursive:true,force:true}); }

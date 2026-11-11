@@ -6,12 +6,20 @@
   },
   "sources": [
     {
+      "id": "c00001",
+      "url": "https://gcis.nat.gov.tw/F/c00001_p",
+      "path": "assets/official/c00001.pdf",
+      "sha256": "4124199c8a0883832e3f3accf701f319fa9bffc93c830eb9ae0fe7196cf1244a",
+      "downloaded_on": "2026-11-11",
+      "usage": "Unmodified downloaded original; runtime adds demo footer and confirmed text in selected blank regions, preserving all original pages. Unmapped semantic facts appear in a separate clearly marked nonofficial appendix. Signatures, seals and unknown fields remain blank. Official PDF edition of the Step 1 name-reservation form (the Word original is https://gcis.nat.gov.tw/F/c00001)."
+    },
+    {
       "id": "t70124",
       "url": "https://gcis.nat.gov.tw/F/t70124_p",
       "path": "assets/official/t70124.pdf",
       "sha256": "bb21f6d2138e554c9e2443b9f3507c99b668dec6b214720a51341d440e10aca2",
       "downloaded_on": "2026-11-11",
-      "usage": "Unmodified downloaded original; runtime adds demo footer and confirmed text in selected blank regions, preserving all original pages. Unmapped semantic facts appear in a separate clearly marked nonofficial appendix. Signatures, seals and unknown fields remain blank."
+      "usage": "Unmodified downloaded original; runtime adds demo footer and confirmed text in selected blank regions, preserving all original pages. Unmapped semantic facts appear in a separate clearly marked nonofficial appendix. Signatures, seals and unknown fields remain blank. On this sample (範例) the bracketed placeholder hints inside the three underlined blanks are covered by the filled values; all other wording is untouched."
     },
     {
       "id": "t70126",

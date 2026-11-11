@@ -117,7 +117,7 @@ function selfReviewReport() {
 const VIEWS = {
   welcome: () => `
     <div class="eyebrow zh">臺北市商業處 · 有限公司設立登記<br>Taipei Commerce Office · Company registration</div>
-    <h1>${DOCS.length + 1} 份表單，一次完成。<br>${DOCS.length + 1} forms. One conversation.</h1>
+    <h1>${FORMS.length} 份表單，一次完成。<br>${FORMS.length} forms. One conversation.</h1>
     <p class="lead">資料只填一次，帶入整套文件，確認後一次送出。<br>Answer once, fill every document, then confirm and submit.</p>
     <div class="steps">
       <div><b>1</b>確認既有資料 · Confirm known details</div>
@@ -152,7 +152,7 @@ const VIEWS = {
     </div>
     <div class="spacer"></div>
     <button class="btn primary" data-go="confirmKnown">確認使用 · Use these details <span style="opacity:.6">↵</span></button>
-    <div class="note">沿用至全部 ${DOCS.length + 1} 份表單，不必重填。<br>Reused across all ${DOCS.length + 1} forms.</div>`;
+    <div class="note">沿用至全部 ${FORMS.length} 份表單，不必重填。<br>Reused across all ${FORMS.length} forms.</div>`;
   },
 
   q: () => {

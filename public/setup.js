@@ -64,7 +64,7 @@ function render() {
   $root.innerHTML = `
     <section class="intro">
       <div class="eyebrow zh">臺北市商業處 · 有限公司設立登記 · <a href="${PAGE}" target="_blank">registration page</a></div>
-      <h1>${{ idle: 'Three official forms. One applicant.', scan: 'Reading every field…', found: `${total()} fields to fill by hand.`, merge: `${total()} fields, but only ${keys.length} different facts.`, result: `The applicant types ${ask.length} things.`, live: 'Live on the website.' }[st.phase]}</h1>
+      <h1>${{ idle: `${st.forms.length} official forms. One applicant.`, scan: 'Reading every field…', found: `${total()} fields to fill by hand.`, merge: `${total()} fields, but only ${keys.length} different facts.`, result: `The applicant types ${ask.length} things.`, live: 'Live on the website.' }[st.phase]}</h1>
       <p>${{ idle: 'Today an applicant downloads these forms and writes the same company name, address and representative again and again. Zero Form reads them once — this setup happens one time, by the agency.',
         scan: 'The AI finds each box that asks the applicant for information.',
         found: 'Many of these boxes ask for the same thing. Next, Zero Form matches them.',
@@ -77,7 +77,7 @@ function render() {
         : 'Demo mode · offline replay of the mapping') : ''}</div>
     </section>
 
-    <section class="pages">${st.forms.map(page).join('')}</section>
+    <section class="pages ${st.forms.length > 4 ? 'many' : ''}" style="--n:${st.forms.length}">${st.forms.map(page).join('')}</section>
 
     ${merged() ? `<section class="legend">${keys.sort((a, b) => usage(b) - usage(a)).map((k) => { const c = fact(k); const isAsk = !c.known && ['result', 'live'].includes(st.phase);
       return `<div class="fact ${isAsk ? 'ask' : ''} ${['result', 'live'].includes(st.phase) && c.known ? 'kn' : ''}" data-fact="${k}" style="--c:${c.color}">
@@ -98,7 +98,7 @@ const ACT = {
     st.phase = 'scan'; st.error = ''; st.meta = null;
     st.forms.forEach((f) => (st.shown[f.id] = 0)); render();
     document.querySelectorAll('figure').forEach((f) => f.classList.add('scan'));
-    document.getElementById('status').innerHTML = `<span class="rd"><i></i>${st.mode === 'ai' ? 'Claude is reading 3 official PDFs…' : 'Reading 3 forms…'}</span>`;
+    document.getElementById('status').innerHTML = `<span class="rd"><i></i>${st.mode === 'ai' ? `Claude is reading ${st.forms.length} official PDFs in parallel…` : `Reading ${st.forms.length} forms…`}</span>`;
     const t0 = performance.now();
     try {
       const r = await fetch('/api/setup/read', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ mode: st.mode }) });
@@ -110,12 +110,12 @@ const ACT = {
     st.forms.forEach((f) => (st.shown[f.id] = 0)); render();
     for (const f of st.forms) {
       const fig = document.querySelector(`[data-count="${f.id}"]`).closest('figure');
-      fig.classList.add('scan'); await sleep(350);
+      fig.classList.add('scan'); await sleep(st.forms.length > 4 ? 200 : 350);
       const boxes = fig.querySelectorAll('.box');
       for (let i = 1; i <= f.fields.length; i++) {
         st.shown[f.id] = i; boxes[i - 1].classList.add('on');
         fig.querySelector('.fc').textContent = i; document.getElementById('found').textContent = found();
-        await sleep(260);
+        await sleep(st.forms.length > 4 ? 150 : 260);
       }
       fig.classList.remove('scan');
     }

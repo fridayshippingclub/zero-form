@@ -12,7 +12,7 @@
 3. **Zero refill** — screen shows facts already known (name, ID, phone, address, company name, business items) with their source; user confirms with one click.
 4. **Ask once** — only the missing fields are asked, one per screen (~5): registered address, capital, second director name + national ID, building owner. Each shows "used in N of 7 forms". National ID checksum validated.
 5. **Sign once** — review screen → "Sign & submit" → a fresh code bound to the SHA-256 of the canonical snapshot; on confirm the server seals {hash, confirmation} with Ed25519.
-6. **Every form generated** — 6 documents rendered from the single snapshot at `/doc/:v/:formId`, each footer shows snapshot hash + document hash.
+6. **Every form generated** — 7 documents (every fillable official form, incl. the c00001 name reservation) rendered from the single snapshot at `/doc/:v/:formId`, each footer shows snapshot hash + document hash.
 7. **Officer console** (`/officer.html`) — 5 checks computed live by the server (identity = code confirmed this exact hash, integrity, consistency, evidence, gov records), facts table with source + "in N forms", actions: Approve / Request change on one field / Reject.
 8. **Tamper demo** — "Simulate tampering" turns Integrity + Consistency red.
 9. **Revision loop** — officer requests change on one field → applicant sees only that field reopened → re-signs → snapshot v2 with `prev` = v1 hash → officer approves → applicant sees Approved.

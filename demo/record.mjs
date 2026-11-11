@@ -1,15 +1,17 @@
 // Records a narrated end-to-end run on the native PDF engine:
-// agency setup (Claude reads the official PDFs once) → real Taipei page + extension drawer → 3 questions → sign (6 PDFs) → officer requests one fix → re-sign v2
-// → applicant uploads evidence PDFs → officer approves → generated PDF → tamper.
-// Needs `npm run dev` on :5173 and the engine toolchain (see README). Output: demo/zero-form-demo.webm
+// agency setup (Claude reads all 7 official PDFs once) → real Taipei page + extension drawer → 3 questions → sign (7 official PDFs) → officer requests one fix → re-sign v2
+// → applicant uploads evidence PDFs → officer approves → contact sheet of every generated official PDF → tamper.
+// Needs `npm run dev` on :5173 (or ZF_APP=http://localhost:<port>; the extension's localhost:5173 iframe is routed there) and the engine toolchain (see README).
+// Output: demo/zero-form-all-forms.webm
 // HEADED=1 opens a visible browser window so you can watch the run live.
 import { chromium } from 'playwright';
+import { FORMS } from '../public/schema.js';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-const APP = 'http://localhost:5173', GOV = 'https://tcooc-co.gov.taipei/cp.aspx?n=1ddc8c221b97a1bd&s=5BA095ECA5D6FAB3';
+const APP = process.env.ZF_APP || 'http://localhost:5173', GOV = 'https://tcooc-co.gov.taipei/cp.aspx?n=1ddc8c221b97a1bd&s=5BA095ECA5D6FAB3';
 const OUT = path.resolve('demo'), VID = fs.mkdtempSync(path.join(os.tmpdir(), 'zf-vid-')), TMP = fs.mkdtempSync(path.join(os.tmpdir(), 'zf-files-'));
 const post = (p) => fetch(APP + p, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
 await post('/api/demo/reset');
@@ -19,6 +21,9 @@ const ctx = await chromium.launchPersistentContext(fs.mkdtempSync(path.join(os.t
   recordVideo: { dir: VID, size: { width: 1440, height: 900 } },
   args: [`--disable-extensions-except=${path.resolve('extension')}`, `--load-extension=${path.resolve('extension')}`],
 });
+// The extension frames http://localhost:5173; send it to ZF_APP when the server runs elsewhere.
+if (!APP.startsWith('http://localhost:5173')) await ctx.route('http://localhost:5173/**', async (r) => r.fulfill({ response: await r.fetch({ url: r.request().url().replace('http://localhost:5173', APP) }) }));
+const DOCS = FORMS.filter((x) => !x.onFile);
 for (const p of ['local-network-access', 'local-network', 'loopback-network']) { try { await ctx.grantPermissions([p], { origin: 'https://tcooc-co.gov.taipei' }); } catch {} }
 const page = ctx.pages()[0] ?? await ctx.newPage();
 const T0 = Date.now(), fast = []; // spans of real waiting that post-processing speeds up
@@ -71,11 +76,12 @@ const evidenceSection = 'section:has(.checks) ~ section:last-of-type';
 
 // 0 · agency setup, done once per service: Claude reads the official forms
 await page.goto(APP + '/setup.html'); await page.waitForSelector('[data-go="scan"]'); await wait(800);
-await caption('Set up once, by the agency: Claude reads three official registration forms.'); await wait(3500);
+await caption(`Set up once, by the agency: Claude reads all ${FORMS.length} official forms for registering a limited company in Taipei.`); await wait(3500);
 await page.click('[data-go="scan"]');
-await caption('Claude reads each official PDF and marks every box the applicant has to fill. (Sped up ×10.)');
+await caption(`Claude reads the ${FORMS.length} official PDFs in parallel and marks every box the applicant has to fill. (Sped up ×10.)`);
 { const from = (Date.now() - T0) / 1000; await page.waitForSelector('.status .mono', { timeout: 120000 }); fast.push([from, (Date.now() - T0) / 1000 - 0.3]); }
 await page.waitForSelector('[data-go="merge"]', { timeout: 60000 }); await wait(2500);
+await caption('Every box on every form is found, with its real position on the official PDF.'); await wait(2500);
 await page.click('[data-go="merge"]'); await caption('Boxes that ask for the same thing are merged: same colour, same fact.'); await wait(4500);
 await page.click('[data-go="result"]'); await caption('Facts the applicant already verified are reused. Only what is new gets asked.'); await wait(4500);
 await page.click('[data-go="publish"]'); await caption('An officer approves the mapping and publishes it to the button on the government site.'); await wait(3500);
@@ -97,8 +103,8 @@ await caption('Check once. Then attach the supporting evidence the city asks for
 await upload(f, KINDS, 'Supporting evidence: marked demo PDFs for the capital audit, address approval and name approval.');
 await selfReview(f, 'Self-review: Claude Haiku reads each evidence PDF and checks it against your answers before you sign.');
 await caption('Every check passes. Signing locks this exact version by its SHA-256 fingerprint.'); await wait(3000);
-await signAndWait(f, 'The text code confirms that fingerprint. The server seals it with Ed25519, then the native engine renders and verifies 6 PDFs.');
-await caption('Submitted: 6 PDFs generated from one signed snapshot.'); await wait(3000);
+await signAndWait(f, `The text code confirms that fingerprint. The server seals it with Ed25519, then the native engine renders and verifies ${DOCS.length} PDFs.`);
+await caption(`Submitted: ${DOCS.length} official PDFs generated from one signed snapshot.`); await wait(3000);
 await f.locator('.docs').scrollIntoViewIfNeeded(); await wait(2500);
 
 // 2 · officer: live checks, one-field change request
@@ -135,7 +141,22 @@ await page.click('#approve'); await wait(2500);
 f = await openDrawer('The applicant sees the decision on the same page.');
 await f.waitForSelector('.badge.ok'); await wait(3500);
 
-// 5 · a generated PDF (rasterised with Poppler; headless Chromium has no PDF viewer)
+// 5 · every generated official PDF, page 1 each (rasterised with Poppler; headless Chromium has no PDF viewer)
+const raster = async (id, dpi) => {
+  const file = path.join(TMP, `${id}-v2.pdf`);
+  fs.writeFileSync(file, Buffer.from(await (await fetch(`${APP}/doc/2/${id}`)).arrayBuffer()));
+  execFileSync(process.env.ZERO_FORM_PDFTOPPM || 'pdftoppm', ['-png', '-r', String(dpi), '-f', '1', '-l', '1', '-singlefile', file, file.slice(0, -4)]);
+  return 'data:image/png;base64,' + fs.readFileSync(file.slice(0, -4) + '.png').toString('base64');
+};
+const thumbs = await Promise.all(DOCS.map(async (d) => ({ ...d, png: await raster(d.id, 70) })));
+await page.goto('about:blank');
+await page.setContent(`<body style="margin:0;background:#E8EAEE;font:600 13px Inter,system-ui,sans-serif;color:#0E1116;height:100vh;display:flex;flex-direction:column;align-items:center;padding-top:34px;box-sizing:border-box">
+  <div style="display:grid;grid-template-columns:repeat(${Math.ceil(thumbs.length / 2)},226px);gap:16px 18px">${thumbs.map((t) => `<figure style="margin:0;display:flex;flex-direction:column;gap:6px">
+    <img src="${t.png}" style="width:226px;height:320px;object-fit:cover;object-position:top;background:#fff;box-shadow:0 3px 14px #0002">
+    <figcaption>${t.name}<br><span style="font-weight:500;color:#4A5160">${t.en} · /doc/2/${t.id}</span></figcaption></figure>`).join('')}</div></body>`);
+await caption(`${DOCS.length} official forms generated from one signed snapshot: confirmed values written onto the real GCIS forms.`); await wait(6500);
+
+// 5b · one generated PDF up close
 const pdf = path.join(TMP, 't70126.pdf');
 fs.writeFileSync(pdf, Buffer.from(await (await fetch(APP + '/doc/2/t70126')).arrayBuffer()));
 execFileSync(process.env.ZERO_FORM_PDFTOPPM || 'pdftoppm', ['-png', '-r', '150', '-singlefile', pdf, path.join(TMP, 't70126')]);
@@ -156,7 +177,7 @@ await caption('Identity, integrity and consistency turn red: the signed PDFs no 
 
 const video = page.video();
 await ctx.close();
-const src = await video.path(), dest = path.join(OUT, 'zero-form-demo.webm');
+const src = await video.path(), dest = path.join(OUT, 'zero-form-all-forms.webm');
 // Speed up the PDF-generation waits ×10 and encode VP9 (much smaller than Playwright's VP8). Falls back to the raw file without ffmpeg.
 try {
   const cuts = [0, ...fast.flat(), 1e6], parts = [];
@@ -164,5 +185,5 @@ try {
   const graph = parts.join(';') + ';' + parts.map((_, i) => `[p${i}]`).join('') + `concat=n=${parts.length}:v=1[out]`;
   execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', src, '-filter_complex', graph, '-map', '[out]', '-c:v', 'libvpx-vp9', '-crf', '34', '-b:v', '0', '-row-mt', '1', '-cpu-used', '4', dest]);
 } catch (e) { console.warn('ffmpeg post-processing skipped:', e.message); fs.copyFileSync(src, dest); }
-console.log('saved', path.join(OUT, 'zero-form-demo.webm'));
+console.log('saved', dest);
 await post('/api/demo/reset');

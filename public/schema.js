@@ -16,7 +16,7 @@ export const FIELDS = {
 };
 
 export const FORMS = [
-  { id: 'c00001', name: '公司名稱及所營事業登記預查申請表', en: 'Name reservation', onFile: true,
+  { id: 'c00001', name: '公司名稱及所營事業登記預查申請表', en: 'Name reservation',
     fieldRoles: { 'person.name': 'applicant', 'person.nationalId': 'applicant' },
     fields: ['company.name', 'company.items', 'person.name', 'person.nationalId', 'person.address'] },
   { id: 'app', name: '公司設立登記申請書', en: 'Application letter',
