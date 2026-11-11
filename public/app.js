@@ -27,6 +27,15 @@ const api = async (path, body) => {
   return j;
 };
 
+async function uploadEvidence(kind, file) {
+  const response = await fetch(`/api/attachments?kind=${encodeURIComponent(kind)}`, { method: 'POST', headers: { 'content-type': 'application/pdf' }, body: file });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || t('上傳失敗，請重試。', 'Upload failed. Please try again.'));
+}
+
+const missingEvidenceKinds = (application) => Object.keys(EVIDENCE)
+  .filter((kind) => !(application.attachments || []).some((item) => item.kind === kind));
+
 // ---------- derive which screen we are on ----------
 function screen() {
   const st = S?.app?.status;
@@ -72,15 +81,17 @@ const source = (f) => !f ? '' : f.source === 'Applicant' ? `<span class="tag you
 
 function evidenceUploads() {
   const a = S.app;
-  const uploaded = Object.keys(EVIDENCE).filter((kind) => (a.attachments || []).some((item) => item.kind === kind)).length;
-  return `<div class="group"><h3>${t('外部文件上傳', 'External PDFs')} (${uploaded}/${Object.keys(EVIDENCE).length})</h3>
+  const total = Object.keys(EVIDENCE).length;
+  const missing = missingEvidenceKinds(a);
+  const canLoadSamples = DEMO_SAMPLES && ['draft', 'revision'].includes(a.status) && missing.length > 0;
+  return `<div class="group"><h3>${t('外部文件上傳', 'External PDFs')} (${total - missing.length}/${total})</h3>
     <p class="lead" style="font-size:14px;margin-bottom:12px">${t('請自行取得下列三份外部文件，再上傳 PDF。', 'Obtain these three documents externally, then upload the PDFs.', '<br>')}</p>
-    ${DEMO_SAMPLES ? `<div class="note" style="margin-bottom:12px">${t('展示樣張：下載後請自行上傳。', 'Demo samples: download, then upload manually.', '<br>')}</div>` : ''}
+    ${canLoadSamples ? `<button type="button" class="btn ghost" data-go="loadDemoEvidence" ${ui.busy ? 'disabled' : ''}>${ui.activity === 'demo-evidence' ? t('載入展示 PDF 中…', 'Loading demo PDFs…') : t('一鍵載入展示 PDF', 'Load demo PDFs')}</button>` : ''}
     <div class="facts">${Object.entries(EVIDENCE).map(([kind, names]) => {
       const title = t(...names);
       const attachment = (a.attachments || []).find((item) => item.kind === kind);
       return `<div class="fact"><div class="grow"><label class="k" for="evidence-${kind}">${title}</label>
-        <div style="display:flex;gap:12px;flex-wrap:wrap;margin:7px 0">${DEMO_SAMPLES ? `<a class="edit" href="/api/mock-attachments/${kind}" target="_blank" rel="noopener">${t('下載展示樣張', 'Download demo sample')} ↗</a>` : ''}${attachment ? `<a class="edit" href="${esc(attachment.url)}" target="_blank" rel="noopener">${t('已上傳', 'Uploaded PDF')} ✓</a>` : ''}</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin:7px 0">${DEMO_SAMPLES ? `<a class="edit" href="/api/mock-attachments/${kind}" target="_blank" rel="noopener">${t('下載展示樣張', 'Download demo sample')} ↗</a>` : ''}${attachment ? `<a class="edit" href="${esc(attachment.url)}" target="_blank" rel="noopener" aria-label="${t('預覽 PDF', 'Preview PDF')} · ${title}">${t('預覽 PDF', 'Preview PDF')} ↗</a>` : ''}</div>
         <input id="evidence-${kind}" data-upload="${kind}" type="file" accept=".pdf,application/pdf" aria-label="${t('上傳', 'Upload')} ${title}" style="font:12px Inter,sans-serif;max-width:100%" ${ui.busy || a.status === 'approved' ? 'disabled' : ''}>
       </div></div>`;
     }).join('')}</div>
@@ -273,6 +284,23 @@ const ACTIONS = {
   },
   edit(k) { ui.live = undefined; ui.qs = ui.qs.includes(k) ? ui.qs : ORDER; ui.i = ui.qs.indexOf(k); ui.step = 'q'; ui.returnTo = 'review'; render(); },
   fix() { ui.live = undefined; ui.qs = [S.app.reopen]; ui.i = 0; ui.step = 'q'; render(); },
+  async loadDemoEvidence() {
+    if (!DEMO_SAMPLES || !['draft', 'revision'].includes(S.app.status)) return;
+    const kinds = missingEvidenceKinds(S.app);
+    if (!kinds.length) return;
+    ui.busy = true; ui.activity = 'demo-evidence'; ui.err = ''; render();
+    try {
+      const samples = await Promise.all(kinds.map(async (kind) => {
+        const response = await fetch(`/api/mock-attachments/${kind}`);
+        if (!response.ok) throw new Error(t('無法產生展示 PDF，請重試。', 'Could not generate demo PDFs. Please try again.'));
+        return { kind, file: await response.blob() };
+      }));
+      for (const { kind, file } of samples) await uploadEvidence(kind, file);
+    } catch (error) { ui.err = error.message; }
+    try { S = await api('/api/state'); }
+    catch (error) { ui.err ||= error.message; }
+    finally { ui.busy = false; ui.activity = null; render(); }
+  },
   async selfReview() {
     ui.busy = true; ui.activity = 'self-review'; ui.err = ''; render();
     try { await api('/api/self-review', {}); S = await api('/api/state'); }
@@ -292,7 +320,7 @@ document.addEventListener('click', (e) => {
   const go = e.target.closest('[data-go]')?.dataset.go;
   const ed = e.target.closest('[data-edit]')?.dataset.edit;
   if (go && !ui.busy) ACTIONS[go]();
-  if (ed) ACTIONS.edit(ed);
+  if (ed && !ui.busy) ACTIONS.edit(ed);
 });
 document.addEventListener('submit', (e) => { e.preventDefault(); ui.step === 'otp' ? ACTIONS.verify() : ACTIONS.answer(); });
 document.addEventListener('change', async (event) => {
@@ -302,9 +330,7 @@ document.addEventListener('change', async (event) => {
   if (file.size > 10 * 1024 * 1024) { ui.err = '請選擇 10 MB 以下的 PDF。 Choose a PDF up to 10 MB.'; return render(); }
   ui.busy = true; ui.activity = 'upload'; ui.err = ''; render();
   try {
-    const response = await fetch(`/api/attachments?kind=${encodeURIComponent(kind)}`, { method: 'POST', headers: { 'content-type': 'application/pdf' }, body: file });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || '上傳失敗，請重試。 Upload failed. Please try again.');
+    await uploadEvidence(kind, file);
     S = await api('/api/state');
   } catch (error) { ui.err = error.message; }
   finally { ui.busy = false; ui.activity = null; render(); }

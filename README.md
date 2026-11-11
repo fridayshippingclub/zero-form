@@ -68,7 +68,7 @@ npm run dev
 - Applicant panel: http://localhost:5173
 - Officer console: http://localhost:5173/officer.html
 
-Normal mode requires the applicant to upload the capital report, address precheck and name reservation PDFs. These external documents are separate from the seven forms generated from the confirmed facts. Open `http://localhost:5173/?demo=1` to reveal synthetic sample download links; samples still require manual upload and are never auto-attached.
+Normal mode requires the applicant to upload the capital report, address precheck and name reservation PDFs. These external documents are separate from the seven forms generated from the confirmed facts. Open `http://localhost:5173/?demo=1` and select **Load demo PDFs** to attach marked samples for the missing document types. Select **Preview PDF** next to any attachment to open it.
 
 `PORT` and `DATA_DIR` override the port and the state directory.
 
