@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Zero Form · Evidence review demo</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="demo-banner"><strong>DEMO ONLY</strong><span>Fictional documents and simulated decisions. No government submission.</span></div>
+  <header class="page-header">
+    <a class="brand" href="/" aria-label="Zero Form home"><span class="brand-mark" aria-hidden="true">Z</span> Zero Form</a>
+    <span class="header-note">Company formation · Proof of concept</span>
+  </header>
+  <main>
+    <div class="intro">
+      <div><p class="eyebrow">Evidence workspace</p><h1>One application. A clearer review.</h1><p class="intro-copy">Compare supporting documents with the applicant’s declared facts, then record a simulated review decision.</p></div>
+      <button id="refresh" class="button button-secondary" type="button">Refresh review</button>
+    </div>
+    <div id="error" class="notice notice-error" role="alert" hidden></div>
+    <p id="activity" class="sr-only" role="status" aria-live="polite"></p>
+    <div class="workspace">
+      <section class="applicant-column" aria-label="Application and supporting evidence">
+        <section class="card">
+          <div class="section-heading"><div><p class="eyebrow">01 · Application</p><h2>Declared facts</h2></div><span class="badge badge-neutral">Demo case</span></div>
+          <dl class="facts">
+            <div><dt>Company name</dt><dd id="company">Harbor Labs</dd></div>
+            <div><dt>Declared capital</dt><dd id="capital">TWD 10,000</dd></div>
+            <div><dt>Registered address</dt><dd id="address">10 Example Street</dd></div>
+            <div><dt>Application date</dt><dd id="application-date">11 Nov 2026</dd></div>
+          </dl>
+          <p class="footnote">Supporting evidence is compared with these facts. Uploads do not overwrite the application.</p>
+          <div class="generation-controls"><button id="generate" class="button button-primary" type="button">Generate demo PDFs</button><p id="generation-status" class="footnote" role="status">Generate the core package before approving the review.</p></div>
+          <ul id="generated-documents" class="generated-documents" aria-label="Generated application PDFs" hidden></ul>
+        </section>
+        <section class="card">
+          <div class="section-heading"><div><p class="eyebrow">02 · Supporting documents</p><h2>Add the evidence</h2></div><span id="evidence-count" class="badge badge-neutral">0 of 3</span></div>
+          <p class="section-copy">Upload the marked demo PDFs. Each file can be up to 10 MB.</p>
+          <div id="uploads"></div>
+          <p class="footnote">Use a matching set, a capital mismatch, or a rejected name approval to explore the review outcomes. Missing or unreadable evidence needs clarification.</p>
+        </section>
+      </section>
+      <section class="review-column" aria-label="Review findings and decision">
+        <section class="card review-card">
+          <div class="section-heading"><div><p class="eyebrow">03 · Cross-document checks</p><h2>Review findings</h2></div><span id="recommendation-badge" class="badge badge-neutral">Not loaded</span></div>
+          <div id="recommendation" class="recommendation"><span class="recommendation-icon" aria-hidden="true">—</span><div><h3 id="recommendation-title">Waiting for the review</h3><p id="recommendation-copy">Connect to the demo service to load the evidence checks.</p></div></div>
+          <div id="checks" class="checks" aria-live="polite"><p class="empty-state">No findings loaded yet.</p></div>
+        </section>
+        <section class="card decision-card">
+          <div class="section-heading"><div><p class="eyebrow">04 · Reviewer decision</p><h2>Record an outcome</h2></div></div>
+          <label for="reason">Review note <span class="label-hint">Required for a request or decline</span></label>
+          <textarea id="reason" rows="3" placeholder="Describe what needs clarification or why this demo application is declined."></textarea>
+          <p id="approve-hint" class="footnote">Approval is available only after all required evidence checks pass.</p>
+          <div class="decision-actions">
+            <button type="button" class="button button-primary" data-decision="approve" disabled aria-describedby="approve-hint">Approve</button>
+            <button type="button" class="button button-secondary" data-decision="request_documents" disabled>Request documents</button>
+            <button type="button" class="button button-decline" data-decision="decline" disabled>Decline</button>
+          </div>
+          <p class="footnote decision-guidance">Request documents for missing or conflicting evidence. Decline when the review supports rejection; include the reason.</p>
+          <div id="decision-result" class="decision-result" role="status" hidden></div>
+        </section>
+      </section>
+    </div>
+    <footer>Zero Form hackathon demo <span>Evidence checks support review. They are not legal approval or identity verification.</span></footer>
+  </main>
+</body>
+</html>
