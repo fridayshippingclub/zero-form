@@ -1,0 +1,7 @@
+stills/
+*.png
+*.wav
+video-silent.mp4
+!app2.png
+!t70135.png
+!t70136.png

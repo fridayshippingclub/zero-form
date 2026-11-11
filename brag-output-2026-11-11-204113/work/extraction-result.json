@@ -1,0 +1,501 @@
+{
+ "mode": "ai",
+ "model": "claude-opus-5-5",
+ "forms": [
+  {
+   "id": "app2",
+   "name": "有限公司設立（變更）登記申請書",
+   "en": "Application letter (setup/change)",
+   "source": "user upload",
+   "image": "/setup/app2.png",
+   "aspect": 1.4142,
+   "fields": [
+    {
+     "label": "公司所在地（含鄉鎮市區村里）",
+     "fact": "company.address",
+     "meaning": "Company address",
+     "label_box": [
+      16.25,
+      30.46,
+      31.38,
+      33.27
+     ],
+     "box": [
+      16.25,
+      30.11,
+      35.29,
+      3.52
+     ]
+    },
+    {
+     "label": "代表人姓名",
+     "fact": "person.name",
+     "meaning": "Representative name",
+     "label_box": [
+      16.25,
+      27.42,
+      26.35,
+      28.85
+     ],
+     "box": [
+      16.25,
+      27.07,
+      30.25,
+      2.14
+     ]
+    },
+    {
+     "label": "預查編號",
+     "fact": "reservation.id",
+     "meaning": "Name pre-check number",
+     "label_box": [
+      6.29,
+      14.3,
+      14.35,
+      15.72
+     ],
+     "box": [
+      6.29,
+      13.94,
+      28.22,
+      2.14
+     ]
+    },
+    {
+     "label": "公司名稱",
+     "fact": "company.name",
+     "meaning": "Company name",
+     "label_box": [
+      16.25,
+      22.98,
+      24.31,
+      24.4
+     ],
+     "box": [
+      16.25,
+      22.62,
+      28.22,
+      2.14
+     ]
+    },
+    {
+     "label": "申請日期",
+     "fact": "app.date",
+     "meaning": "Application date",
+     "label_box": [
+      6.29,
+      48.11,
+      14.35,
+      49.54
+     ],
+     "box": [
+      6.29,
+      47.75,
+      28.22,
+      2.14
+     ]
+    },
+    {
+     "label": "營業場所",
+     "fact": "company.address",
+     "meaning": "Business premises address",
+     "label_box": [
+      6.29,
+      69.67,
+      14.35,
+      71.09
+     ],
+     "box": [
+      6.29,
+      69.31,
+      28.22,
+      2.14
+     ]
+    },
+    {
+     "label": "姓名",
+     "fact": "person.name",
+     "meaning": "Contact person name",
+     "label_box": [
+      16.25,
+      36.55,
+      20.28,
+      37.97
+     ],
+     "box": [
+      16.25,
+      36.19,
+      24.19,
+      2.14
+     ]
+    },
+    {
+     "label": "市話",
+     "fact": "person.phone",
+     "meaning": "Contact landline",
+     "label_box": [
+      16.9,
+      58.99,
+      22.96,
+      59.95
+     ],
+     "box": [
+      16.9,
+      58.64,
+      26.22,
+      1.67
+     ]
+    },
+    {
+     "label": "手機",
+     "fact": "person.phone",
+     "meaning": "Contact mobile",
+     "label_box": [
+      24.45,
+      60.53,
+      27.82,
+      61.72
+     ],
+     "box": [
+      24.45,
+      60.18,
+      23.52,
+      1.9
+     ]
+    }
+   ],
+   "other": 13,
+   "missed": []
+  },
+  {
+   "id": "t70135",
+   "name": "有限公司設立登記表",
+   "en": "Registration form",
+   "source": "user upload",
+   "image": "/setup/t70135.png",
+   "aspect": 1.4142,
+   "fields": [
+    {
+     "label": "(郵遞區號)公司所在地",
+     "fact": "company.address",
+     "meaning": "Company address with postal code",
+     "label_box": [
+      12.62,
+      31.3,
+      29.55,
+      32.73
+     ],
+     "box": [
+      12.62,
+      30.94,
+      37.09,
+      2.14
+     ]
+    },
+    {
+     "label": "公司章程訂定日期",
+     "fact": "app.date",
+     "meaning": "Date articles of incorporation adopted",
+     "label_box": [
+      11.31,
+      39.96,
+      27.44,
+      41.39
+     ],
+     "box": [
+      11.31,
+      39.61,
+      36.28,
+      2.14
+     ]
+    },
+    {
+     "label": "公司預查編號",
+     "fact": "reservation.id",
+     "meaning": "Name reservation number",
+     "label_box": [
+      45.91,
+      12.03,
+      57.23,
+      13.35
+     ],
+     "box": [
+      45.91,
+      11.68,
+      31.49,
+      2.02
+     ]
+    },
+    {
+     "label": "公司聯絡電話",
+     "fact": "person.phone",
+     "meaning": "Company contact phone",
+     "label_box": [
+      45.91,
+      16.77,
+      57.23,
+      18.08
+     ],
+     "box": [
+      45.91,
+      16.41,
+      31.49,
+      2.02
+     ]
+    },
+    {
+     "label": "預定開業日期",
+     "fact": "app.date",
+     "meaning": "Planned business start date",
+     "label_box": [
+      69.42,
+      21.56,
+      78.59,
+      22.63
+     ],
+     "box": [
+      69.42,
+      21.21,
+      25.54,
+      1.78
+     ]
+    },
+    {
+     "label": "代表人姓名",
+     "fact": "person.name",
+     "meaning": "Representative name",
+     "label_box": [
+      42.74,
+      37.61,
+      56.81,
+      39.04
+     ],
+     "box": [
+      42.74,
+      37.26,
+      34.23,
+      2.14
+     ]
+    },
+    {
+     "label": "合併基準日",
+     "fact": "app.date",
+     "meaning": "Merger effective date",
+     "label_box": [
+      16.41,
+      54.2,
+      26.49,
+      55.63
+     ],
+     "box": [
+      16.41,
+      53.85,
+      30.24,
+      2.14
+     ]
+    },
+    {
+     "label": "資本總額",
+     "fact": "company.capital",
+     "meaning": "Total capital (NTD)",
+     "label_box": [
+      11.31,
+      35.26,
+      21.91,
+      36.69
+     ],
+     "box": [
+      11.31,
+      34.91,
+      30.76,
+      2.14
+     ]
+    },
+    {
+     "label": "中文",
+     "fact": "company.name",
+     "meaning": "Company name in Chinese",
+     "label_box": [
+      24.23,
+      25.45,
+      28.26,
+      26.88
+     ],
+     "box": [
+      24.23,
+      25.1,
+      24.19,
+      2.14
+     ]
+    }
+   ],
+   "other": 11,
+   "missed": []
+  },
+  {
+   "id": "t70136",
+   "name": "有限公司變更登記表",
+   "en": "Change registration form",
+   "source": "user upload",
+   "image": "/setup/t70136.png",
+   "aspect": 1.4142,
+   "fields": [
+    {
+     "label": "六﹑公司章程修正（訂定）日期",
+     "fact": "app.date",
+     "meaning": "Articles of incorporation amendment date",
+     "label_box": [
+      8.69,
+      39.49,
+      30.93,
+      40.92
+     ],
+     "box": [
+      8.69,
+      39.14,
+      42.4,
+      2.14
+     ]
+    },
+    {
+     "label": "一﹑公司名稱(變更後)中文",
+     "fact": "company.name",
+     "meaning": "Company name after change (Chinese)",
+     "label_box": [
+      9.21,
+      25.33,
+      30.55,
+      28.23
+     ],
+     "box": [
+      9.21,
+      24.97,
+      41.5,
+      3.61
+     ]
+    },
+    {
+     "label": "二﹑(郵遞區號)公司所在地",
+     "fact": "company.address",
+     "meaning": "Company address with postal code",
+     "label_box": [
+      8.69,
+      30.46,
+      29.09,
+      32.09
+     ],
+     "box": [
+      8.69,
+      30.1,
+      40.56,
+      2.35
+     ]
+    },
+    {
+     "label": "五﹑代表人姓名",
+     "fact": "person.name",
+     "meaning": "Representative name",
+     "label_box": [
+      48.69,
+      37.14,
+      61.53,
+      38.57
+     ],
+     "box": [
+      48.69,
+      36.79,
+      33,
+      2.14
+     ]
+    },
+    {
+     "label": "變更預查編號",
+     "fact": "reservation.id",
+     "meaning": "Name reservation number for change",
+     "label_box": [
+      46.05,
+      8.85,
+      57.17,
+      10.17
+     ],
+     "box": [
+      46.05,
+      8.5,
+      31.28,
+      2.02
+     ]
+    },
+    {
+     "label": "公司聯絡電話",
+     "fact": "person.phone",
+     "meaning": "Company contact phone",
+     "label_box": [
+      46.05,
+      13.59,
+      57.17,
+      14.9
+     ],
+     "box": [
+      46.05,
+      13.23,
+      31.28,
+      2.02
+     ]
+    },
+    {
+     "label": "三﹑資本總額",
+     "fact": "company.capital",
+     "meaning": "Total capital (NTD)",
+     "label_box": [
+      8.69,
+      34.79,
+      30.12,
+      36.22
+     ],
+     "box": [
+      8.69,
+      34.44,
+      41.59,
+      2.14
+     ]
+    },
+    {
+     "label": "合併基準日",
+     "fact": "app.date",
+     "meaning": "Merger record date",
+     "label_box": [
+      17.24,
+      67.83,
+      27.32,
+      69.25
+     ],
+     "box": [
+      17.24,
+      67.47,
+      30.24,
+      2.14
+     ]
+    },
+    {
+     "label": "原名稱",
+     "fact": "company.name",
+     "meaning": "Original company name",
+     "label_box": [
+      46.05,
+      20.69,
+      52.31,
+      22
+     ],
+     "box": [
+      46.05,
+      20.33,
+      26.42,
+      2.02
+     ]
+    }
+   ],
+   "other": 18,
+   "missed": []
+  }
+ ]
+}

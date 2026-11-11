@@ -1,0 +1,47 @@
+--- a/scripts/extract-form-fields.py	2026-11-11 20:34:42
++++ b/scripts/extract-form-fields.py	2026-11-11 20:39:45
+@@ -29,14 +29,21 @@
+           re.findall(r'<word xMin="([\d.]+)" yMin="([\d.]+)" xMax="([\d.]+)" yMax="([\d.]+)">(.*?)</word>', out)]
+     return float(page[1]), float(page[2]), ws
+ 
+-def find(ws, label, nth=0):
++PUNCT = str.maketrans({'﹑': '、', '（': '(', '）': ')', '，': ',', '：': ':'})
++def norm(t): return re.sub(r'\s+', '', t).translate(PUNCT)
++
++def find(ws, label, nth=0, used=None):
+     text, owner = '', []
+     for i, w in enumerate(ws):
+-        for ch in re.sub(r'\s+', '', w[4]):
++        for ch in norm(w[4]):
+             text += ch; owner.append(i)
++    label = norm(label)
+     hits = [m.start() for m in re.finditer(re.escape(label), text)]
++    if used is not None:  # skip printed words another field already claimed (e.g. 姓名 inside 代表人姓名)
++        hits = [h for h in hits if not {owner[j] for j in range(h, h + len(label))} & used]
+     if len(hits) <= nth: return None
+     idx = sorted({owner[j] for j in range(hits[nth], hits[nth] + len(label))})
++    if used is not None: used.update(idx)
+     sel = [ws[i] for i in idx]
+     return [min(w[0] for w in sel), min(w[1] for w in sel), max(w[2] for w in sel), max(w[3] for w in sel)]
+ 
+@@ -46,15 +53,15 @@
+ 
+ def locate(fid, fields):
+     W, H, ws = words(ROOT / 'bench/forms' / f'{fid}.pdf')
+-    out, missed = [], []
+-    for f in fields:
+-        label = re.sub(r'\s+', '', f.get('label', ''))
++    out, missed, used = [], [], set()
++    for f in sorted(fields, key=lambda f: -len(norm(f.get('label', '')))):  # longest labels claim their words first
++        label = norm(f.get('label', ''))
+         hit = None
+         for cand in [label] + [label[:n] for n in range(len(label) - 1, 2, -1)]:  # exact first, then the longest printed prefix (3+ chars)
+-            hit = find(ws, cand) if cand else None
++            hit = find(ws, cand, used=used) if cand else None
+             if hit: break
+         if not hit: missed.append(f.get('label')); continue
+-        out.append({**f, 'box': box(W, H, *hit, 120)})
++        out.append({**f, 'label_box': [round(v / d * 100, 2) for v, d in zip(hit, (W, H, W, H))], 'box': box(W, H, *hit, 120)})
+     return {'fields': out, 'missed': missed}
+ 
+ if len(sys.argv) == 3 and sys.argv[1] == 'locate':
