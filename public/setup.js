@@ -1,126 +1,140 @@
-// Agency setup: read the government's forms ONCE, merge overlapping boxes into shared facts,
-// a human approves, then publish to the website button.
-// Demo: the "AI reading" is mocked — the mapping below was taken from the official PDFs' text.
+// Agency setup, done ONCE per service: read the official forms, merge overlapping fields into
+// shared facts, show what the applicant still has to type, approve, publish.
+// Two modes: "Live" sends each PDF to Claude (POST /api/setup/read {mode:'ai'}) and locates the labels it returns;
+// "Demo" replays a mapping prepared from the same PDFs (works offline). Field positions are real in both.
 
 const PAGE = 'https://tcooc-co.gov.taipei/cp.aspx?n=1ddc8c221b97a1bd&s=5BA095ECA5D6FAB3';
-const G = 'https://gcis.nat.gov.tw/mainNew/matterAction.do?method=showFile&fileNo=';
-
-const FORMS = [
-  { id: 'c00001', name: '公司名稱及所營事業登記預查申請表', en: 'Name reservation', url: 'https://gcis.nat.gov.tw/F/c00001' },
-  { id: 'app', name: '公司設立登記申請書', en: 'Application letter', url: 'https://www-ws.gov.taipei/001/Upload/676/relfile/43122/105581/6420cf31-ad92-4f72-baa5-f34a70a127b9.pdf' },
-  { id: 't70126', name: '章程', en: 'Articles of incorporation', url: 'https://gcis.nat.gov.tw/F/t70126_p' },
-  { id: 't70130', name: '股東同意書', en: 'Shareholder consent', url: G + 't70130_p' },
-  { id: 't70132', name: '董事願任同意書', en: 'Director consent', url: G + 't70132_p' },
-  { id: 't70124', name: '建物所有權人同意書', en: 'Building owner consent', url: G + 't70124_p' },
-  { id: 't70135', name: '設立登記表', en: 'Registration form', url: G + 't70135_p' },
-];
-
-// Shared facts. `known` = where Zero Form already gets it; otherwise the applicant is asked once.
-const FACTS = [
-  { key: 'company.name', zh: '公司名稱', en: 'Company name', known: 'Name reservation' },
-  { key: 'company.items', zh: '所營事業', en: 'Business items', known: 'Name reservation' },
-  { key: 'reservation.id', zh: '預查編號', en: 'Reservation number', known: 'Name reservation' },
-  { key: 'person.name', zh: '負責人姓名', en: 'Representative', known: 'MOI identity' },
-  { key: 'person.nationalId', zh: '身分證字號', en: 'National ID', known: 'MOI identity' },
-  { key: 'person.phone', zh: '聯絡電話', en: 'Phone', known: 'Verified by SMS' },
-  { key: 'person.address', zh: '住址', en: 'Home address', known: 'Household registration' },
-  { key: 'app.date', zh: '申請日期', en: 'Application date', known: 'System' },
-  { key: 'company.address', zh: '公司所在地', en: 'Registered address' },
-  { key: 'company.capital', zh: '資本總額', en: 'Capital' },
-  { key: 'owner.name', zh: '建物所有權人', en: 'Building owner' },
-];
-
-// form → fact → the label the "AI" found in that form (verbatim from the official PDF text)
-const FOUND = {
-  c00001: { 'company.name': '預查公司名稱', 'company.items': '所營事業', 'person.name': '申請人姓名', 'person.nationalId': '身分證統一編號', 'person.address': '申請人住所', 'person.phone': '聯絡電話' },
-  app: { 'reservation.id': '預查編號', 'company.name': '公司名稱', 'person.name': '代表人姓名', 'company.address': '公司所在地（含鄉鎮市區村里）', 'person.phone': '聯絡電話', 'app.date': '申請日期　年　月　日' },
-  t70126: { 'company.name': '定名為＿＿有限公司', 'company.items': '本公司經營之事業如下', 'company.address': '本公司設於＿＿（縣／市）', 'company.capital': '本公司資本總額定為新臺幣＿＿元', 'person.name': '股東姓名或名稱及其出資額', 'app.date': '中華民國　年　月　日' },
-  t70130: { 'company.name': '＿＿有限公司 股東同意書', 'person.name': '股東姓名（親自簽名）', 'app.date': '中華民國　年　月　日' },
-  t70132: { 'company.name': '本人同意擔任＿＿有限公司董事', 'person.name': '立同意書人', 'app.date': '中華民國　年　月　日' },
-  t70124: { 'company.address': '所有座落於（門牌號碼）之房屋', 'company.name': '同意（公司名稱）登記為所在地', 'owner.name': '立同意書人（姓名）簽名或蓋章', 'app.date': '中華民國　年　月　日' },
-  t70135: { 'reservation.id': '公司預查編號', 'person.phone': '公司聯絡電話', 'company.name': '公司名稱 中文＿＿有限公司', 'company.address': '（郵遞區號）公司所在地', 'company.capital': '資本總額 新台幣＿＿元', 'person.name': '代表人姓名', 'person.nationalId': '董事 身分證號', 'person.address': '董事 住所或居所', 'app.date': '公司章程訂定日期' },
+const FACTS = {
+  'company.name':    { zh: '公司名稱', en: 'Company name', color: '#2B50FF', known: 'Name reservation' },
+  'person.name':     { zh: '負責人姓名', en: 'Representative', color: '#7C3AED', known: 'MOI identity' },
+  'reservation.id':  { zh: '預查編號', en: 'Reservation no.', color: '#0D9488', known: 'Name reservation' },
+  'person.phone':    { zh: '聯絡電話', en: 'Phone', color: '#DB2777', known: 'Verified by SMS' },
+  'app.date':        { zh: '日期', en: 'Date', color: '#64748B', known: 'System' },
+  'company.items':   { zh: '所營事業', en: 'Business items', color: '#16A34A', known: 'Name reservation' },
+  'company.address': { zh: '公司所在地', en: 'Registered address', color: '#EA580C' },
+  'company.capital': { zh: '資本總額', en: 'Capital', color: '#CA8A04' },
+  'person.nationalId': { zh: '身分證字號', en: 'National ID', color: '#0891B2', known: 'MOI identity' },
+  'person.address':  { zh: '住址', en: 'Home address', color: '#9333EA', known: 'Household registration' },
+  'owner.name':      { zh: '建物所有權人', en: 'Building owner', color: '#BE123C' },
 };
+const fact = (k) => FACTS[k] ?? { zh: k, en: k, color: '#94A3B8' };
 
-const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const boxes = Object.values(FOUND).reduce((n, f) => n + Object.keys(f).length, 0);
-const ask = FACTS.filter((f) => !f.known);
-
-const st = { phase: 'idle', read: {}, approved: new Set(), pick: null };
+const st = { phase: 'idle', forms: [], shown: {}, focus: null, mode: new URLSearchParams(location.search).get('mode') === 'demo' ? 'demo' : 'ai', meta: null, error: '' };
 const $root = document.getElementById('root');
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-function render() {
-  const allRead = FORMS.every((f) => st.read[f.id] === 'done');
-  $root.innerHTML = `
-    <section class="intro">
-      <div class="eyebrow zh">有限公司設立登記 · Limited company registration</div>
-      <h1>Turn this page's forms into<br>one short conversation.</h1>
-      <p>Zero Form reads every form on <a href="${PAGE}" target="_blank">the registration page</a> once, finds the boxes that ask for the same thing, and merges them. You review the result, then publish it to the website button. Applicants never see the paperwork.</p>
-    </section>
+const total = () => st.forms.reduce((n, f) => n + f.fields.length, 0);
+const found = () => Object.values(st.shown).reduce((n, v) => n + v, 0);
+const factKeys = () => [...new Set(st.forms.flatMap((f) => f.fields.map((x) => x.fact)))];
+const usage = (k) => st.forms.reduce((n, f) => n + f.fields.filter((x) => x.fact === k).length, 0);
+const merged = () => ['merge', 'result', 'live'].includes(st.phase);
 
-    <section class="step ${st.phase === 'idle' ? 'active' : 'done'}">
-      <div class="sh"><span class="n">1</span><h2>Read the forms</h2>${allRead ? `<span class="okp">✓ ${FORMS.length} forms read</span>` : ''}</div>
-      <div class="forms">${FORMS.map((f) => {
-        const s = st.read[f.id];
-        const n = Object.keys(FOUND[f.id]).length;
-        return `<div class="form ${s || ''}"><div class="ic">PDF</div><div class="t"><div class="zh nm">${f.name}</div><div class="en">${f.en} · <a href="${f.url}" target="_blank">source</a></div></div>
-          <div class="state">${s === 'done' ? `<span class="okp">${n} boxes found</span>` : s === 'reading' ? '<span class="rd"><i></i>Reading…</span>' : '<span class="wait">Waiting</span>'}</div></div>`;
-      }).join('')}</div>
-      ${st.phase === 'idle' ? `<button class="btn primary" data-go="read">✦ Read ${FORMS.length} forms with AI</button><div class="note">Runs once per service. Takes a few seconds.</div>` : ''}
-    </section>
-
-    ${st.phase === 'idle' || st.phase === 'reading' ? '' : `
-    <section class="step ${st.phase === 'review' ? 'active' : 'done'}">
-      <div class="sh"><span class="n">2</span><h2>Check what was merged</h2></div>
-      <div class="stats">
-        <div><b>${boxes}</b><span>boxes on paper</span></div><i>→</i>
-        <div><b>${FACTS.length}</b><span>shared facts</span></div><i>→</i>
-        <div class="hl"><b>${ask.length}</b><span>questions for applicants</span></div>
-      </div>
-      <p class="sub">${FACTS.length - ask.length} facts come from records the applicant already verified. Click a dot to see the exact box the AI matched. Approve each row.</p>
-      <div class="matrix">
-        <table>
-          <thead><tr><th>Shared fact</th>${FORMS.map((f) => `<th class="fc" title="${esc(f.name)}"><span class="zh">${f.name.length > 6 ? f.name.slice(0, 5) + '…' : f.name}</span></th>`).join('')}<th>Comes from</th><th></th></tr></thead>
-          <tbody>${FACTS.map((x) => `<tr class="${st.approved.has(x.key) ? 'ok' : ''}">
-            <td><div class="zh fk">${x.zh}</div><div class="en">${x.en}</div></td>
-            ${FORMS.map((f) => FOUND[f.id][x.key] ? `<td class="c"><button class="dot ${st.pick === f.id + x.key ? 'on' : ''}" data-pick="${f.id}|${x.key}" title="${esc(FOUND[f.id][x.key])}"></button></td>` : '<td class="c"></td>').join('')}
-            <td>${x.known ? `<span class="src">${x.known}</span>` : '<span class="askp">Ask applicant once</span>'}</td>
-            <td><button class="ap" data-ap="${x.key}">${st.approved.has(x.key) ? '✓ Approved' : 'Approve'}</button></td></tr>`).join('')}</tbody>
-        </table>
-      </div>
-      <div class="evidence">${st.pick ? (() => { const [fid, k] = st.pick.split('|'); const f = FORMS.find((x) => x.id === fid); const fact = FACTS.find((x) => x.key === k);
-        return `<span class="lbl">Found in <b class="zh">${f.name}</b>:</span> <span class="zh q">「${esc(FOUND[fid][k])}」</span> <span class="lbl">→ ${fact.en}</span>`; })() : '<span class="lbl">Tip: click any dot to see the box it came from.</span>'}</div>
-      ${st.phase === 'review' ? `<div class="row"><button class="btn ghost" data-go="approveAll">Approve all ${FACTS.length}</button>
-        <button class="btn primary" data-go="publish" ${st.approved.size < FACTS.length ? 'disabled' : ''}>Publish to the website button</button></div>` : ''}
-    </section>`}
-
-    ${st.phase !== 'live' ? '' : `
-    <section class="step active">
-      <div class="sh"><span class="n">3</span><h2>Live</h2><span class="okp">● Published</span></div>
-      <p class="sub">Applicants on the registration page now answer <b>${ask.length} questions</b> instead of filling ${FORMS.length} forms. Add this line to the page — or use the browser extension until you do:</p>
-      <pre class="code">&lt;script src="https://zeroform.app/embed.js" data-service="tw-company-ltd-incorporation"&gt;&lt;/script&gt;</pre>
-      <div class="row"><a class="btn primary" href="/" target="_blank">Open the applicant view →</a><a class="btn ghost" href="/officer.html" target="_blank">Officer console</a></div>
-    </section>`}
-
-    <p class="foot">Demo note: the AI step is simulated — this mapping was prepared from the official forms' text. In production a model proposes it and an officer approves every row before anything goes live.</p>`;
+function page(f) {
+  const n = st.shown[f.id] ?? 0;
+  return `<figure class="pg">
+    <div class="sheet" style="aspect-ratio:1/${f.aspect}"><img src="${f.image}" alt="${esc(f.name)}">
+      ${f.fields.map((x, i) => {
+        const c = fact(x.fact);
+        return `<span class="box ${i < n ? 'on' : ''} ${merged() ? 'm' : ''}" data-fact="${x.fact}" title="${esc(x.label)} → ${c.en}"
+          style="left:${x.box[0]}%;top:${x.box[1]}%;width:${x.box[2]}%;height:${x.box[3]}%;--c:${merged() ? c.color : '#2B50FF'}">${merged() ? `<em>${c.en}</em>` : ''}</span>`;
+      }).join('')}
+      <div class="beam"></div></div>
+    <figcaption><b class="zh">${f.name}</b><span>${f.en} · <a href="${f.source}" target="_blank">official PDF</a> · <b class="fc" data-count="${f.id}">${n}</b> fields</span></figcaption></figure>`;
 }
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+function render() {
+  const keys = factKeys(), ask = keys.filter((k) => !fact(k).known), known = keys.filter((k) => fact(k).known);
+  const counter = st.phase === 'idle' ? '' : `
+    <div class="eq">
+      <div><b id="found">${st.phase === 'scan' ? found() : total()}</b><span>fields on ${st.forms.length} forms</span></div>
+      ${merged() ? `<i>→</i><div><b>${keys.length}</b><span>different facts</span></div>` : ''}
+      ${['result', 'live'].includes(st.phase) ? `<i>→</i><div class="hl"><b>${ask.length}</b><span>the applicant types</span></div>` : ''}
+    </div>`;
+  const next = {
+    idle: `<div class="mode">${[['ai', 'Live · Claude reads the PDFs'], ['demo', 'Demo · offline replay']].map(([m, l]) => `<button data-mode="${m}" class="${st.mode === m ? 'on' : ''}">${l}</button>`).join('')}</div>
+      <button class="btn blue" data-go="scan">✦ Read the forms with ${st.mode === 'ai' ? 'Claude' : 'AI'}</button>${st.error ? `<div class="err">${esc(st.error)}</div>` : ''}`,
+    scan: '',
+    found: `<button class="btn blue" data-go="merge">Merge fields that ask for the same thing →</button>`,
+    merge: `<button class="btn blue" data-go="result">Show what the applicant still types →</button>`,
+    result: `<button class="btn dark" data-go="publish">Approve & publish to the website button</button>`,
+    live: '',
+  }[st.phase];
+
+  $root.innerHTML = `
+    <section class="intro">
+      <div class="eyebrow zh">臺北市商業處 · 有限公司設立登記 · <a href="${PAGE}" target="_blank">registration page</a></div>
+      <h1>${{ idle: 'Three official forms. One applicant.', scan: 'Reading every field…', found: `${total()} fields to fill by hand.`, merge: `${total()} fields, but only ${keys.length} different facts.`, result: `The applicant types ${ask.length} things.`, live: 'Live on the website.' }[st.phase]}</h1>
+      <p>${{ idle: 'Today an applicant downloads these forms and writes the same company name, address and representative again and again. Zero Form reads them once — this setup happens one time, by the agency.',
+        scan: 'The AI finds each box that asks the applicant for information.',
+        found: 'Many of these boxes ask for the same thing. Next, Zero Form matches them.',
+        merge: 'Same colour = same fact. Hover a colour to see everywhere it appears.',
+        result: `${known.length} facts come from records the applicant already verified. Only ${ask.length} are new.`,
+        live: 'An officer approved the mapping. The button on the registration page now uses it.' }[st.phase]}</p>
+      ${counter}
+      <div class="status" id="status">${st.meta && st.phase !== 'idle' ? (st.meta.mode === 'ai'
+        ? `✦ Read by Claude (<span class="mono">${st.meta.model}</span>) in ${st.meta.secs}s${st.meta.other ? ` · ${st.meta.other} other boxes (agent details, optional, official use) set aside for the reviewer` : ''}`
+        : 'Demo mode · offline replay of the mapping') : ''}</div>
+    </section>
+
+    <section class="pages">${st.forms.map(page).join('')}</section>
+
+    ${merged() ? `<section class="legend">${keys.sort((a, b) => usage(b) - usage(a)).map((k) => { const c = fact(k); const isAsk = !c.known && ['result', 'live'].includes(st.phase);
+      return `<div class="fact ${isAsk ? 'ask' : ''} ${['result', 'live'].includes(st.phase) && c.known ? 'kn' : ''}" data-fact="${k}" style="--c:${c.color}">
+        <span class="sw"></span><div class="t"><b class="zh">${c.zh}</b><span>${c.en}</span></div><span class="ct">×${usage(k)}</span>
+        ${['result', 'live'].includes(st.phase) ? (c.known ? `<span class="src">✓ ${c.known}</span>` : '<span class="askp">Applicant types once</span>') : ''}</div>`; }).join('')}</section>` : ''}
+
+    ${st.phase === 'live' ? `<section class="live">
+      <p>Add one line to the registration page — or use the browser extension until then:</p>
+      <pre>&lt;script src="https://zeroform.app/embed.js" data-service="tw-company-ltd-incorporation"&gt;&lt;/script&gt;</pre>
+      <div class="row"><a class="btn dark" href="/" target="_blank">Open the applicant view →</a><a class="btn ghost" href="/officer.html" target="_blank">Officer console</a></div></section>` : ''}
+
+    <div class="cta">${next}</div>
+    <p class="foot">${st.mode === 'ai' ? 'Live: Claude reads each official PDF and proposes the mapping; box positions come from the PDF text layer.' : 'Demo mode: replays a mapping prepared from the same official PDFs, so it works offline.'} An officer approves the mapping before it goes live.</p>`;
+}
+
 const ACT = {
-  async read() {
-    st.phase = 'reading'; render();
-    for (const f of FORMS) { st.read[f.id] = 'reading'; render(); await sleep(450); st.read[f.id] = 'done'; render(); }
-    await sleep(300); st.phase = 'review'; render();
-    document.querySelector('.step.active')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  async scan() {
+    st.phase = 'scan'; st.error = ''; st.meta = null;
+    st.forms.forEach((f) => (st.shown[f.id] = 0)); render();
+    document.querySelectorAll('figure').forEach((f) => f.classList.add('scan'));
+    document.getElementById('status').innerHTML = `<span class="rd"><i></i>${st.mode === 'ai' ? 'Claude is reading 3 official PDFs…' : 'Reading 3 forms…'}</span>`;
+    const t0 = performance.now();
+    try {
+      const r = await fetch('/api/setup/read', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ mode: st.mode }) });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || 'Reading failed');
+      st.forms = data.forms;
+      st.meta = { mode: data.mode, model: data.model, secs: ((performance.now() - t0) / 1000).toFixed(1), other: data.forms.reduce((n, f) => n + (f.other || 0), 0) };
+    } catch (e) { st.phase = 'idle'; st.error = `${e.message} — try Demo mode.`; render(); return; }
+    st.forms.forEach((f) => (st.shown[f.id] = 0)); render();
+    for (const f of st.forms) {
+      const fig = document.querySelector(`[data-count="${f.id}"]`).closest('figure');
+      fig.classList.add('scan'); await sleep(350);
+      const boxes = fig.querySelectorAll('.box');
+      for (let i = 1; i <= f.fields.length; i++) {
+        st.shown[f.id] = i; boxes[i - 1].classList.add('on');
+        fig.querySelector('.fc').textContent = i; document.getElementById('found').textContent = found();
+        await sleep(260);
+      }
+      fig.classList.remove('scan');
+    }
+    st.phase = 'found'; render();
   },
-  approveAll() { FACTS.forEach((x) => st.approved.add(x.key)); render(); },
-  publish() { st.phase = 'live'; render(); document.querySelector('.step:last-of-type')?.scrollIntoView({ behavior: 'smooth' }); },
+  merge() { st.phase = 'merge'; render(); },
+  result() { st.phase = 'result'; render(); },
+  publish() { st.phase = 'live'; render(); setTimeout(() => document.querySelector('.live')?.scrollIntoView({ behavior: 'smooth' }), 50); },
 };
 document.addEventListener('click', (e) => {
-  const go = e.target.closest('[data-go]')?.dataset.go;
-  const pick = e.target.closest('[data-pick]')?.dataset.pick;
-  const ap = e.target.closest('[data-ap]')?.dataset.ap;
-  if (go) ACT[go]();
-  if (pick) { st.pick = pick; render(); }
-  if (ap && st.phase === 'review') { st.approved.has(ap) ? st.approved.delete(ap) : st.approved.add(ap); render(); }
+  const go = e.target.closest('[data-go]')?.dataset.go; if (go) ACT[go]();
+  const m = e.target.closest('[data-mode]')?.dataset.mode; if (m && st.phase === 'idle') { st.mode = m; st.error = ''; render(); }
 });
+document.addEventListener('mouseover', (e) => {
+  const f = merged() ? e.target.closest('[data-fact]')?.dataset.fact ?? null : null;
+  if (f === st.focus) return;
+  st.focus = f;
+  document.querySelectorAll('.box, .fact').forEach((el) => el.classList.toggle('dim', !!f && el.dataset.fact !== f));
+});
+
+st.forms = await (await fetch('/setup/fields.json')).json();
 render();

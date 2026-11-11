@@ -43,6 +43,7 @@ export const evidenceKind = (kind) => ({
 
 export const evidenceField = (field) => ({
   demo_report_presence: '文件提供 · Report provided',
+  report_presence: '文件提供 · Report provided',
   document_status: '核准狀態 · Approval status',
   'Company-Name': '公司名稱 · Company name',
   'Capital-TWD': '資本額 · Capital (TWD)',
@@ -56,4 +57,5 @@ export const evidenceStatus = (status) => ({
   passed: '通過 · Passed', rejected: '駁回 · Rejected',
   needs_confirmation: '待確認 · Needs confirmation', missing: '缺件 · Missing',
   mismatch: '不符 · Mismatch',
+  unknown: '未確認 · Unknown', unavailable: '無法核對 · Unavailable',
 }[status] ?? status);

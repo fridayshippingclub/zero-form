@@ -1,0 +1,6 @@
+{
+  "declared_capital_twd": 10000,
+  "mismatch_fixture_status": "mismatch",
+  "matching_fixture_status": "passed",
+  "rule_engine": "demo/review.py assess; actual live extracted fields supplied; name/address attachments intentionally not included"
+}

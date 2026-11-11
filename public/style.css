@@ -107,3 +107,16 @@ p.lead{font-size:16px;line-height:1.55;color:var(--ink2);margin:0}
 .doc mark.on{background:#FFE58A;box-shadow:0 0 0 1px #F5C400}
 @media (max-width:879px){#app.with-packet{display:flex}.packet{display:none}}
 .sms span b{color:var(--ink);font-size:16px;letter-spacing:1px}
+.self-review{display:flex;flex-direction:column;gap:24px;scroll-margin-top:24px}
+.review-checks{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.review-check{padding:16px;border-top:1px solid var(--line)}
+.review-check:first-child{border-top:0}
+.review-check-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-size:13px}
+.review-check-head .note{text-align:left;margin-bottom:4px}
+.review-check-head .tag{white-space:normal;flex-shrink:0;max-width:40%}
+.review-values{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0;font-size:13px}
+.review-values dt{font-size:11px;color:var(--ink3);margin-bottom:4px}
+.review-values dd{margin:0;overflow-wrap:anywhere}
+.review-check>.note{text-align:left}
+.review-check blockquote{margin:12px 0 0;border-left:2px solid var(--line);padding-left:10px;color:var(--ink2);font-size:12px;white-space:pre-wrap}
+.self-review .callout span{white-space:pre-wrap}

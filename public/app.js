@@ -1,5 +1,5 @@
 import { FIELDS, FORMS, formBindings, paperFieldCount, validate, money, rocDate, docBody } from '/schema.js';
-import { sourceLabel, errorLabel } from '/labels.js';
+import { sourceLabel, errorLabel, evidenceKind, evidenceField, evidenceStatus } from '/labels.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -16,7 +16,7 @@ const EVIDENCE = { capital_verification: '會計師驗資證明 · Accountant ca
 const fmt = (k, v) => (k === 'company.capital' ? `NT$ ${money(v)}` : k === 'company.name' ? `${v}有限公司` : FIELDS[k]?.type === 'date' ? rocDate(v) : v);
 
 let S = null;                       // server state (source of truth)
-let ui = { step: 'welcome', qs: [], i: 0, err: '', busy: false, returnTo: null };
+let ui = { step: 'welcome', qs: [], i: 0, err: '', busy: false, activity: null, readiness: null, returnTo: null };
 
 const api = async (path, body) => {
   const r = await fetch(path, body === undefined ? {} : { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
@@ -68,6 +68,52 @@ const source = (f) => !f ? '' : f.source === 'Applicant' ? '<span class="tag you
   : f.source === 'Agent draft' ? '<span class="tag agent">✦ 代理草稿 · Agent draft</span>'
   : `<span class="tag ok">${esc(sourceLabel(f.source))}</span>`;
 
+function evidenceUploads() {
+  const a = S.app;
+  return `<div class="group"><h3>佐證附件 · Supporting evidence</h3>
+    <p class="lead" style="font-size:14px;margin-bottom:12px">上傳三份外部證明；展示時可下載樣張再上傳。<br>Upload three supporting PDFs, or use the demo samples.</p>
+    <div class="facts">${Object.entries(EVIDENCE).map(([kind, title]) => {
+      const attachment = (a.attachments || []).find((item) => item.kind === kind);
+      return `<div class="fact"><div class="grow"><label class="k" for="evidence-${kind}">${title}</label>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin:7px 0"><a class="edit" href="/api/mock-attachments/${kind}" target="_blank" rel="noopener">下載樣張 · Download PDF ↗</a>${attachment ? `<a class="edit" href="${esc(attachment.url)}" target="_blank" rel="noopener">已上傳 · Uploaded PDF ✓</a>` : ''}</div>
+        <input id="evidence-${kind}" data-upload="${kind}" type="file" accept=".pdf,application/pdf" aria-label="上傳 / Upload ${title}" style="font:12px Inter,sans-serif;max-width:100%" ${ui.busy || a.status === 'approved' ? 'disabled' : ''}>
+      </div></div>`;
+    }).join('')}</div>
+    <div class="note" style="margin-top:10px">每份限 10 MB / Up to 10 MB each · ${ui.activity === 'upload' ? '上傳中 / Uploading…' : '選取 PDF 上傳 / Select a PDF.'}</div>
+  </div>`;
+}
+
+const reviewValue = (value) => value?.on_or_before ? `不晚於 / On or before ${value.on_or_before}`
+  : value == null ? '未擷取 / Not extracted' : ({ provided: '已提供 · Provided', approved: '已核准 · Approved', rejected: '已駁回 · Rejected', 'valid issue date': '有效日期 · Valid date' }[value] ?? (typeof value === 'object' ? JSON.stringify(value) : String(value)));
+
+function selfReviewReport() {
+  const report = S.app.selfReview;
+  if (!report) return `<div class="callout blue"><b>送出前自我核對 · Review before submitting</b><span>比對公司名稱、資本額與日期，並顯示來源。<br>Compare company, capital, and dates against the uploaded evidence.</span></div>`;
+  const ready = report.current && report.recommendation === 'ready_to_submit';
+  const title = !report.current ? '資料已更新，請重新核對 · Details changed; review again'
+    : ready ? '資料核對完成，可進入最後確認 · Ready for final confirmation'
+    : report.recommendation === 'unknown' ? '尚無法完成核對 · Review incomplete' : '有項目需要處理 · Attention needed';
+  return `<section class="self-review" aria-live="polite">
+    <div class="callout ${ready ? 'blue' : 'warn'}"><b>${title}</b><span>這是送件準備檢查，不是政府核准。<br>This is a submission-readiness check, not government approval.</span></div>
+    <div class="group"><h3>規則比對與來源 · Rule checks and evidence</h3>
+      <div class="review-checks">${(report.checks || []).map((check) => `<article class="review-check">
+        <div class="review-check-head"><div><div class="note">${esc(evidenceKind(check.kind))}</div><strong>${esc(evidenceField(check.field))}</strong></div><span class="tag ${check.status === 'passed' ? 'ok' : 'warn'}">${esc(evidenceStatus(check.status))}</span></div>
+        <dl class="review-values"><div><dt>預期資料 · Expected</dt><dd>${esc(reviewValue(check.expected))}</dd></div><div><dt>文件內容 · Observed</dt><dd>${esc(reviewValue(check.actual))}</dd></div></dl>
+        ${check.source?.url ? `<a class="edit" href="${esc(check.source.url)}" target="_blank" rel="noopener">查看來源 · View source${check.source.page ? ` · p.${esc(check.source.page)}` : ''} ↗</a>` : '<div class="note">未取得文件來源 · No document evidence</div>'}
+        ${check.source?.quote ? `<blockquote>${esc(check.source.quote)}</blockquote>` : ''}
+      </article>`).join('') || '<p class="note">尚無核對結果 · No checks available.</p>'}</div>
+    </div>
+    ${(report.extraction || []).length ? `<div class="group"><h3>文件擷取狀態 · Extraction status</h3><div class="facts">${report.extraction.map((item) => {
+      const status = { complete: '已擷取 · Extracted', partial: '部分待核對 · Partly extracted', unavailable: '無法擷取 · Unavailable', unknown: '待人工核對 · Needs review' }[item.status] || item.status;
+      const method = item.mode === 'deterministic' ? '已知格式 · Known format' : ['llm', 'semantic'].includes(item.mode) ? '語意擷取 · Semantic extraction' : '擷取方式未確認 · Method unconfirmed';
+      return `<div class="fact"><div class="grow"><div class="k">${esc(evidenceKind(item.kind))}</div><div class="v">${esc(status)}</div><div class="note" style="text-align:left">${esc(method)}</div></div></div>`;
+    }).join('')}</div></div>` : ''}
+    <div class="callout ${report.explanation?.available ? 'blue' : 'warn'}"><b>語意說明 · Semantic explanation</b>
+      <span>${report.explanation?.available && report.explanation.text ? esc(report.explanation.text) : '語意說明目前無法使用；上方只列實際完成的規則核對。<br>Semantic explanation is unavailable. Only completed rule checks are shown above.'}</span>
+    </div>
+  </section>`;
+}
+
 const VIEWS = {
   welcome: () => `
     <div class="eyebrow zh">臺北市商業處 · 有限公司設立登記<br>Taipei Commerce Office · Company registration</div>
@@ -76,7 +122,8 @@ const VIEWS = {
     <div class="steps">
       <div><b>1</b>確認既有資料 · Confirm known details</div>
       <div><b>2</b>回答 ${ORDER.length} 個問題 · Answer ${ORDER.length} questions</div>
-      <div><b>3</b>簡訊代碼確認 · Confirm with a text code</div>
+      <div><b>3</b>上傳與自我核對 · Upload and review</div>
+      <div><b>4</b>簡訊代碼確認 · Confirm with a text code</div>
     </div>
     <div class="spacer"></div>
     <div class="err">${esc(ui.err)}</div>
@@ -131,13 +178,17 @@ const VIEWS = {
       <div class="fact"><div class="grow"><div class="k zh">${FIELDS[k].label} · ${FIELDS[k].en}</div><div class="v zh">${esc(fmt(k, d[k]?.value))}</div></div>
       ${ORDER.includes(k) ? `<button class="edit" data-edit="${k}">修改 · Edit</button>` : ''}${source(d[k])}</div>`).join('')}</div></div>`;
     return `
-    <h2>確認一次，簽署一次。<br>Check once, sign once.</h2>
-    <p class="lead">確認後鎖定此版本，產生 ${DOCS.length} 份文件；變更須再次確認。<br>Signing locks this version for all ${DOCS.length} documents. Changes require your confirmation.</p>
+    <h2>送出前，先核對。<br>Review before you submit.</h2>
+    <p class="lead">確認資料、上傳佐證，再查看送件準備結果。最後以代碼確認，產生 ${DOCS.length} 份文件。<br>Check your details and evidence before confirming the final ${DOCS.length} documents.</p>
     ${group('公司 · Company', ['company.name', 'company.address', 'company.capital', 'company.items', 'company.articles_date'])}
     ${group('相關人員 · People', ['person.name', 'person.nationalId', 'owner.name'])}
+    ${evidenceUploads()}
+    ${ui.readiness?.available === false ? '<div class="note">一般文件語意擷取尚未啟用；已知格式的展示文件仍可規則核對。<br>General semantic extraction is unavailable; known demo formats can still be checked by rules.</div>' : ''}
+    <button class="btn primary" data-go="selfReview" ${ui.busy ? 'disabled' : ''}>${ui.activity === 'self-review' ? '<i class="spin"></i>核對中 · Reviewing…' : '執行自我核對 · Run self-review'}</button>
+    ${selfReviewReport()}
     <div class="err">${esc(ui.err)}</div>
-    <button class="btn primary blue" data-go="sign" ${ui.busy ? 'disabled' : ''}>${ui.busy ? '<i class="spin"></i>' : ''}確認送出 · Sign & submit <span style="opacity:.6">↵</span></button>
-    <div class="note">一次性代碼將傳至 ${esc(S.phone)}，確認上方資料指紋。<br>A text code confirms the SHA-256 fingerprint of these details.</div>`;
+    <button class="btn primary blue" data-go="sign" ${ui.busy || !S.app.selfReview?.current || S.app.selfReview?.recommendation !== 'ready_to_submit' ? 'disabled' : ''}>${ui.busy ? '<i class="spin"></i>' : ''}確認送出 · Sign & submit <span style="opacity:.6">↵</span></button>
+    <div class="note">自我核對完成後，以 ${esc(S.phone)} 的代碼確認送出。<br>After review, confirm submission with a text code. No government filing occurs in this demo.</div>`;
   },
 
   fixintro: () => {
@@ -154,8 +205,8 @@ const VIEWS = {
   done: () => {
     const a = S.app, sn = a.snapshot;
     const head = {
-      submitted: ['wait', '✓', '已送出 · Submitted', `<span class="live"><i></i>臺北市商業處審查中 · Under review</span>`],
-      approved: ['ok', '✓', '已核准 · Approved', '<span class="lead">公司設立已核准。<br>Your registration is approved. 🎉</span>'],
+      submitted: ['wait', '✓', '已送出 · Submitted', `<span class="live"><i></i>展示審查中 · Demo review in progress</span>`],
+      approved: ['ok', '✓', '展示審查通過 · Demo approved', '<span class="lead">展示流程已完成，尚未送交政府。<br>Demo review complete. No government filing has occurred.</span>'],
       rejected: ['bad', '×', '未核准 · Not approved', `<span class="lead">${esc(a.decision?.note || '')}</span>`],
       revision: ['wait', '✓', '已重新送出 · Re-submitted', '<span class="live"><i></i>等待審查 · Waiting for review</span>'],
     }[a.status];
@@ -166,18 +217,8 @@ const VIEWS = {
       <div class="s">${sn.prev ? `取代 / Replaces v${sn.v - 1} · ` : ''}簡訊確認 / Confirmed by SMS to ${esc(sn.to)} · ${new Date(sn.signedAt).toLocaleString()}</div></div>
     <div class="group"><h3>${DOCS.length} 份文件已產生 · Documents generated</h3><div class="docs">${DOCS.map((f) => `
       <a href="/doc/${sn.v}/${f.id}" target="_blank"><div class="ic">📄</div><div><div class="n zh">${f.name}</div><div class="e">${f.en}</div></div><span class="open">開啟 Open ↗</span></a>`).join('')}</div></div>
-    <div class="group"><h3>佐證附件 · Supporting evidence</h3>
-      <p class="lead" style="font-size:14px;margin-bottom:12px">下載展示文件，再上傳進行跨文件核對。<br>Download the demo PDFs, then upload them for cross-document checks.</p>
-      <div class="facts">${Object.entries(EVIDENCE).map(([kind, title]) => {
-        const attachment = (a.attachments || []).find((item) => item.kind === kind);
-        return `<div class="fact"><div class="grow"><label class="k" for="evidence-${kind}">${title}</label>
-          <div style="display:flex;gap:12px;flex-wrap:wrap;margin:7px 0"><a class="edit" href="/api/mock-attachments/${kind}" target="_blank" rel="noopener">下載樣張 · Download PDF ↗</a>${attachment ? `<a class="edit" href="${esc(attachment.url)}" target="_blank" rel="noopener">已上傳 · Uploaded PDF ✓</a>` : ''}</div>
-          <input id="evidence-${kind}" data-upload="${kind}" type="file" accept=".pdf,application/pdf" aria-label="上傳 / Upload ${title}" style="font:12px Inter,sans-serif;max-width:100%" ${ui.busy || a.status === 'approved' ? 'disabled' : ''}>
-        </div></div>`;
-      }).join('')}</div>
-      <div class="note" style="margin-top:10px">展示附件，每份限 10 MB / Demo PDFs, up to 10 MB · ${ui.busy ? '上傳核對中 / Uploading…' : '選取 PDF 上傳 / Select a PDF.'}</div>
-      <div class="err" role="alert">${esc(ui.err)}</div>
-    </div>
+    ${evidenceUploads()}
+    <div class="err" role="alert">${esc(ui.err)}</div>
     <div class="callout blue"><b>下次免重填 · Next time: 0 questions</b><span>公司資料已儲存，下次填表可沿用。<br>Your saved company details can be reused in future forms.</span></div>`;
   },
 };
@@ -227,7 +268,15 @@ const ACTIONS = {
   },
   edit(k) { ui.live = undefined; ui.qs = ui.qs.includes(k) ? ui.qs : ORDER; ui.i = ui.qs.indexOf(k); ui.step = 'q'; ui.returnTo = 'review'; render(); },
   fix() { ui.live = undefined; ui.qs = [S.app.reopen]; ui.i = 0; ui.step = 'q'; render(); },
+  async selfReview() {
+    ui.busy = true; ui.activity = 'self-review'; ui.err = ''; render();
+    try { await api('/api/self-review', {}); S = await api('/api/state'); }
+    catch (error) { ui.err = error.message; }
+    finally { ui.busy = false; ui.activity = null; render(); }
+    if (S.app.selfReview) document.querySelector('.self-review')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  },
   async sign() {
+    if (!S.app.selfReview?.current || S.app.selfReview.recommendation !== 'ready_to_submit') return;
     try { ui.otp = { purpose: 'sign', ...(await api('/api/sign/send', {})) }; ui.step = 'otp'; ui.err = ''; }
     catch (e) { ui.err = e.message; }
     render();
@@ -246,19 +295,19 @@ document.addEventListener('change', async (event) => {
   if (!kind || ui.busy || !event.target.files?.length) return;
   const file = event.target.files[0];
   if (file.size > 10 * 1024 * 1024) { ui.err = '請選擇 10 MB 以下的 PDF。 Choose a PDF up to 10 MB.'; return render(); }
-  ui.busy = true; ui.err = ''; render();
+  ui.busy = true; ui.activity = 'upload'; ui.err = ''; render();
   try {
     const response = await fetch(`/api/attachments?kind=${encodeURIComponent(kind)}`, { method: 'POST', headers: { 'content-type': 'application/pdf' }, body: file });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || '上傳失敗，請重試。 Upload failed. Please try again.');
     S = await api('/api/state');
   } catch (error) { ui.err = error.message; }
-  finally { ui.busy = false; render(); }
+  finally { ui.busy = false; ui.activity = null; render(); }
 });
 document.addEventListener('keydown', (e) => {
-  if (e.key !== 'Enter' || e.target.tagName === 'INPUT' || ui.busy) return;
+  if (e.key !== 'Enter' || e.target.tagName === 'INPUT' || e.target.closest('button, a') || ui.busy) return;
   e.preventDefault(); // stop the same keystroke from submitting the next screen's input
-  const btn = document.querySelector('.btn.primary'); if (btn) btn.click();
+  const btn = document.querySelector('[data-go="sign"]:not([disabled])') || document.querySelector('.btn.primary:not([disabled])'); if (btn) btn.click();
 });
 
 // Live updates from the officer (approve / request change)
@@ -269,4 +318,5 @@ setInterval(async () => {
 }, 2000);
 
 S = await api('/api/state');
+try { ui.readiness = await api('/api/self-review/readiness'); } catch { ui.readiness = null; }
 render();

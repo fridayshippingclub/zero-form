@@ -25,14 +25,16 @@ One input layer for government applications: verified facts are reused, only mis
 
 1. **Zero refill.** Facts already verified on the applicant's profile (name, national ID, phone, address, company name, business items) are shown with their source and confirmed with one click.
 2. **Ask once.** Only missing fields are asked, one question per screen. Each shows "used in N of 7 forms". National IDs are checksum-validated.
-3. **Confirm once.** The applicant reviews, then enters a code sent to their known phone. The code is bound to the snapshot hash; the server seals `{hash, confirmation}` with Ed25519.
-4. **Generate every document.** The native Rust core renders all official documents from that one snapshot. Each document carries the snapshot hash and its own hash.
-5. **Officer review.** The console at `/officer.html` runs five live checks, then the officer approves, rejects, or requests a change to one field. The re-signed snapshot v2 links to v1 through `prev`.
+3. **Self-review before signing.** Upload the three evidence PDFs. Source-grounded extraction feeds deterministic company, capital and date checks; an optional LLM explanation describes the result. Missing or uncertain evidence stays visible and blocks this review workflow from signing.
+4. **Confirm once.** The applicant reviews, then enters a code sent to their known phone. The code is bound to the snapshot hash; the server seals `{hash, confirmation}` with Ed25519.
+5. **Generate every document.** The native Rust core renders all official documents from that one snapshot. Each document carries the snapshot hash and its own hash.
+6. **Officer review.** The console at `/officer.html` runs five live checks, then the officer approves, rejects, or requests a change to one field. The re-signed snapshot v2 links to v1 through `prev`.
 
 ```mermaid
 flowchart LR
   P[Verified profile] --> A[Ask only missing fields]
-  A --> C[Confirm once<br/>SMS code + SHA-256]
+  A --> R[Upload evidence<br/>Self-review]
+  R --> C[Confirm once<br/>SMS code + SHA-256]
   C --> S[(Signed snapshot<br/>Ed25519)]
   S --> D[Rust core<br/>renders every PDF]
   D --> O[Officer console<br/>5 live checks]
@@ -40,7 +42,7 @@ flowchart LR
   O -- change 1 field --> A
 ```
 
-AI agents can draft answers through `GET /api/agent/schema` and `POST /api/agent/draft`. Only the human can confirm and sign.
+AI agents can draft answers through `GET /api/agent/schema` and `POST /api/agent/draft`. Only the human can confirm and sign. See [Agent API and self-review setup](docs/AGENT_API.md) for endpoints and opt-in Haiku configuration; missing credentials never produce a simulated LLM success.
 
 ## Demo
 

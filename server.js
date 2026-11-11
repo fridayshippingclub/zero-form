@@ -8,6 +8,7 @@ const execute = promisify(execFile);
 const ROOT = process.cwd();
 const ATTACHMENT_KINDS = ['capital_verification', 'address_approval', 'name_approval'];
 let generating = false;
+import { registerSetupRoutes } from './lib/setup-ai.js';
 import { FIELDS, FORMS, ROLE_BINDINGS, formBindings, allFieldKeys, validate, docBody } from './public/schema.js';
 
 
@@ -62,11 +63,26 @@ async function renderCore(body, hash) {
   }
   return result;
 }
-async function externalReview(snap) {
+async function externalReview(snap, attachments = db.app.attachments || {}, revision = db.app.evidenceRevision || 0) {
   const expected = { company_name: snap.data['company.name'], capital_twd: Number(String(snap.data['company.capital']).replaceAll(',', '')), address: snap.data['company.address'], application_date: snap.data['app.date'], articles_date: snap.data['company.articles_date'] };
-  const payload = { attachments: db.app.attachments || {}, revision: db.app.evidenceRevision || 0, expected };
+  const payload = { attachments, revision, expected };
   const program = "import sys,json;sys.path.insert(0,'demo');from review import assess;x=json.loads(sys.argv[1]);print(json.dumps(assess(x['attachments'],x['revision'],x['expected'])))";
   const { stdout } = await execute('python3', ['-c', program, JSON.stringify(payload)], { cwd: ROOT, timeout: 15000 });
+  const review = JSON.parse(stdout);
+  for (const check of review.checks) {
+    const key = { 'document.issued_on': 'Issued-On', document_status: 'Status', 'demo_rule: audit.certified_on = company.articles_date': 'Certified-On' }[check.field] || check.field;
+    const observation = attachments[check.kind]?.extraction?.observations?.find(item => item.field === key);
+    if (check.source && observation?.page) check.source = { ...check.source, page: observation.page, quote: observation.quote, bbox: observation.bbox };
+  }
+  return review;
+}
+
+const draftData = application => Object.fromEntries(Object.entries(application.draft).map(([key, fact]) => [key, fact.value]));
+const draftHash = application => sha256(canonical({ applicationId: application.id, data: draftData(application), roles: ROLE_BINDINGS })).toString('hex');
+const reviewCurrent = application => application.selfReview?.draft_hash === draftHash(application) && application.selfReview.evidence_revision === (application.evidenceRevision || 0);
+const selfReviewReady = application => reviewCurrent(application) && application.selfReview.recommendation === 'ready_to_submit';
+async function extractionCLI(args) {
+  const { stdout } = await execute('python3', ['demo/evidence_extract.py', ...args], { cwd: ROOT, timeout: 90000, maxBuffer: 4 * 1024 * 1024 });
   return JSON.parse(stdout);
 }
 
@@ -140,6 +156,7 @@ async function verifySnapshot(snap) {
 // ---------- http ----------
 const app = express();
 app.use(express.json({ limit: '1mb' }));
+registerSetupRoutes(app);
 app.use(express.static('public'));
 
 // Second factor: one-time code to the phone number already verified on the profile (SMS simulated for the demo).
@@ -160,6 +177,7 @@ const publicState = () => {
     phone: mask(db.profile['person.phone'].value),
     profile: db.profile,
     app: a && { id: a.id, status: a.status, draft: a.draft, missing: missing(a), decision: a.decision, reopen: a.reopen,
+      selfReview: reviewCurrent(a) ? a.selfReview : null, selfReviewRequired: !!a.selfReviewRequired,
       attachments: Object.values(a.attachments || {}).map(({path: _path, ...item}) => item), evidenceRevision: a.evidenceRevision || 0,
       snapshot: a.snapshots.at(-1) && { v: a.snapshots.at(-1).v, hash: a.snapshots.at(-1).hash, prev: a.snapshots.at(-1).prev, signedAt: a.snapshots.at(-1).signedAt, to: mask(a.snapshots.at(-1).confirmation.to) } },
   };
@@ -177,6 +195,7 @@ app.post('/api/login/verify', (q, r) => {
 
 const setFacts = (values, source) => {
   const errors = {};
+  db.app.selfReview = null;
   for (const [k, value] of Object.entries(values)) {
     if (!FIELDS[k]) continue;
     const err = validate(k, value);
@@ -200,7 +219,7 @@ const agentSchema = () => {
       generatedDocuments: forms.filter(f => !f.onFile).length,
       placements: forms.reduce((n, f) => n + f.bindings.length, 0),
       generatedPlacements: forms.filter(f => !f.onFile).reduce((n, f) => n + f.bindings.length, 0) },
-    links: { schema: '/api/agent/schema', draft: '/api/agent/draft', review: '/api/agent/review' } };
+    links: { schema: '/api/agent/schema', draft: '/api/agent/draft', review: '/api/agent/review', selfReview: '/api/self-review', selfReviewReadiness: '/api/self-review/readiness', attachments: '/api/attachments' } };
 };
 app.get('/api/agent/schema', (_q, r) => r.json({ mode: 'demo_only', ...agentSchema(), missing: db.app ? missing(db.app) : allFieldKeys() }));
 app.get('/api/agent/review', async (_q, r) => {
@@ -219,7 +238,7 @@ app.get('/api/agent/review', async (_q, r) => {
     }));
     const attachments = Object.values(application.attachments || {}).map(item => ({
       id: item.id, kind: item.kind, sha256: item.sha256, url: item.url,
-      source: 'uploaded_pdf', observations: Object.entries(item.fields).map(([field, value]) => ({ field, value, page: 1, url: item.url })),
+      source: 'uploaded_pdf', observations: item.extraction?.observations?.map(observation => ({ ...observation, url: item.url })) || Object.entries(item.fields).map(([field, value]) => ({ field, value, page: 1, url: item.url })),
     }));
     const declaredFields = { 'Company-Name': 'company.name', 'Capital-TWD': 'company.capital', Address: 'company.address' };
     const externalChecks = verification.externalReview.checks.map(check => {
@@ -250,23 +269,70 @@ app.post('/api/agent/draft', (q, r) => {
   r.json({ errors, missing: missing(db.app) });
 });
 
+
+app.get('/api/self-review/readiness', async (_q, r) => {
+  try { r.json(await extractionCLI(['--readiness'])); }
+  catch { r.json({ provider: 'anthropic', available: false, reason: 'Extraction adapter unavailable.' }); }
+});
+app.post('/api/self-review', async (_q, r) => {
+  const application = db.app;
+  if (!application || !['draft', 'revision'].includes(application.status)) return r.status(409).json({ error: 'Self-review requires an editable draft.' });
+  application.selfReviewRequired = true; application.selfReview = null; save();
+  const hash = draftHash(application), revision = application.evidenceRevision || 0;
+  const evidence = structuredClone(application.attachments || {}), data = draftData(application);
+  const extraction = [];
+  for (const [kind, attachment] of Object.entries(evidence)) {
+    try {
+      if (sha256(fs.readFileSync(attachment.path)).toString('hex') !== attachment.sha256) throw new Error('Evidence digest mismatch');
+      const result = await extractionCLI(['--input', attachment.path, '--kind', kind]);
+      if (result.source_sha256 !== attachment.sha256) throw new Error('Extraction source mismatch');
+      attachment.fields = result.fields || {}; attachment.received = true; attachment.extraction = result;
+      extraction.push({ kind, attachment_id: attachment.id, ...result });
+    } catch { attachment.fields = {}; extraction.push({ kind, attachment_id: attachment.id, status: 'unknown', error: 'Evidence extraction unavailable.', fields: {} }); }
+  }
+  const result = await externalReview({ data }, evidence, revision);
+  const checks = [...missing(application).map(field => ({ kind: 'application', field, expected: 'required', actual: null, status: 'missing', source: null })), ...result.checks];
+  for (const check of checks) {
+    const field = { 'document.issued_on': 'Issued-On', document_status: 'Status', 'demo_rule: audit.certified_on = company.articles_date': 'Certified-On' }[check.field] || check.field;
+    const observed = extraction.find(item => item.kind === check.kind)?.observations?.find(item => item.field === field);
+    if (check.source && observed?.page) check.source = { ...check.source, page: observed.page, quote: observed.quote, bbox: observed.bbox };
+  }
+  const definiteFailure = checks.some(check => ['mismatch', 'rejected'].includes(check.status) || (check.status === 'missing' && !check.source));
+  const recommendation = checks.every(check => check.status === 'passed') ? 'ready_to_submit' : definiteFailure ? 'needs_attention' : 'unknown';
+  let explanation = { available: false, reason: 'LLM explanation unavailable.' };
+  const explanationFile = path.resolve(DATA, 'reviews', crypto.randomUUID() + '.json');
+  fs.mkdirSync(path.dirname(explanationFile), { recursive: true });
+  try {
+    fs.writeFileSync(explanationFile, JSON.stringify({ checks, recommendation }));
+    explanation = await extractionCLI(['--explain-input', explanationFile]);
+  } catch { /* Deterministic results remain usable when explanation is unavailable. */ }
+  finally { fs.rmSync(explanationFile, { force: true }); }
+  if (db.app !== application || draftHash(application) !== hash || (application.evidenceRevision || 0) !== revision) return r.status(409).json({ error: 'Draft or evidence changed. Run self-review again.' });
+  for (const [kind, item] of Object.entries(evidence)) Object.assign(application.attachments[kind], { fields: item.fields, received: item.received, extraction: item.extraction });
+  application.selfReview = { mode: 'demo_only', stage: 'draft', draft_hash: hash, evidence_revision: revision, current: true, recommendation, checks, extraction, explanation };
+  save(); r.json(application.selfReview);
+});
+
 app.post('/api/sign/send', (_q, r) => {
   const a = db.app;
+  if (!a) return r.status(400).json({ error: 'No application.' });
+  if (a.selfReviewRequired && !selfReviewReady(a)) return r.status(409).json({ error: 'Complete a current self-review before signing.' });
   if (missing(a).filter((k) => k !== a.reopen).length) return r.status(400).json({ error: 'incomplete' });
   const body = snapshotBody(a);
   const hash = sha256(canonical(body)).toString('hex');
-  r.json({ hash, ...sendOtp('sign', { body, hash }) });
+  r.json({ hash, ...sendOtp('sign', { body, hash, evidenceRevision: a.evidenceRevision || 0 }) });
 });
 app.post('/api/sign/verify', async (q, r) => {
   if (generating) return r.status(409).json({ error: 'Document generation is already running.' });
   if (!checkOtp('sign', q.body.code)) return r.status(400).json({ error: 'That code is not right. Try again.' });
   const target = db.app;
-  const { body, hash } = pendingOtp;
+  const { body, hash, evidenceRevision } = pendingOtp;
+  if (target?.selfReviewRequired && (!selfReviewReady(target) || evidenceRevision !== (target.evidenceRevision || 0))) return r.status(409).json({ error: 'Evidence changed. Repeat self-review and confirmation.' });
   if (!target || sha256(canonical(snapshotBody(target))).toString('hex') !== hash) return r.status(409).json({ error: 'Application changed. Confirm the updated version.' });
   generating = true;
   try {
     const generated = await renderCore(body, hash);
-    if (db.app !== target || sha256(canonical(snapshotBody(target))).toString('hex') !== hash) return r.status(409).json({ error: 'Application changed during generation. Confirm again.' });
+    if (db.app !== target || (target.selfReviewRequired && (!selfReviewReady(target) || evidenceRevision !== (target.evidenceRevision || 0))) || sha256(canonical(snapshotBody(target))).toString('hex') !== hash) return r.status(409).json({ error: 'Application changed during generation. Confirm again.' });
     pendingOtp = null;
     const confirmation = { method: 'demo-sms-otp', to: db.profile['person.phone'].value, hash, at: new Date().toISOString() };
     const serverSig = crypto.sign(null, Buffer.from(canonical({ hash, confirmation })), serverKey).toString('base64');
@@ -321,19 +387,21 @@ app.post('/api/officer/decide', async (q, r) => {
 
 app.post('/api/attachments', express.raw({ type: 'application/pdf', limit: '10mb' }), async (q, r) => {
   const target = db.app, kind = q.query.kind;
-  if (!target?.snapshots.length) return r.status(400).json({ error: 'Sign and generate the application first.' });
+  if (!target) return r.status(400).json({ error: 'Start an application first.' });
   if (!ATTACHMENT_KINDS.includes(kind) || !Buffer.isBuffer(q.body) || q.body.subarray(0,5).toString() !== '%PDF-') return r.status(400).json({ error: 'Upload a demo PDF with a supported kind.' });
   const id = crypto.randomUUID(), file = path.resolve(DATA, 'attachments', id + '.pdf');
   fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, q.body);
   try {
     const program = "import sys,json;from pathlib import Path;sys.path.insert(0,'demo');from server import extract_pdf;from review import parse_document;print(json.dumps(parse_document(extract_pdf(Path(sys.argv[1])),sys.argv[2])))";
-    const { stdout } = await execute('python3', ['-c', program, file, kind], { cwd: ROOT, timeout: 20000 });
+    let fields = {};
+    try { const { stdout } = await execute('python3', ['-c', program, file, kind], { cwd: ROOT, timeout: 20000 }); fields = JSON.parse(stdout); } catch { /* Unrecognized text is retained for explicit semantic self-review. */ }
     if (db.app !== target) return r.status(409).json({ error: 'Application changed.' });
-    const attachment = { id, kind, fields: JSON.parse(stdout), sha256: sha256(q.body).toString('hex'), path: file, url: '/api/attachments/' + id };
+    const attachment = { id, kind, fields, sha256: sha256(q.body).toString('hex'), path: file, url: '/api/attachments/' + id };
     target.attachments ||= {}; target.attachments[kind] = attachment;
-    target.evidenceRevision = (target.evidenceRevision || 0) + 1; target.decision = null;
+    target.evidenceRevision = (target.evidenceRevision || 0) + 1; target.decision = null; target.selfReview = null;
+    if (!target.snapshots.length || target.status === 'revision') target.selfReviewRequired = true;
     if (['approved', 'rejected'].includes(target.status)) target.status = 'submitted';
-    save(); r.status(201).json({ attachment: { ...attachment, path: undefined }, review: await externalReview(target.snapshots.at(-1)) });
+    save(); r.status(201).json({ attachment: { ...attachment, path: undefined }, review: target.snapshots.length ? await externalReview(target.snapshots.at(-1)) : null });
   } catch (error) { fs.rmSync(file, { force: true }); r.status(422).json({ error: 'Could not read marked demo evidence.', detail: error.stderr?.slice(-500) }); }
 });
 app.get('/api/attachments/:id', (q, r) => {
@@ -342,8 +410,8 @@ app.get('/api/attachments/:id', (q, r) => {
   r.type('pdf').sendFile(path.resolve(attachment.path), { dotfiles: 'allow' });
 });
 app.get('/api/mock-attachments/:kind', async (q, r) => {
-  const snap = db.app?.snapshots.at(-1), kind = q.params.kind;
-  if (!snap || !ATTACHMENT_KINDS.includes(kind)) return r.status(400).json({ error: 'Generate a signed application first and choose a supported kind.' });
+  const snap = db.app && { data: draftData(db.app) }, kind = q.params.kind;
+  if (!snap || missing(db.app).length || !ATTACHMENT_KINDS.includes(kind)) return r.status(400).json({ error: 'Complete the application facts and choose a supported kind.' });
   const dir = path.resolve(DATA, 'mock', crypto.randomUUID()); fs.mkdirSync(dir, { recursive: true });
   const input = path.join(dir, 'snapshot.json'), output = path.join(dir, kind + '.pdf'); fs.writeFileSync(input, JSON.stringify(snap));
   try {
