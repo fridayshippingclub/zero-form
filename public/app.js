@@ -196,23 +196,23 @@ function selfReviewCard() {
 
 const VIEWS = {
   welcome: () => `
-    <div class="eyebrow zh">${t('臺北市商業處 · 有限公司設立登記', 'Taipei Commerce Office · Company registration')}</div>
-    <h1>${t(`${N_FORMS} 份表單，只答 ${N_Q} 題。`, `${N_FORMS} forms. You answer ${N_Q} questions.`, '<br>')}</h1>
-    <div class="stats">
-      <div class="stat blue"><b>${N_GEN}</b><span>${N_FILE ? t('份自動產生', 'generated for you') : t('份表單全部自動產生', 'forms, all generated for you')}</span></div>
-      ${N_FILE ? `<div class="stat green"><b>${N_FILE}</b><span>${t('份已存檔（名稱預查）', 'already on file (name reservation)')}</span></div>` : ''}
-      <div class="stat amber"><b>${N_Q}</b><span>${t('題由你回答', 'questions for you')}</span></div>
+    <div class="eyebrow zh">${t('臺北市 · 有限公司設立登記', 'Taipei City · Limited company registration')}</div>
+    <h1>${t('開一間公司', 'Start your company')}</h1>
+    <p class="lead">${t(`完成後，下列 ${N_FORMS} 份官方表單會替你填好，送交臺北市商業處審查。`, `When you finish, these ${N_FORMS} official forms are filled in for you and sent to the Taipei Commerce Office for review.`)}</p>
+    <div class="wl">
+      <div class="wl-h">${t('你會得到', "You'll get")}</div>
+      ${FORMS.map((f) => `<div class="wl-row"><span class="wl-ic">${I.doc}</span><span class="wl-n zh">${language() === 'en' ? f.en : f.name}</span>${language() === 'bi' ? `<span class="wl-e">${f.en}</span>` : ''}</div>`).join('')}
     </div>
-    <div class="steps">
-      <div><b>1</b>${t('確認既有資料', 'Confirm what we already know')}</div>
-      <div><b>2</b>${t(`回答 ${N_Q} 題`, `Answer ${N_Q} questions`)}</div>
-      <div><b>3</b>${t('上傳文件並自我核對', 'Upload documents and self-check')}</div>
-      <div><b>4</b>${t('以代碼確認送出', 'Confirm once with a code')}</div>
+    <div class="wl">
+      <div class="wl-h">${t('接下來', 'What happens next')}</div>
+      <div class="wl-row"><span class="wl-num">1</span><span>${t(`回答 ${N_Q} 個問題，其餘資料自動帶入`, `Answer ${N_Q} questions — everything else is filled from your verified details`)}</span></div>
+      <div class="wl-row"><span class="wl-num">2</span><span>${t('確認一次後送出', 'Check once and submit')}</span></div>
+      <div class="wl-row"><span class="wl-num">3</span><span>${t('審查人員核對，核准後通知你', 'An officer reviews it and you are notified when approved')}</span></div>
     </div>
     <div class="spacer"></div>
     <div class="err">${esc(ui.err)}</div>
-    <button class="btn primary" data-go="login" ${ui.busy ? 'disabled' : ''}>${t('開始', 'Get started')} <span class="k">↵</span></button>
-    <div class="note">${t('以展示代碼確認，不會傳送簡訊。', 'You confirm with a demo code — no SMS is sent.')}</div>`,
+    <button class="btn primary" data-go="login" ${ui.busy ? 'disabled' : ''}>${t('開始', 'Start')} <span class="k">↵</span></button>
+    <div class="note">${t('約 3 分鐘 · 展示版，不會傳送簡訊', 'About 3 minutes · Demo — no SMS is sent')}</div>`,
 
   otp: () => `
     <div class="notif sms" data-go="fillCode" role="button" tabindex="0" aria-label="${t('點選填入代碼', 'Tap to fill the code')}">
