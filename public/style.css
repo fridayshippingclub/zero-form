@@ -106,3 +106,4 @@ p.lead{font-size:16px;line-height:1.55;color:var(--ink2);margin:0}
 .doc mark.empty{background:none;border-bottom:1px dashed #ccc}
 .doc mark.on{background:#FFE58A;box-shadow:0 0 0 1px #F5C400}
 @media (max-width:879px){#app.with-packet{display:flex}.packet{display:none}}
+.sms span b{color:var(--ink);font-size:16px;letter-spacing:1px}
