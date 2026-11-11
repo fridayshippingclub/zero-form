@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Zero Form brag</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono&display=block" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  html,body{width:1920px;height:1080px;overflow:hidden;background:#F5F5F2}
+  body{position:relative}
+  .layer{position:absolute;inset:0;will-change:opacity,transform}
+  .cap{position:absolute;left:0;right:0;top:64px;text-align:center;font:700 64px/1.1 Inter,sans-serif;letter-spacing:-2px;color:#0E1116}
+  .cap em{font-style:normal;color:#2B50FF}
+
+  /* scene 1: the pile of forms */
+  #s1 .cards{position:absolute;left:0;right:0;top:300px;height:560px}
+  .card{position:absolute;top:0;width:330px;height:470px;background:#fff;border-radius:14px;box-shadow:0 30px 60px -20px rgba(14,17,22,.25),0 0 0 1px #E6E6E1;padding:22px 20px;overflow:hidden}
+  .card .doc{font-size:11px}
+  .card .doc h1{font-size:14px;margin-bottom:10px}
+  .card .doc td{height:22px}
+  .count{position:absolute;left:0;right:0;top:900px;text-align:center;font:600 40px Inter,sans-serif;color:#4A5160;letter-spacing:-.5px}
+  .count b{color:#0E1116;font-variant-numeric:tabular-nums}
+
+  /* scene 2 / 5: logo */
+  .logo{position:absolute;left:50%;top:50%;width:840px;transform:translate(-50%,-50%)}
+  .tag2{position:absolute;left:0;right:0;text-align:center;font:700 72px/1.15 Inter,sans-serif;letter-spacing:-2.4px;color:#0E1116}
+
+  /* scenes 3-4: the real app in a window */
+  .win{position:absolute;left:50%;top:214px;width:1280px;height:720px;margin-left:-640px;background:#fff;border-radius:18px;overflow:hidden;
+       box-shadow:0 50px 100px -30px rgba(14,17,22,.28),0 0 0 1px #E6E6E1;transform-origin:50% 0}
+  .win .bar{position:absolute}
+  .win .top{padding-top:22px}
+  .win #app{max-width:1180px;margin:auto;padding:28px 28px 0;display:grid}
+  .win #app.with-packet{grid-template-columns:minmax(0,520px) minmax(0,1fr);gap:48px}
+  .win #app.single{display:flex;max-width:640px}
+  .win .screen{animation:none;min-height:560px}
+  .win .packet{position:static;max-height:600px;overflow:hidden}
+  .win .done .docs a{padding:6px 0}
+  .win .done .hash .h{font-size:12.2px}
+  .win .done{gap:20px}
+  .caret{display:inline-block;width:2px;height:30px;background:#2B50FF;vertical-align:middle;margin-left:2px}
+  .btn.pressed{transform:scale(.96);background:#1f42e6}
+</style>
+</head>
+<body>
+<!-- 1 · hook -->
+<div class="layer" id="s1">
+  <div class="cap" id="s1cap">Starting a company in Taipei?</div>
+  <div class="cards" id="cards"></div>
+  <div class="count" id="count"><b id="nForms">0</b> forms · <b id="nFields">0</b> fields to fill by hand</div>
+</div>
+<!-- 2 · reveal -->
+<div class="layer" id="s2">
+  <img class="logo" id="logo2" src="logo-light.svg" style="top:43%">
+  <div class="tag2" id="tag2" style="top:640px">7 forms. <em style="font-style:normal;color:#2B50FF">One conversation.</em></div>
+</div>
+<!-- 3/4 · the app -->
+<div class="layer" id="s3">
+  <div class="cap" id="cap3"></div>
+  <div class="win" id="win">
+    <div class="bar"><div class="fill" id="progress"></div></div>
+    <header class="top"><div class="brand"><span class="mark">0</span>zero form</div><span class="secure">🔒 Two-step verified</span></header>
+    <div id="app"></div>
+  </div>
+</div>
+<!-- 5 · outro -->
+<div class="layer" id="s5">
+  <img class="logo" id="logo5" src="logo-light.svg" style="top:36%">
+  <div class="tag2" id="tag5" style="top:560px">Answer once. Confirm once.<br><em style="font-style:normal;color:#2B50FF">Every government form is filled.</em></div>
+</div>
+
+<script type="module">
+import { FIELDS, FORMS, formBindings, paperFieldCount, money, docBody } from './schema.js';
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const clamp = (x) => Math.max(0, Math.min(1, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const out = (x) => 1 - Math.pow(1 - x, 3);           // ease-out cubic
+const outBack = (x) => { const c = 1.4; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const inOut = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const show = (el, o, y = 0, s = 1) => { el.style.opacity = o; el.style.transform = `translateY(${y}px) scale(${s})`; };
+
+// --- fictional seed data, straight from server.js ---
+const BASE = {
+  'person.name': '陳大文', 'person.nationalId': 'A123456789', 'person.phone': '0912-345-678',
+  'person.address': '臺北市大安區仁愛路四段 1 號', 'company.name': '大大科技',
+  'company.items': 'F119010 電子材料批發業、F113050 事務性機器設備批發業',
+  'company.articles_date': '2026-11-11', 'app.date': '2026-11-11',
+  'company.address': '臺北市大安區復興南路一段 390 號 5 樓',
+};
+const DOCS = FORMS.filter((f) => !f.onFile);
+const TOTAL = paperFieldCount();
+
+// ---------- scene 1 cards (real forms, blank) ----------
+const emptyWrap = (_k, t) => `<mark class="${t ? '' : 'empty'}">${t ? esc(t) : '　　　　'}</mark>`;
+$('cards').innerHTML = FORMS.map((f) => `<div class="card"><div class="doc zh">${docBody(f, {}, emptyWrap)}</div></div>`).join('');
+const cards = [...document.querySelectorAll('.card')];
+const LAND = 0.5, STEP = 0.25;  // one card per half-beat @ 120bpm
+function scene1(t) {
+  const L = $('s1');
+  // exit: cards pull to center and fade, 3.25–3.6
+  const ex = out(seg(t, 3.25, 3.6));
+  L.style.opacity = t < 3.6 ? 1 : 0;
+  show($('s1cap'), out(seg(t, 0.05, 0.45)) * (1 - ex), (1 - out(seg(t, 0.05, 0.45))) * 24 - ex * 20);
+  cards.forEach((c, i) => {
+    const t0 = LAND + i * STEP, p = seg(t, t0, t0 + 0.35);
+    const mid = (i - 3);
+    const x = 960 - 165 + mid * 215, rot = mid * 3.2, yArc = Math.abs(mid) * 14;
+    const y = yArc + (1 - outBack(p)) * -380;
+    const cx = 960 - 165, sx = x + (cx - x) * inOut(ex);
+    c.style.left = sx + 'px';
+    c.style.opacity = Math.min(p * 3, 1) * (1 - ex);
+    c.style.zIndex = 10 - Math.abs(mid);
+    c.style.transform = `translateY(${y + ex * 40}px) rotate(${rot * (1 - ex)}deg) scale(${1 - ex * .35})`;
+  });
+  const landed = cards.filter((_, i) => t >= LAND + i * STEP + 0.12).length;
+  const fields = FORMS.slice(0, landed).reduce((n, f) => n + formBindings(f).length, 0);
+  $('nForms').textContent = landed; $('nFields').textContent = fields;
+  show($('count'), out(seg(t, 0.55, 0.9)) * (1 - ex), (1 - out(seg(t, 0.55, 0.9))) * 16);
+}
+
+// ---------- scene 2 reveal ----------
+function scene2(t) {
+  const L = $('s2');
+  const on = t >= 3.55 && t < 6.0; L.style.opacity = on ? 1 : 0; if (!on) return;
+  const a = out(seg(t, 3.6, 4.05)), o = seg(t, 5.7, 5.95);
+  $('logo2').style.opacity = a * (1 - o);
+  $('logo2').style.transform = `translate(-50%,-50%) scale(${0.82 + 0.18 * outBack(seg(t, 3.6, 4.05)) - o * .04})`;
+  const b = out(seg(t, 4.1, 4.5));
+  show($('tag2'), b * (1 - o), (1 - b) * 26);
+}
+
+// ---------- scene 3/4: the real app ----------
+const ASK = {
+  'company.address': { q: 'Where will the company be registered?', ph: 'e.g. 臺北市○○區○○路 1 號' },
+  'company.capital': { q: 'How much capital are you starting with?', ph: '1,000,000', pre: 'NT$', num: true },
+  'owner.name': { q: 'Who owns the building at that address?', ph: 'e.g. 王小明', hint: "We'll prepare their consent letter for them." },
+};
+const ORDER = Object.keys(ASK);
+// typing script: [key, text, startT, endT, okT]
+const TYPE = [
+  ['company.capital', '1000000', 6.5, 8.0, 9.0],
+  ['owner.name', '吳小明', 9.75, 10.25, 11.5],
+];
+function appState(t) {
+  const d = { ...BASE };
+  const [k1, v1, a1, b1, ok1] = TYPE[0], [k2, v2, a2, b2, ok2] = TYPE[1];
+  const typed = (txt, a) => t < a ? '' : txt.slice(0, Math.floor((t - a) / 0.25 + 1e-6) + 1);  // one key per 8th note
+  const press = (ok) => t >= ok - 0.12 && t < ok + 0.1;
+  if (t < ok1 + 0.25) { if (t >= ok1) d[k1] = v1; return { d, qi: 1, cur: k1, live: typed(v1, a1, b1), pressed: press(ok1) }; }
+  d[k1] = v1; if (t >= ok2) d[k2] = v2;
+  return { d, qi: 2, cur: k2, live: typed(v2, a2, b2), pressed: press(ok2) };
+}
+function qView(st, t) {
+  const k = ORDER[st.qi], a = ASK[k], f = FIELDS[k];
+  const used = FORMS.filter((x) => x.fields.includes(k));
+  const shown = a.num && st.live ? money(st.live) : st.live;
+  const blink = Math.floor(t * 2.2) % 2 === 0;
+  return `
+    <div class="qnum">${st.qi + 1} of ${ORDER.length} →</div>
+    <h2>${a.q}</h2>
+    <div class="qlabel zh">${f.label} · ${f.en}</div>
+    <div class="field" style="border-color:#2B50FF">${a.pre ? `<span class="pre">${a.pre}</span>` : ''}<div style="flex:1;font:500 26px 'Noto Sans TC',Inter,sans-serif;padding:6px 0;min-height:43px">${shown ? esc(shown) : `<span style="color:#C9CCD2">${a.ph}</span>`}${blink ? '<i class="caret"></i>' : ''}</div></div>
+    <div class="err">${a.hint ? `<span style="color:var(--ink3)">${a.hint}</span>` : ''}</div>
+    <div class="used"><span class="lbl">Fills ${used.length} of ${FORMS.length} forms:</span>${used.map((x) => `<span class="zh">${x.name.length > 8 ? x.name.slice(0, 7) + '…' : x.name}</span>`).join('')}</div>
+    <div class="spacer"></div>
+    <div class="row"><button class="btn ghost">← Back</button><div class="spacer"></div>
+    <button class="btn primary blue ${st.pressed ? 'pressed' : ''}" style="width:auto;padding:0 28px">OK ✓</button></div>
+    <div class="kbd">press <span>Enter ↵</span></div>`;
+}
+function packetView(st) {
+  const d = { ...st.d }; if (st.live) d[st.cur] = st.live;
+  const filled = FORMS.reduce((n, f) => n + formBindings(f).filter(({ key }) => d[key]).length, 0);
+  const typed = ORDER.filter((k) => st.d[k]).length;
+  const wrap = (k, txt) => `<mark class="${k === st.cur && st.live ? 'on' : txt ? '' : 'empty'}">${txt ? esc(txt) : '　　　'}</mark>`;
+  return `<div class="ph"><b>Your forms, filling live</b><span><b>${filled}</b> of ${TOTAL} fields filled · you typed <b>${typed}</b></span></div>
+    <div class="pgrid">${DOCS.map((f) => `<div class="mini ${f.fields.includes(st.cur) && st.live ? 'hit' : ''}"><div class="mt zh">${f.en}</div><div class="doc zh">${docBody(f, d, wrap)}</div></div>`).join('')}</div>`;
+}
+const HASH = '30b882ebc20f9491846b79fe4b1d95963a7910d427e5ceacc323bfd4ba7c16c7';
+function doneView(t) {
+  const docs = DOCS.map((f, i) => {
+    const p = out(seg(t, 13.0 + i * 0.25, 13.3 + i * 0.25));
+    return `<a style="opacity:${p};transform:translateX(${(1 - p) * 18}px)"><div class="ic">📄</div><div><div class="n zh">${f.name}</div><div class="e">${f.en}</div></div><span class="open" style="color:#0F8A4F;font-weight:600">✓ Generated</span></a>`;
+  }).join('');
+  return `
+    <div class="badge ok">✓</div>
+    <div><h1>Submitted</h1><div style="margin-top:8px"><span class="live"><i style="opacity:${0.25 + 0.75 * Math.abs(Math.cos(t * Math.PI / 1.4))}"></i>Taipei City Commerce Office is reviewing</span></div></div>
+    <div class="hash"><div class="l">SIGNED SNAPSHOT · v1 · TPE-2026-418207</div><div class="h mono">sha256:${HASH}</div>
+      <div class="s">Confirmed by SMS code to 0912-***-678 · Ed25519 sealed</div></div>
+    <div class="group"><h3>${DOCS.length} documents generated</h3><div class="docs">${docs}</div></div>`;
+}
+const CAP3 = '<em>3 questions.</em> Every form fills live.';
+const CAP4 = '<em>Sign once.</em> Every document generated.';
+function scene3(t) {
+  const L = $('s3');
+  const on = t >= 5.95 && t < 16.2; L.style.opacity = on ? 1 : 0; if (!on) return;
+  // window in 6.0–6.45, out 15.75–16.1
+  const wi = out(seg(t, 6.0, 6.5)), wo = inOut(seg(t, 15.75, 16.1));
+  $('win').style.opacity = Math.min(1, wi * 1.4) * (1 - wo);
+  $('win').style.transform = `translateY(${(1 - wi) * 120 + wo * 40}px) scale(${1.12 - wo * .04})`;
+  // captions: swap with a stagger (old out, then new in)
+  const isSign = t >= 12.0;
+  $('cap3').innerHTML = isSign ? CAP4 : CAP3;
+  const ci = isSign ? out(seg(t, 12.05, 12.4)) : out(seg(t, 6.15, 6.55));
+  const co = isSign ? seg(t, 15.7, 15.95) : seg(t, 11.75, 11.98);
+  show($('cap3'), ci * (1 - co), (1 - ci) * 22);
+  // content
+  const app = $('app');
+  if (!isSign) {
+    const st = appState(t);
+    app.className = 'with-packet';
+    // screen slides between questions
+    const sw = TYPE[0][4];
+    const so = t < sw + 0.1 ? 1 : t < sw + 0.25 ? 1 - seg(t, sw + 0.1, sw + 0.25) : out(seg(t, sw + 0.25, sw + 0.6));
+    const contentOut = seg(t, 11.75, 11.98);
+    app.innerHTML = `<section class="screen" style="opacity:${so * (1 - contentOut)};transform:translateY(${(1 - so) * 14}px)">${qView(st, t)}</section><aside class="packet" style="opacity:${1 - contentOut}">${packetView(st)}</aside>`;
+    // bring the building-owner consent into view once that question is up
+    const pk = app.querySelector('.packet'), owner = pk.querySelectorAll('.mini')[4];
+    pk.scrollTop = (owner.offsetTop - pk.offsetTop - 60) * inOut(seg(t, sw + 0.25, sw + 0.75));
+    $('progress').style.width = (15 + 75 * (st.qi + (st.d[ORDER[st.qi]] ? 1 : 0)) / 3) + '%';
+  } else {
+    app.className = 'single';
+    const p = out(seg(t, 12.05, 12.5));
+    app.innerHTML = `<section class="screen done" style="opacity:${p};transform:translateY(${(1 - p) * 14}px)">${doneView(t)}</section>`;
+    $('progress').style.width = '100%';
+  }
+}
+
+// ---------- scene 5 outro ----------
+function scene5(t) {
+  const L = $('s5');
+  const on = t >= 16.0; L.style.opacity = on ? 1 : 0; if (!on) return;
+  const a = out(seg(t, 16.1, 16.55));
+  $('logo5').style.opacity = a;
+  $('logo5').style.transform = `translate(-50%,-50%) scale(${0.85 + 0.15 * outBack(seg(t, 16.1, 16.55))})`;
+  const b = out(seg(t, 16.55, 16.95));
+  show($('tag5'), b, (1 - b) * 26);
+}
+
+window.render = (t) => { scene1(t); scene2(t); scene3(t); scene5(t); };
+window.ready = (async () => {
+  await document.fonts.ready;
+  await Promise.all([...document.images].map((i) => i.complete ? 0 : new Promise((r) => (i.onload = i.onerror = r))));
+  // force-load CJK + mono glyph subsets used later
+  await document.fonts.load('500 26px "Noto Sans TC"', '臺北市大安區復興南路吳小明陳大文有限公司設立登記申請書');
+  await document.fonts.load('13px "JetBrains Mono"', 'sha256:0123456789abcdef');
+  window.render(0);
+  return true;
+})();
+</script>
+</body>
+</html>
