@@ -1,0 +1,212 @@
+[
+ {
+  "id": "app",
+  "name": "公司設立登記申請書",
+  "en": "Application letter",
+  "source": "https://www-ws.gov.taipei/001/Upload/676/relfile/43122/105581/6420cf31-ad92-4f72-baa5-f34a70a127b9.pdf",
+  "image": "/setup/app.png",
+  "aspect": 1.4142,
+  "fields": [
+   {
+    "label": "預查編號",
+    "fact": "reservation.id",
+    "box": [
+     14.13,
+     21.79,
+     45.02,
+     2.14
+    ]
+   },
+   {
+    "label": "公司名稱",
+    "fact": "company.name",
+    "box": [
+     14.13,
+     28.46,
+     58.46,
+     2.14
+    ]
+   },
+   {
+    "label": "代表人姓名",
+    "fact": "person.name",
+    "box": [
+     14.13,
+     31.78,
+     60.49,
+     2.14
+    ]
+   },
+   {
+    "label": "公司所在地",
+    "fact": "company.address",
+    "box": [
+     14.13,
+     35.05,
+     60.49,
+     2.14
+    ]
+   },
+   {
+    "label": "聯絡電話",
+    "fact": "person.phone",
+    "box": [
+     6.65,
+     61.92,
+     28.22,
+     2.14
+    ]
+   },
+   {
+    "label": "申請日期",
+    "fact": "app.date",
+    "box": [
+     6.65,
+     50.83,
+     41.66,
+     2.14
+    ]
+   }
+  ]
+ },
+ {
+  "id": "t70126",
+  "name": "章程",
+  "en": "Articles of incorporation",
+  "source": "https://gcis.nat.gov.tw/F/t70126_p",
+  "image": "/setup/t70126.png",
+  "aspect": 1.4142,
+  "fields": [
+   {
+    "label": "定名為",
+    "fact": "company.name",
+    "box": [
+     18.95,
+     21.62,
+     49.39,
+     2.14
+    ]
+   },
+   {
+    "label": "經營之事業如下",
+    "fact": "company.items",
+    "box": [
+     18.95,
+     25.33,
+     28.89,
+     2.14
+    ]
+   },
+   {
+    "label": "本公司設於",
+    "fact": "company.address",
+    "box": [
+     18.95,
+     30.89,
+     25.2,
+     2.14
+    ]
+   },
+   {
+    "label": "資本總額定為新臺幣",
+    "fact": "company.capital",
+    "box": [
+     18.95,
+     40.78,
+     35.95,
+     2.14
+    ]
+   },
+   {
+    "label": "股東姓名或名稱",
+    "fact": "person.name",
+    "box": [
+     18.95,
+     42.63,
+     63.16,
+     2.14
+    ]
+   }
+  ]
+ },
+ {
+  "id": "t70135",
+  "name": "有限公司設立登記表",
+  "en": "Registration form",
+  "source": "https://gcis.nat.gov.tw/mainNew/matterAction.do?method=showFile&fileNo=t70135_p",
+  "image": "/setup/t70135.png",
+  "aspect": 1.4144,
+  "fields": [
+   {
+    "label": "公司預查編號",
+    "fact": "reservation.id",
+    "box": [
+     45.91,
+     11.68,
+     41.56,
+     2.02
+    ]
+   },
+   {
+    "label": "公司聯絡電話",
+    "fact": "person.phone",
+    "box": [
+     45.91,
+     16.41,
+     41.56,
+     2.02
+    ]
+   },
+   {
+    "label": "公司名稱",
+    "fact": "company.name",
+    "box": [
+     6.49,
+     26.92,
+     69.26,
+     2.14
+    ]
+   },
+   {
+    "label": "公司所在地",
+    "fact": "company.address",
+    "box": [
+     19.48,
+     30.94,
+     65.51,
+     2.14
+    ]
+   },
+   {
+    "label": "資本總額",
+    "fact": "company.capital",
+    "box": [
+     11.31,
+     34.91,
+     66.04,
+     2.14
+    ]
+   },
+   {
+    "label": "代表人姓名",
+    "fact": "person.name",
+    "box": [
+     42.74,
+     37.26,
+     34.23,
+     2.14
+    ]
+   },
+   {
+    "label": "公司章程訂定日期",
+    "fact": "app.date",
+    "box": [
+     11.31,
+     39.61,
+     58.12,
+     2.14
+    ]
+   }
+  ]
+ }
+]

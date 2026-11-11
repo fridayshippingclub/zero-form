@@ -8,6 +8,7 @@ const execute = promisify(execFile);
 const ROOT = process.cwd();
 const ATTACHMENT_KINDS = ['capital_verification', 'address_approval', 'name_approval'];
 let generating = false;
+import { registerSetupRoutes } from './lib/setup-ai.js';
 import { FIELDS, FORMS, ROLE_BINDINGS, formBindings, allFieldKeys, validate, docBody } from './public/schema.js';
 
 
@@ -128,6 +129,7 @@ async function verifySnapshot(snap) {
 // ---------- http ----------
 const app = express();
 app.use(express.json({ limit: '1mb' }));
+registerSetupRoutes(app);
 app.use(express.static('public'));
 
 // Second factor: one-time code to the phone number already verified on the profile (SMS simulated for the demo).
