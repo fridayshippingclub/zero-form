@@ -8,7 +8,7 @@ const execute = promisify(execFile);
 const ROOT = process.cwd();
 const ATTACHMENT_KINDS = ['capital_verification', 'address_approval', 'name_approval'];
 let generating = false;
-import { FIELDS, FORMS, ROLE_BINDINGS, formFieldRole, formFieldLabel, allFieldKeys, validate, docBody } from './public/schema.js';
+import { FIELDS, FORMS, ROLE_BINDINGS, formBindings, allFieldKeys, validate, docBody } from './public/schema.js';
 
 
 const PORT = Number(process.env.PORT) || 5173;
@@ -50,7 +50,7 @@ async function renderCore(body, hash) {
   const job = path.resolve(DATA, 'packages', crypto.randomUUID());
   fs.mkdirSync(job, { recursive: true });
   const input = path.join(job, 'input.json');
-  fs.writeFileSync(input, JSON.stringify({ ...body, hash, forms: FORMS.filter(f => !f.onFile).map(f => ({ id: f.id, name: f.name, fields: f.fields.map(key => ({ key, label: formFieldLabel(f, key), role: formFieldRole(f, key) })) })) }));
+  fs.writeFileSync(input, JSON.stringify({ ...body, hash, forms: FORMS.filter(f => !f.onFile).map(f => ({ id: f.id, name: f.name, fields: formBindings(f) })) }));
   const { stdout } = await execute('python3', ['scripts/render-application.py', '--input', input, '--out', path.join(job, 'output')], { cwd: ROOT, timeout: 180000, maxBuffer: 4 * 1024 * 1024 });
   const result = JSON.parse(stdout);
   for (const f of FORMS.filter(f => !f.onFile)) {

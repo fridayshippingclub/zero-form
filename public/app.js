@@ -1,4 +1,4 @@
-import { FIELDS, FORMS, validate, money, rocDate, docBody } from '/schema.js';
+import { FIELDS, FORMS, formBindings, paperFieldCount, validate, money, rocDate, docBody } from '/schema.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -53,8 +53,8 @@ function liveData() {
 function renderPacket() {
   const el = $('packet'); if (!el) return;
   const d = liveData(), cur = ui.step === 'q' ? ui.qs[ui.i] : null;
-  const filled = FORMS.reduce((n, f) => n + f.fields.filter((k) => d[k]).length, 0);
-  const total = FORMS.reduce((n, f) => n + f.fields.length, 0);
+  const filled = FORMS.reduce((n, f) => n + formBindings(f).filter(({ key }) => d[key]).length, 0);
+  const total = paperFieldCount();
   const typed = Object.values(S.app.draft).filter((f) => ['Applicant', 'Agent draft'].includes(f.source)).length;
   const wrap = (k, t) => `<mark class="${k === cur ? 'on' : t ? '' : 'empty'}">${t ? esc(t) : '　　　'}</mark>`;
   el.innerHTML = `

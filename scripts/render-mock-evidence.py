@@ -21,7 +21,7 @@ def main():
     fields={'Document-Type':args.kind,'Company-Name':str(d['company.name'])}
     if args.kind=='capital_verification':fields['Capital-TWD']=str(int(str(d['company.capital']).replace(',',''))+(20000 if args.scenario=='mismatch' else 0))
     if args.kind=='address_approval':fields['Address']=str(d['company.address'])
-    fields.update({'Status':'rejected' if args.scenario=='rejected' else 'approved','Issued-On':str(d['app.date']),'Demo-Only':'true'})
+    fields.update({'Status':'rejected' if args.scenario=='rejected' else 'approved',('Certified-On' if args.kind=='capital_verification' else 'Issued-On'):str(d['app.date']),'Demo-Only':'true'})
     args.out.parent.mkdir(parents=True,exist_ok=True)
     c=canvas.Canvas(str(args.out),pagesize=(595.28,841.89),invariant=1)
     c.setTitle('MOCK / DEMO ONLY - '+titles[args.kind]);c.setFont('Helvetica-Bold',16);c.drawString(40,795,'MOCK / DEMO ONLY / NOT VALID FOR FILING')

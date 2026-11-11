@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "evidence_kind": "external_document_observations",
+  "pdf": "capital-audit-report.pdf",
+  "sha256": "b675c02fefee2efaf24d5af56b1591e7e4d2b4cdb8066e9c27127e1b73e14045",
+  "document.type": "capital_audit_report",
+  "document.demo_only": true,
+  "company.legal_name": "大大科技",
+  "capital.paid_in_amount": {
+    "value": 10000,
+    "currency": "TWD"
+  },
+  "audit.certified_on": "2026-11-11",
+  "fields": [
+    {
+      "key": "document.type",
+      "value": "capital_audit_report",
+      "source": {
+        "page": 1,
+        "label": "資本查核報告書"
+      }
+    },
+    {
+      "key": "company.legal_name",
+      "value": "大大科技",
+      "source": {
+        "page": 1,
+        "label": "公司名稱",
+        "machine_label": "Company-Name"
+      },
+      "comparison_target": "declared.company.name"
+    },
+    {
+      "key": "capital.paid_in_amount",
+      "value": {
+        "value": 10000,
+        "currency": "TWD"
+      },
+      "source": {
+        "page": 1,
+        "label": "資本額",
+        "machine_label": "Capital-TWD"
+      },
+      "comparison_target": "declared.company.capital"
+    },
+    {
+      "key": "audit.certified_on",
+      "value": "2026-11-11",
+      "source": {
+        "page": 1,
+        "label": "查核簽證日期",
+        "machine_label": "Certified-On"
+      },
+      "comparison_target": null,
+      "comparison_policy": "Independent certification date; no default equality with application or articles dates."
+    },
+    {
+      "key": "document.demo_only",
+      "value": true,
+      "source": {
+        "page": 1,
+        "label": "示範文件／非正式簽證／不得送件",
+        "machine_label": "Demo-Only"
+      }
+    }
+  ],
+  "notice": "Synthetic observations only. This sidecar is not authenticated evidence; extract uploaded PDF bytes independently."
+}
