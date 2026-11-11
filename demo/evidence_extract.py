@@ -12,6 +12,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import unicodedata
 import urllib.request
@@ -44,7 +45,8 @@ def compact(text):
 
 
 def inventory(path):
-    tool = os.environ.get('ZERO_FORM_PDFTOTEXT', str(ROOT / '.tools/bin/pdftotext'))
+    local = ROOT / '.tools/bin/pdftotext'
+    tool = os.environ.get('ZERO_FORM_PDFTOTEXT') or (str(local) if local.exists() else shutil.which('pdftotext') or str(local))
     result = subprocess.run([tool, '-f', '1', '-l', '10', '-bbox-layout', str(path), '-'],
                             capture_output=True, timeout=25, check=True)
     text = result.stdout.decode('utf-8', errors='replace')

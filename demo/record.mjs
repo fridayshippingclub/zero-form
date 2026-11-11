@@ -1,7 +1,8 @@
 // Records a narrated end-to-end run on the native PDF engine:
-// real Taipei page + extension drawer → 3 questions → sign (6 PDFs) → officer requests one fix → re-sign v2
+// agency setup (Claude reads the official PDFs once) → real Taipei page + extension drawer → 3 questions → sign (6 PDFs) → officer requests one fix → re-sign v2
 // → applicant uploads evidence PDFs → officer approves → generated PDF → tamper.
 // Needs `npm run dev` on :5173 and the engine toolchain (see README). Output: demo/zero-form-demo.webm
+// HEADED=1 opens a visible browser window so you can watch the run live.
 import { chromium } from 'playwright';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -14,7 +15,7 @@ const post = (p) => fetch(APP + p, { method: 'POST', headers: { 'content-type': 
 await post('/api/demo/reset');
 
 const ctx = await chromium.launchPersistentContext(fs.mkdtempSync(path.join(os.tmpdir(), 'zf-prof-')), {
-  channel: 'chromium', headless: true, viewport: { width: 1440, height: 900 },
+  channel: 'chromium', headless: !process.env.HEADED, viewport: { width: 1440, height: 900 },
   recordVideo: { dir: VID, size: { width: 1440, height: 900 } },
   args: [`--disable-extensions-except=${path.resolve('extension')}`, `--load-extension=${path.resolve('extension')}`],
 });
@@ -44,9 +45,40 @@ const signAndWait = async (f, cap) => {
   await f.waitForSelector('.hash', { timeout: 300000 });
   fast.push([from, (Date.now() - T0) / 1000 - 0.3]); await wait(800);
 };
+const KINDS = ['capital_verification', 'address_approval', 'name_approval'];
+const upload = async (f, kinds, cap) => {
+  await f.locator(`#evidence-${kinds[0]}`).scrollIntoViewIfNeeded(); await caption(cap); await wait(1800);
+  for (const kind of kinds) {
+    const r = await fetch(`${APP}/api/mock-attachments/${kind}`);
+    if (!r.ok) throw new Error(`mock evidence ${kind}: ${r.status}`);
+    const file = path.join(TMP, `MOCK-${kind}-${Date.now()}.pdf`); fs.writeFileSync(file, Buffer.from(await r.arrayBuffer()));
+    await f.setInputFiles(`#evidence-${kind}`, file); await wait(600);
+    await f.waitForFunction(() => !document.querySelector('input[data-upload]:disabled'), null, { timeout: 60000 });
+    await f.locator(`#evidence-${kind}`).scrollIntoViewIfNeeded(); await wait(900);
+  }
+};
+// Self-review calls Claude Haiku on each evidence PDF: wait for the report, speed the wait up in post.
+const selfReview = async (f, cap) => {
+  await f.click('[data-go="selfReview"]'); await caption(cap + ' (Sped up ×10.)');
+  const from = (Date.now() - T0) / 1000;
+  await f.waitForFunction(() => document.querySelector('.self-review') && !document.querySelector('[data-go="selfReview"]')?.disabled, null, { timeout: 240000 });
+  fast.push([from, (Date.now() - T0) / 1000 - 0.3]);
+  await f.locator('.self-review').scrollIntoViewIfNeeded(); await caption(cap); await wait(3500);
+};
 const officer = async () => { await page.goto(APP + '/officer.html'); await page.waitForSelector('[data-check]'); await wait(600); };
 const scrollTo = (sel) => page.evaluate((s) => document.querySelector(s)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), sel);
 const evidenceSection = 'section:has(.checks) ~ section:last-of-type';
+
+// 0 · agency setup, done once per service: Claude reads the official forms
+await page.goto(APP + '/setup.html'); await page.waitForSelector('[data-go="scan"]'); await wait(800);
+await caption('Set up once, by the agency: Claude reads three official registration forms.'); await wait(3500);
+await page.click('[data-go="scan"]');
+await caption('Claude reads each official PDF and marks every box the applicant has to fill. (Sped up ×10.)');
+{ const from = (Date.now() - T0) / 1000; await page.waitForSelector('.status .mono', { timeout: 120000 }); fast.push([from, (Date.now() - T0) / 1000 - 0.3]); }
+await page.waitForSelector('[data-go="merge"]', { timeout: 60000 }); await wait(2500);
+await page.click('[data-go="merge"]'); await caption('Boxes that ask for the same thing are merged: same colour, same fact.'); await wait(4500);
+await page.click('[data-go="result"]'); await caption('Facts the applicant already verified are reused. Only what is new gets asked.'); await wait(4500);
+await page.click('[data-go="publish"]'); await caption('An officer approves the mapping and publishes it to the button on the government site.'); await wait(3500);
 
 // 1 · applicant on the real government page
 await page.goto(GOV, { waitUntil: 'domcontentloaded' }); await wait(1000);
@@ -61,44 +93,36 @@ await caption('Only the 3 missing facts are asked, one per screen. Every form fi
 await answer(f, '臺北市大安區復興南路一段 390 號 5 樓');
 await answer(f, '1000000');
 await answer(f, '林美華');
-await caption('Check once. Signing locks this exact version by its SHA-256 fingerprint.'); await wait(3500);
+await caption('Check once. Then attach the supporting evidence the city asks for.'); await wait(3000);
+await upload(f, KINDS, 'Supporting evidence: marked demo PDFs for the capital audit, address approval and name approval.');
+await selfReview(f, 'Self-review: Claude Haiku reads each evidence PDF and checks it against your answers before you sign.');
+await caption('Every check passes. Signing locks this exact version by its SHA-256 fingerprint.'); await wait(3000);
 await signAndWait(f, 'The text code confirms that fingerprint. The server seals it with Ed25519, then the native engine renders and verifies 6 PDFs.');
 await caption('Submitted: 6 PDFs generated from one signed snapshot.'); await wait(3000);
 await f.locator('.docs').scrollIntoViewIfNeeded(); await wait(2500);
 
-// 2 · officer: checks, evidence gate, one-field change request
+// 2 · officer: live checks, one-field change request
 await officer();
 await caption('Officer console: the server computes 5 checks live, including hash, signature and the text in every PDF.'); await wait(4500);
 await scrollTo(evidenceSection); await wait(1500);
-await caption('Supporting evidence is still missing, so Approve stays blocked.'); await wait(3500);
+await caption('Each evidence PDF is compared with the signed facts.'); await wait(3500);
 await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' })); await wait(1000);
 await page.click('tr[data-k="company.capital"]'); await wait(800);
 await caption('The officer asks for a fix to one field, not the whole application.');
 await page.type('#note', 'Bank deposit proof shows NT$ 800,000. Please correct the capital.', { delay: 22 }); await wait(800);
 await page.click('#revise'); await wait(2500);
 
-// 3 · applicant fixes only that field, re-signs, uploads evidence
+// 3 · applicant fixes only that field; self-review catches the stale evidence; re-sign v2
 f = await openDrawer('Back on the government page, the applicant sees exactly what to fix.');
 await f.waitForSelector('[data-go="fix"]'); await wait(2500); await f.click('[data-go="fix"]'); await wait(1000);
 await caption('Everything else stays locked. Only the capital field reopens.');
 await answer(f, '800000');
-await wait(1500);
+await wait(1200);
+await selfReview(f, 'Self-review again: the old capital proof still says NT$ 1,000,000, so it is flagged before anything is sent.');
+await upload(f, ['capital_verification'], 'Attach updated capital proof for NT$ 800,000.');
+await selfReview(f, 'Re-check with the new proof.');
 await signAndWait(f, 'Re-signing creates version 2, linked to version 1. New PDFs are generated.');
-await caption('Version 2 signed. Next, upload the supporting evidence.'); await wait(2500);
-const kinds = ['capital_verification', 'address_approval', 'name_approval'];
-for (const kind of kinds) {
-  const r = await fetch(`${APP}/api/mock-attachments/${kind}`);
-  if (!r.ok) throw new Error(`mock evidence ${kind}: ${r.status}`);
-  fs.writeFileSync(path.join(TMP, `MOCK-${kind}.pdf`), Buffer.from(await r.arrayBuffer()));
-}
-await f.locator('#evidence-capital_verification').scrollIntoViewIfNeeded();
-await caption('Supporting evidence: marked demo PDFs for the capital audit, address approval and name approval.'); await wait(2500);
-for (const [i, kind] of kinds.entries()) {
-  await f.setInputFiles(`#evidence-${kind}`, path.join(TMP, `MOCK-${kind}.pdf`));
-  await f.waitForFunction((n) => document.querySelectorAll('a.edit[href^="/api/attachments/"]').length === n && !document.querySelector('input[data-upload]:disabled'), i + 1, { timeout: 30000 });
-  await f.locator(`#evidence-${kind}`).scrollIntoViewIfNeeded(); await wait(1200);
-}
-await wait(1500);
+await caption('Version 2 signed.'); await wait(2500);
 
 // 4 · officer reviews v2 + evidence, approves
 await officer();
