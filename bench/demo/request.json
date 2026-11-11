@@ -1,0 +1,11 @@
+{
+  "id": "hackathon-demo",
+  "application_type": "company-application-demo",
+  "scope": "demo-workspace",
+  "as_of": "2026-11-11",
+  "roles": {
+    "company": "org-harbor",
+    "representative": "person-alex",
+    "contact": "person-jamie"
+  }
+}

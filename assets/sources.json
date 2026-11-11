@@ -1,0 +1,17 @@
+{
+  "official_pdf": {
+    "url": "https://gcis.nat.gov.tw/mainNew/matterAction.do?fileNo=t70435_p&method=showFile",
+    "sha256": "c3fe42a34432602f3f453e4bde6413dcbe643b0b988b72ff61ccd93ca66aa113",
+    "note": "Unmodified public two-page blank form. Only three supplied fields are demonstrated; not filing-ready."
+  },
+  "font": {
+    "url": "https://raw.githubusercontent.com/notofonts/noto-fonts/main/hinted/ttf/NotoSans/NotoSans-Regular.ttf",
+    "sha256": "b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5",
+    "license": "OFL-1.1"
+  },
+  "synthetic_templates": [
+    "application-cover.pdf",
+    "certificate-request.pdf",
+    "branch-attachment.pdf"
+  ]
+}

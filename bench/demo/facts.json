@@ -1,0 +1,196 @@
+{
+  "scope": "demo-workspace",
+  "read_revision": "profile-bundle-v1",
+  "grant_id": "fixture-grant-001",
+  "expires_on": "2026-12-31",
+  "allowed_fact_ids": [
+    "fact-01",
+    "fact-02",
+    "fact-03",
+    "fact-04",
+    "fact-05",
+    "fact-06",
+    "fact-07",
+    "fact-08",
+    "fact-09",
+    "fact-10",
+    "fact-11",
+    "fact-12"
+  ],
+  "allowed_relationship_ids": [
+    "relationship-001"
+  ],
+  "approved_definition_hashes": [
+    "05036fa0186a2d96aff1f8160e8c9517940c24147683313ba46399c4fef3d205"
+  ],
+  "facts": [
+    {
+      "id": "fact-01",
+      "subject": "org-harbor",
+      "predicate": "legal_name",
+      "value": "Harbor Labs",
+      "revision": "1",
+      "source": "fictional-profile:company.name",
+      "confirmation": "confirmed",
+      "verification_event": null,
+      "valid_from": "2026-01-01",
+      "valid_to": null
+    },
+    {
+      "id": "fact-02",
+      "subject": "org-harbor",
+      "predicate": "registration_reference",
+      "value": "DEMO-0042",
+      "revision": "1",
+      "source": "fictional-profile:company.reference",
+      "confirmation": "confirmed",
+      "verification_event": null,
+      "valid_from": "2026-01-01",
+      "valid_to": null
+    },
+    {
+      "id": "fact-03",
+      "subject": "person-alex",
+      "predicate": "name",
+      "value": "Alex Morgan",
+      "revision": "1",
+      "source": "fictional-profile:representative.name",
+      "confirmation": "confirmed",
+      "verification_event": "fixture-event-001",
+      "valid_from": "2026-01-01",
+      "valid_to": null
+    },
+    {
+      "id": "fact-04",
+      "subject": "person-jamie",
+      "predicate": "name",
+      "value": "Jamie Park",
+      "revision": "1",
+      "source": "fictional-profile:contact.name",
+      "confirmation": "confirmed",
+      "verification_event": null,
+      "valid_from": "2026-01-01",
+      "valid_to": null
+    },
+    {
+      "id": "fact-05",
+      "subject": "person-jamie",
+      "predicate": "email",
+      "value": "jamie@example.test",
+      "revision": "1",
+      "source": "fictional-profile:contact.email",
+      "confirmation": "confirmed",
+      "verification_event": null,
+      "valid_from": "2026-01-01",
+      "valid_to": null
+    },
+    {
+      "id": "fact-06",
+      "subject": "org-harbor",
+      "predicate": "application_date",
+      "value": "2026-11-11",
+      "revision": "1",
+      "source": "fictional-profile:application.date",
+      "confirmation": "confirmed",
+      "verification_event": null,
+      "valid_from": "2026-01-01",
+      "valid_to": null
+    },
+    {
+      "id": "fact-07",
+      "subject": "org-harbor",
+      "predicate": "reservation_number",
+      "value": "1150000000",
+      "revision": "1",
+      "source": "fictional-profile:application.reservation",
+      "confirmation": "confirmed",
+      "verification_event": null,
+      "valid_from": "2026-01-01",
+      "valid_to": null
+    },
+    {
+      "id": "fact-08",
+      "subject": "org-harbor",
+      "predicate": "include_certificate",
+      "value": true,
+      "revision": "1",
+      "source": "fictional-profile:application.certificate",
+      "confirmation": "confirmed",
+      "verification_event": null,
+      "valid_from": "2026-01-01",
+      "valid_to": null
+    },
+    {
+      "id": "fact-09",
+      "subject": "org-harbor",
+      "predicate": "branches",
+      "value": [
+        {
+          "id": "north",
+          "name": "North Office",
+          "address": "10 Example Street"
+        },
+        {
+          "id": "south",
+          "name": "South Office",
+          "address": "20 Sample Avenue"
+        }
+      ],
+      "revision": "1",
+      "source": "fictional-profile:company.branches",
+      "confirmation": "confirmed",
+      "verification_event": null,
+      "valid_from": "2026-01-01",
+      "valid_to": null
+    },
+    {
+      "id": "fact-10",
+      "subject": "org-harbor",
+      "predicate": "first_contribution",
+      "value": 6000,
+      "revision": "1",
+      "source": "fictional-profile:capital.first",
+      "confirmation": "confirmed",
+      "verification_event": null,
+      "valid_from": "2026-01-01",
+      "valid_to": null
+    },
+    {
+      "id": "fact-11",
+      "subject": "org-harbor",
+      "predicate": "second_contribution",
+      "value": 4000,
+      "revision": "1",
+      "source": "fictional-profile:capital.second",
+      "confirmation": "confirmed",
+      "verification_event": null,
+      "valid_from": "2026-01-01",
+      "valid_to": null
+    },
+    {
+      "id": "fact-12",
+      "subject": "org-harbor",
+      "predicate": "capital_total",
+      "value": 10000,
+      "revision": "1",
+      "source": "fictional-profile:capital.total",
+      "confirmation": "confirmed",
+      "verification_event": null,
+      "valid_from": "2026-01-01",
+      "valid_to": null
+    }
+  ],
+  "relationships": [
+    {
+      "id": "relationship-001",
+      "from": "person-alex",
+      "to": "org-harbor",
+      "kind": "represents",
+      "application_type": "company-application-demo",
+      "revision": "1",
+      "source": "fixture-policy: fictional representative relationship",
+      "valid_from": "2026-01-01",
+      "valid_to": null
+    }
+  ]
+}

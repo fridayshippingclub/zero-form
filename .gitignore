@@ -5,3 +5,6 @@ dist/
 .env.*
 .DS_Store
 *.log
+/target/
+/.tools/
+/output/

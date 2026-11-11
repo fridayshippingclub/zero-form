@@ -1,0 +1,14 @@
+[package]
+name = "zero-form-cli"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "zero-form"
+path = "src/main.rs"
+
+[dependencies]
+zero-form-core = { path = "../zero-form-core" }
+anyhow.workspace = true
+serde_json.workspace = true
+clap = { version = "4", features = ["derive"] }

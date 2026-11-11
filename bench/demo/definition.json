@@ -1,0 +1,667 @@
+{
+  "schema_version": 1,
+  "application": {
+    "id": "company-application-demo",
+    "version": "1.0.0",
+    "valid_from": "2026-01-01",
+    "valid_to": null,
+    "schema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "company.name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "company.reference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "representative.name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "contact.name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "contact.email": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "format": "email"
+        },
+        "application.date": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "format": "date"
+        },
+        "application.reservation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "application.certificate": {
+          "type": "boolean"
+        },
+        "company.branches": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "address": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "address"
+            ]
+          }
+        },
+        "capital.first": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "capital.second": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "capital.total": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "company.name",
+        "company.reference",
+        "representative.name",
+        "contact.name",
+        "contact.email",
+        "application.date",
+        "application.reservation",
+        "application.certificate",
+        "company.branches",
+        "capital.first",
+        "capital.second",
+        "capital.total"
+      ]
+    },
+    "fields": {
+      "company.name": {
+        "role": "company",
+        "predicate": "legal_name",
+        "require_verification_event": false
+      },
+      "company.reference": {
+        "role": "company",
+        "predicate": "registration_reference",
+        "require_verification_event": false
+      },
+      "representative.name": {
+        "role": "representative",
+        "predicate": "name",
+        "require_verification_event": true
+      },
+      "contact.name": {
+        "role": "contact",
+        "predicate": "name",
+        "require_verification_event": false
+      },
+      "contact.email": {
+        "role": "contact",
+        "predicate": "email",
+        "require_verification_event": false
+      },
+      "application.date": {
+        "role": "company",
+        "predicate": "application_date",
+        "require_verification_event": false
+      },
+      "application.reservation": {
+        "role": "company",
+        "predicate": "reservation_number",
+        "require_verification_event": false
+      },
+      "application.certificate": {
+        "role": "company",
+        "predicate": "include_certificate",
+        "require_verification_event": false
+      },
+      "company.branches": {
+        "role": "company",
+        "predicate": "branches",
+        "require_verification_event": false
+      },
+      "capital.first": {
+        "role": "company",
+        "predicate": "first_contribution",
+        "require_verification_event": false
+      },
+      "capital.second": {
+        "role": "company",
+        "predicate": "second_contribution",
+        "require_verification_event": false
+      },
+      "capital.total": {
+        "role": "company",
+        "predicate": "capital_total",
+        "require_verification_event": false
+      }
+    },
+    "rules": [
+      {
+        "id": "representation",
+        "version": "1",
+        "source": "fixture-policy: representation required for this demo",
+        "check": {
+          "kind": "relationship",
+          "from_role": "representative",
+          "to_role": "company",
+          "relation": "represents"
+        }
+      },
+      {
+        "id": "capital-sum",
+        "version": "1",
+        "source": "fixture-policy: exact integer TWD totals",
+        "check": {
+          "kind": "sum",
+          "fields": [
+            "capital.first",
+            "capital.second"
+          ],
+          "total": "capital.total",
+          "unit": "TWD"
+        }
+      },
+      {
+        "id": "certificate-email",
+        "version": "1",
+        "source": "fixture-policy: certificate contact required",
+        "check": {
+          "kind": "required_when",
+          "condition": {
+            "op": "equals",
+            "field": "application.certificate",
+            "value": true
+          },
+          "field": "contact.email"
+        }
+      }
+    ],
+    "documents": [
+      {
+        "id": "01-overview",
+        "template": "cover",
+        "condition": {
+          "op": "always"
+        },
+        "repeat_field": null,
+        "bindings": {
+          "company": {
+            "source": {
+              "kind": "field",
+              "field": "company.name"
+            },
+            "transform": {
+              "kind": "identity"
+            }
+          },
+          "number": {
+            "source": {
+              "kind": "field",
+              "field": "company.reference"
+            },
+            "transform": {
+              "kind": "identity"
+            }
+          },
+          "representative": {
+            "source": {
+              "kind": "field",
+              "field": "representative.name"
+            },
+            "transform": {
+              "kind": "identity"
+            }
+          },
+          "contact": {
+            "source": {
+              "kind": "field",
+              "field": "contact.name"
+            },
+            "transform": {
+              "kind": "identity"
+            }
+          },
+          "date": {
+            "source": {
+              "kind": "field",
+              "field": "application.date"
+            },
+            "transform": {
+              "kind": "identity"
+            }
+          },
+          "certificate": {
+            "source": {
+              "kind": "field",
+              "field": "application.certificate"
+            },
+            "transform": {
+              "kind": "identity"
+            }
+          }
+        }
+      },
+      {
+        "id": "02-official-form",
+        "template": "official",
+        "condition": {
+          "op": "always"
+        },
+        "repeat_field": null,
+        "bindings": {
+          "reservation": {
+            "source": {
+              "kind": "field",
+              "field": "application.reservation"
+            },
+            "transform": {
+              "kind": "identity"
+            }
+          },
+          "representative": {
+            "source": {
+              "kind": "field",
+              "field": "representative.name"
+            },
+            "transform": {
+              "kind": "identity"
+            }
+          },
+          "email": {
+            "source": {
+              "kind": "field",
+              "field": "contact.email"
+            },
+            "transform": {
+              "kind": "identity"
+            }
+          }
+        }
+      },
+      {
+        "id": "03-certificate",
+        "template": "certificate",
+        "condition": {
+          "op": "equals",
+          "field": "application.certificate",
+          "value": true
+        },
+        "repeat_field": null,
+        "bindings": {
+          "company": {
+            "source": {
+              "kind": "field",
+              "field": "company.name"
+            },
+            "transform": {
+              "kind": "uppercase"
+            }
+          },
+          "contact": {
+            "source": {
+              "kind": "field",
+              "field": "contact.name"
+            },
+            "transform": {
+              "kind": "identity"
+            }
+          },
+          "email": {
+            "source": {
+              "kind": "field",
+              "field": "contact.email"
+            },
+            "transform": {
+              "kind": "identity"
+            }
+          }
+        }
+      },
+      {
+        "id": "04-branch",
+        "template": "branch",
+        "condition": {
+          "op": "always"
+        },
+        "repeat_field": "company.branches",
+        "bindings": {
+          "company": {
+            "source": {
+              "kind": "field",
+              "field": "company.name"
+            },
+            "transform": {
+              "kind": "identity"
+            }
+          },
+          "branch": {
+            "source": {
+              "kind": "item",
+              "pointer": "/name"
+            },
+            "transform": {
+              "kind": "identity"
+            }
+          },
+          "address": {
+            "source": {
+              "kind": "item",
+              "pointer": "/address"
+            },
+            "transform": {
+              "kind": "identity"
+            }
+          }
+        }
+      }
+    ]
+  },
+  "templates": {
+    "cover": {
+      "version": "1",
+      "source": {
+        "path": "assets/templates/application-cover.pdf",
+        "sha256": "39717d43fc669e365b023fbba6e88e6c4560ddcf7572abf96bd01fb70a909254"
+      },
+      "font": {
+        "asset": {
+          "path": "assets/fonts/NotoSans-Regular.ttf",
+          "sha256": "b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5"
+        },
+        "family": "Noto Sans"
+      },
+      "targets": {
+        "company": {
+          "page": 1,
+          "rect": [
+            44.0,
+            120.0,
+            440.0,
+            24.0
+          ],
+          "filled_by": "applicant",
+          "control": {
+            "kind": "text",
+            "size": 11.0
+          }
+        },
+        "number": {
+          "page": 1,
+          "rect": [
+            44.0,
+            185.0,
+            220.0,
+            24.0
+          ],
+          "filled_by": "applicant",
+          "control": {
+            "kind": "text",
+            "size": 11.0
+          }
+        },
+        "representative": {
+          "page": 1,
+          "rect": [
+            44.0,
+            250.0,
+            440.0,
+            24.0
+          ],
+          "filled_by": "applicant",
+          "control": {
+            "kind": "text",
+            "size": 11.0
+          }
+        },
+        "contact": {
+          "page": 1,
+          "rect": [
+            44.0,
+            315.0,
+            440.0,
+            24.0
+          ],
+          "filled_by": "applicant",
+          "control": {
+            "kind": "text",
+            "size": 11.0
+          }
+        },
+        "date": {
+          "page": 1,
+          "rect": [
+            44.0,
+            380.0,
+            220.0,
+            24.0
+          ],
+          "filled_by": "applicant",
+          "control": {
+            "kind": "text",
+            "size": 11.0
+          }
+        },
+        "certificate": {
+          "page": 1,
+          "rect": [
+            44.0,
+            445.0,
+            12.0,
+            12.0
+          ],
+          "filled_by": "applicant",
+          "control": {
+            "kind": "checkbox"
+          }
+        }
+      }
+    },
+    "certificate": {
+      "version": "1",
+      "source": {
+        "path": "assets/templates/certificate-request.pdf",
+        "sha256": "75c464d381c7394b9316ce54e95ab4293dada15662f970fe028c560c19170b71"
+      },
+      "font": {
+        "asset": {
+          "path": "assets/fonts/NotoSans-Regular.ttf",
+          "sha256": "b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5"
+        },
+        "family": "Noto Sans"
+      },
+      "targets": {
+        "company": {
+          "page": 1,
+          "rect": [
+            44.0,
+            145.0,
+            440.0,
+            24.0
+          ],
+          "filled_by": "applicant",
+          "control": {
+            "kind": "text",
+            "size": 11.0
+          }
+        },
+        "contact": {
+          "page": 1,
+          "rect": [
+            44.0,
+            230.0,
+            440.0,
+            24.0
+          ],
+          "filled_by": "applicant",
+          "control": {
+            "kind": "text",
+            "size": 11.0
+          }
+        },
+        "email": {
+          "page": 1,
+          "rect": [
+            44.0,
+            315.0,
+            440.0,
+            24.0
+          ],
+          "filled_by": "applicant",
+          "control": {
+            "kind": "text",
+            "size": 11.0
+          }
+        }
+      }
+    },
+    "branch": {
+      "version": "1",
+      "source": {
+        "path": "assets/templates/branch-attachment.pdf",
+        "sha256": "d0281d62fed03d4572735ee5e893c010758042b725a6eb9a14a1e41e04bdc939"
+      },
+      "font": {
+        "asset": {
+          "path": "assets/fonts/NotoSans-Regular.ttf",
+          "sha256": "b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5"
+        },
+        "family": "Noto Sans"
+      },
+      "targets": {
+        "company": {
+          "page": 1,
+          "rect": [
+            44.0,
+            140.0,
+            440.0,
+            24.0
+          ],
+          "filled_by": "applicant",
+          "control": {
+            "kind": "text",
+            "size": 11.0
+          }
+        },
+        "branch": {
+          "page": 1,
+          "rect": [
+            44.0,
+            235.0,
+            440.0,
+            24.0
+          ],
+          "filled_by": "applicant",
+          "control": {
+            "kind": "text",
+            "size": 11.0
+          }
+        },
+        "address": {
+          "page": 1,
+          "rect": [
+            44.0,
+            330.0,
+            440.0,
+            24.0
+          ],
+          "filled_by": "applicant",
+          "control": {
+            "kind": "text",
+            "size": 11.0
+          }
+        }
+      }
+    },
+    "official": {
+      "version": "1",
+      "source": {
+        "path": "assets/templates/taiwan-company-application.pdf",
+        "sha256": "c3fe42a34432602f3f453e4bde6413dcbe643b0b988b72ff61ccd93ca66aa113"
+      },
+      "font": {
+        "asset": {
+          "path": "assets/fonts/NotoSans-Regular.ttf",
+          "sha256": "b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5"
+        },
+        "family": "Noto Sans"
+      },
+      "targets": {
+        "reservation": {
+          "page": 1,
+          "rect": [
+            205.0,
+            120.0,
+            340.0,
+            14.0
+          ],
+          "filled_by": "applicant",
+          "control": {
+            "kind": "text",
+            "size": 11.0
+          }
+        },
+        "representative": {
+          "page": 1,
+          "rect": [
+            205.0,
+            227.0,
+            180.0,
+            18.0
+          ],
+          "filled_by": "applicant",
+          "control": {
+            "kind": "text",
+            "size": 11.0
+          }
+        },
+        "email": {
+          "page": 1,
+          "rect": [
+            148.0,
+            532.0,
+            127.0,
+            21.0
+          ],
+          "filled_by": "applicant",
+          "control": {
+            "kind": "text",
+            "size": 11.0
+          }
+        }
+      }
+    }
+  }
+}

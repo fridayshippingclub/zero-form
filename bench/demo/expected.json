@@ -1,0 +1,18 @@
+{
+  "documents": [
+    "01-overview",
+    "02-official-form",
+    "03-certificate",
+    "04-branch--north",
+    "04-branch--south"
+  ],
+  "company": "Harbor Labs",
+  "representative": "Alex Morgan",
+  "contact": "Jamie Park",
+  "email": "jamie@example.test",
+  "branches": [
+    "North Office",
+    "South Office"
+  ],
+  "note": "One official blank PDF plus three synthetic templates. This is not an official complete filing package."
+}
