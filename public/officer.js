@@ -5,7 +5,7 @@ import { FORMS, money, rocDate } from '/schema.js';
 const $root = document.getElementById('root');
 const $live = document.getElementById('live');
 const MOCK = new URLSearchParams(location.search).get('mock');
-const ORDER = ['company.name', 'company.items', 'company.address', 'company.capital', 'person.name', 'person.nationalId', 'person.phone', 'person.address', 'owner.name', 'app.date'];
+const ORDER = ['company.name', 'company.items', 'company.address', 'company.capital', 'company.articles_date', 'person.name', 'person.nationalId', 'person.phone', 'person.address', 'owner.name', 'app.date'];
 const STATUS = { submitted: 'Submitted', revision: 'Change requested', approved: 'Approved', rejected: 'Rejected', draft: 'Draft' };
 const TOTAL_FORMS = FORMS.length;
 
@@ -17,7 +17,7 @@ const when = (iso) => { try { return new Date(iso).toLocaleString('en-GB', { day
 const fmt = (k, v, f) => {
   if (v == null || v === '') return '<span class="muted">—</span>';
   if (k === 'company.capital') return `NT$ ${esc(money(v))}`;
-  if (k === 'app.date') return `<span title="${esc(v)}">${esc(rocDate(v))}</span>`;
+  if (f?.type === 'date') return `<span title="${esc(v)}">${esc(rocDate(v))}</span>`;
   if (f?.suffix) return esc(v + f.suffix);
   return esc(v);
 };
@@ -28,6 +28,7 @@ const ICON = {
   shield: '<svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5l3 3 6-7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 };
 const fieldName = (fields, k) => (fields[k] ? `${fields[k].label} · ${fields[k].en}` : k);
+const checkValue = (value, fallback = '—') => esc(value == null ? fallback : typeof value === 'object' ? JSON.stringify(value) : value);
 
 // ---------- data ----------
 async function api(path, opts) {
@@ -135,10 +136,10 @@ function render() {
         <h3 class="section-title">Supporting evidence <span class="muted">uploaded demo PDFs compared with the signed facts</span></h3>
         <div class="card"><table class="facts"><thead><tr><th>Check</th><th>Expected</th><th>In document</th><th>Result / source</th></tr></thead><tbody>
           ${externalReview.checks.map((check) => `<tr><td><div class="fe">${esc(check.kind.replaceAll('_', ' '))}</div><div>${esc(check.field)}</div></td>
-            <td class="val">${esc(check.expected ?? '—')}</td><td class="val">${esc(check.actual ?? 'Not available')}</td>
+            <td class="val">${checkValue(check.expected)}</td><td class="val">${checkValue(check.actual, 'Not available')}</td>
             <td><span class="badge ${check.status === 'passed' ? 'ok' : 'warn'}">${esc(check.status.replaceAll('_', ' '))}</span>${check.source ? `<div style="margin-top:6px"><a href="${esc(check.source.url)}" target="_blank" rel="noopener">Source · page ${esc(check.source.page)}</a></div>` : ''}</td></tr>`).join('')}
         </tbody></table></div>
-        <p class="muted" style="font-size:12px">Fictional evidence only. The common issue date is a demo scenario rule, not a legal requirement.</p>
+        <p class="muted" style="font-size:12px">Demo scenario: accountant certification matches the articles date, which must be on or before the application date.</p>
       </section>` : ''}
     </div>
 
@@ -216,14 +217,14 @@ function mockInit() {
   const data = {
     'company.name': '大大科技', 'company.items': 'F119010 電子材料批發業、F113050 事務性機器設備批發業', 'company.address': '臺北市信義區松仁路 100 號 12 樓',
     'company.capital': '1000000', 'person.name': '陳大文', 'person.nationalId': 'A123456789', 'person.phone': '0912-345-678', 'person.address': '臺北市大安區仁愛路四段 1 號',
-    'owner.name': '王建國', 'app.date': '2026-11-11',
+    'owner.name': '王建國', 'company.articles_date': '2026-11-11', 'app.date': '2026-11-11',
   };
   const src = (s, v = true) => ({ source: s, verified: v });
   const provenance = {
     'company.name': src('Name reservation 預查 #113045678'), 'company.items': src('Name reservation 預查 #113045678'), 'company.address': src('Applicant', false),
     'company.capital': src('Applicant', false), 'person.name': src('MOI identity'), 'person.nationalId': src('MOI identity'),
     'person.phone': src('Verified by SMS'), 'person.address': src('Household registration'),
-    'owner.name': src('Applicant', false), 'app.date': src('System'),
+    'owner.name': src('Applicant', false), 'company.articles_date': src('Demo scenario'), 'app.date': src('System'),
   };
   const FIELDS_MOCK = {}; // filled lazily from schema module
   const v1 = 'a3f19c04e2b7d8155c0e6f9a1b2c3d4e5f60718293a4b5c6d7e8f9012ab4c9e1';

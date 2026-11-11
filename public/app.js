@@ -12,7 +12,7 @@ const ASK = {
 const ORDER = Object.keys(ASK);
 const DOCS = FORMS.filter((f) => !f.onFile);
 const EVIDENCE = { capital_verification: 'Accountant capital verification', address_approval: 'Address approval', name_approval: 'Company-name approval' };
-const fmt = (k, v) => (k === 'company.capital' ? `NT$ ${money(v)}` : k === 'company.name' ? `${v}有限公司` : k === 'app.date' ? rocDate(v) : v);
+const fmt = (k, v) => (k === 'company.capital' ? `NT$ ${money(v)}` : k === 'company.name' ? `${v}有限公司` : FIELDS[k]?.type === 'date' ? rocDate(v) : v);
 
 let S = null;                       // server state (source of truth)
 let ui = { step: 'welcome', qs: [], i: 0, err: '', busy: false, returnTo: null };
@@ -94,7 +94,7 @@ const VIEWS = {
 
   known: () => {
     const d = S.app.draft;
-    const keys = ['person.name', 'person.nationalId', 'person.phone', 'person.address', 'company.name', 'company.items', ...ORDER.filter((k) => !ui.qs.includes(k))];
+    const keys = ['person.name', 'person.nationalId', 'person.phone', 'person.address', 'company.name', 'company.items', 'company.articles_date', ...ORDER.filter((k) => !ui.qs.includes(k))];
     return `
     <div class="eyebrow">Welcome back, ${esc(d['person.name'].value)}</div>
     <h2>We already know this.<br>Still correct?</h2>
@@ -132,7 +132,7 @@ const VIEWS = {
     return `
     <h2>Check once, sign once.</h2>
     <p class="lead">Signing locks this exact version. All ${DOCS.length} documents are generated from it — nothing can change without your confirmation.</p>
-    ${group('Company', ['company.name', 'company.address', 'company.capital', 'company.items'])}
+    ${group('Company', ['company.name', 'company.address', 'company.capital', 'company.items', 'company.articles_date'])}
     ${group('People', ['person.name', 'person.nationalId', 'owner.name'])}
     <div class="err">${esc(ui.err)}</div>
     <button class="btn primary blue" data-go="sign" ${ui.busy ? 'disabled' : ''}>${ui.busy ? '<i class="spin"></i>' : ''}Sign & submit <span style="opacity:.6">↵</span></button>

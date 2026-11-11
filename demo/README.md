@@ -1,6 +1,6 @@
-# Evidence review demo
+# Evidence review reference demo
 
-This isolated, English-language reference UI demonstrates a single fictional company application. It does not replace the team's frontend or perform government submission, identity verification, or legal review.
+For the current integrated applicant/reviewer demo, use `npm start` and the root README. This earlier isolated, English-language reference UI demonstrates a single fictional company application. It does not replace the team's frontend or perform government submission, identity verification, or legal review.
 
 From the repository root:
 
@@ -33,7 +33,7 @@ The service keeps one shared demo case in temporary local storage. Restarting th
 - `POST /api/decision` accepts `{ "decision": "approve|request_documents|decline", "reason": "...", "evidence_revision": 3 }`; use the revision from the review shown to the reviewer, not a hardcoded number.
 - `GET /api/attachments/{id}` serves an uploaded PDF.
 
-Decisions are simulated and bound to the current evidence version. A new upload clears a previous decision. The demo's common issue-date comparison is a fixed scenario assumption, not a legal rule. Real date relationships must be defined separately for a real application type.
+Decisions are simulated and bound to the current evidence version. A new upload clears a previous decision. The current shared review rule compares capital certification date with the separately supplied articles date, and requires articles date on or before application date. Other issue dates remain independent. These are named demo rules, not legal conclusions. This earlier fixed-fixture reference host does not populate the new articles-date fact; use the integrated Node host for the current complete happy path.
 
 Reviewer approval also requires a successfully generated core package. Generation currently uses the fixed core fixtures; it does not implement applicant editing or identity verification. The address remains supplemental demo data and is identified as such by the API.
 

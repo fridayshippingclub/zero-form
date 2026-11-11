@@ -10,6 +10,7 @@ export const FIELDS = {
   'company.address':    { label: '公司所在地', en: 'Registered address', type: 'address' },
   'company.capital':    { label: '資本總額', en: 'Capital (NT$)', type: 'money' },
   'company.items':      { label: '所營事業', en: 'Business items', type: 'text' },
+  'company.articles_date': { label: '章程訂立日期', en: 'Articles date', type: 'date' },
   'owner.name':         { label: '建物所有權人', en: 'Building owner', type: 'text' },
   'app.date':           { label: '申請日期', en: 'Application date', type: 'date' },
 };
@@ -23,7 +24,7 @@ export const FORMS = [
     fields: ['company.name', 'company.address', 'company.capital', 'person.name', 'person.phone', 'app.date'] },
   { id: 't70126', name: '章程', en: 'Articles of incorporation',
     fieldRoles: { 'person.name': ['representative', 'director'] },
-    fields: ['company.name', 'company.address', 'company.capital', 'company.items', 'person.name', 'app.date'] },
+    fields: ['company.name', 'company.address', 'company.capital', 'company.items', 'person.name', 'company.articles_date'] },
   { id: 't70130', name: '股東同意書', en: 'Shareholder consent',
     fieldRoles: { 'person.name': ['applicant', 'director'] },
     fields: ['company.name', 'person.name', 'app.date'] },
@@ -83,7 +84,7 @@ export const rocDate = (iso) => {
 export const money = (v) => Number(String(v).replace(/,/g, '')).toLocaleString('en-US');
 
 // ---------- documents: one renderer for every form (server hashes it, browser previews it live) ----------
-export const fmt = (k, v) => k === 'company.capital' ? `NT$ ${money(v)}` : k === 'app.date' ? rocDate(v) : k === 'company.name' ? `${v}有限公司` : v;
+export const fmt = (k, v) => k === 'company.capital' ? `NT$ ${money(v)}` : FIELDS[k]?.type === 'date' ? rocDate(v) : k === 'company.name' ? `${v}有限公司` : v;
 const SENTENCES = {
   app: (d) => `茲申請 ${d['company.name']}有限公司 設立登記，檢附相關文件，請 鑒核。`,
   t70126: (d) => `第一條 本公司依照公司法規定組織之，定名為 ${d['company.name']}有限公司。第二條 本公司所營事業如下：${d['company.items']}。第三條 本公司設於 ${d['company.address']}。第四條 本公司資本總額為新臺幣 ${d['company.capital$']} 元。`,
@@ -93,7 +94,7 @@ const SENTENCES = {
 };
 // wrap(key, text) lets the browser highlight values; the server passes identity so hashes stay stable.
 export function docBody(form, data, wrap = (_k, t) => t) {
-  const d = new Proxy({}, { get: (_, k) => k === 'company.capital$' ? wrap('company.capital', money(data['company.capital'])) : wrap(k, data[k] ?? '') });
+  const d = new Proxy({}, { get: (_, k) => k === 'company.capital$' ? wrap('company.capital', data['company.capital'] ? money(data['company.capital']) : '') : wrap(k, data[k] ?? '') });
   const rows = formBindings(form).map(({ key, label }) => `<tr><th>${label}</th><td>${wrap(key, data[key] ? fmt(key, data[key]) : '')}</td></tr>`).join('');
   return `<h1>${form.name}</h1>${SENTENCES[form.id] ? `<p class="s">${SENTENCES[form.id](d)}</p>` : ''}<table>${rows}</table>`;
 }

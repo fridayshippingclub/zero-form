@@ -63,7 +63,7 @@ async function renderCore(body, hash) {
   return result;
 }
 async function externalReview(snap) {
-  const expected = { company_name: snap.data['company.name'], capital_twd: Number(String(snap.data['company.capital']).replaceAll(',', '')), address: snap.data['company.address'], application_date: snap.data['app.date'] };
+  const expected = { company_name: snap.data['company.name'], capital_twd: Number(String(snap.data['company.capital']).replaceAll(',', '')), address: snap.data['company.address'], application_date: snap.data['app.date'], articles_date: snap.data['company.articles_date'] };
   const payload = { attachments: db.app.attachments || {}, revision: db.app.evidenceRevision || 0, expected };
   const program = "import sys,json;sys.path.insert(0,'demo');from review import assess;x=json.loads(sys.argv[1]);print(json.dumps(assess(x['attachments'],x['revision'],x['expected'])))";
   const { stdout } = await execute('python3', ['-c', program, JSON.stringify(payload)], { cwd: ROOT, timeout: 15000 });
@@ -75,6 +75,7 @@ function newApp() {
   for (const [k, f] of Object.entries(db.profile)) draft[k] = { ...f };
   const res = NAME_RESERVATIONS['113045678'];
   for (const [k, value] of Object.entries(res)) draft[k] = { value, source: 'Name reservation 預查 #113045678', verified: true };
+  draft['company.articles_date'] = { value: '2026-11-11', source: 'Demo articles effective date', verified: true };
   draft['app.date'] = { value: new Date().toISOString().slice(0, 10), source: 'System', verified: true };
   return { id: 'TPE-2026-' + crypto.randomInt(100000, 999999), status: 'draft', draft, snapshots: [], decision: null, reopen: null };
 }
