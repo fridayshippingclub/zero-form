@@ -1,0 +1,9 @@
+{
+  "font": "LXGW WenKai TC Regular",
+  "style": "open-source Kai-style; not proprietary DFKai-SB",
+  "source": "https://raw.githubusercontent.com/lxgw/LxgwWenkaiTC/main/fonts/TTF/LXGWWenKaiTC-Regular.ttf",
+  "license": "OFL-1.1",
+  "license_file": "LXGW-OFL.txt",
+  "sha256": "6662480a3f95b4a90c80b189c679617a48adce3a505118a6af63ce5a482b83fa",
+  "derivation": "Unmodified upstream static regular TTF."
+}

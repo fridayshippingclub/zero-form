@@ -16,7 +16,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
 ROOT = Path(__file__).resolve().parents[1]
-FONT = ROOT / 'assets/teammate/NotoSansTC-Regular.ttf'
+FONT = ROOT / 'assets/teammate/LXGWWenKaiTC-Regular.ttf'
 
 def dump(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2))
@@ -50,7 +50,7 @@ def render(source, destination):
         if not chosen:
             raise ValueError('missing_tool:'+binary)
         env[variable]=chosen
-    pdfmetrics.registerFont(TTFont('DemoTC',str(FONT)))
+    pdfmetrics.registerFont(TTFont('DemoKai',str(FONT)))
     with tempfile.TemporaryDirectory(prefix='zero-form-dynamic-') as temporary:
         work=Path(temporary)
         shutil.copyfile(FONT,work/'font.ttf')
@@ -62,9 +62,9 @@ def render(source, destination):
             path=work/(form['id']+'.pdf')
             c=canvas.Canvas(str(path),pagesize=(595.28,841.89),invariant=1)
             c.setTitle('DEMO ONLY - '+form['name'])
-            c.setFont('Helvetica-Bold',12);c.drawString(40,807,'MOCK / DEMO ONLY / NOT VALID FOR FILING')
-            c.setFont('DemoTC',16);c.drawString(40,775,form['name'])
-            c.setFont('Helvetica',8);c.drawString(40,752,'Generated from confirmed application data. No signature or legal attestation.')
+            c.setFont('DemoKai',12);c.drawString(40,807,'MOCK / DEMO ONLY / NOT VALID FOR FILING')
+            c.setFont('DemoKai',16);c.drawString(40,775,form['name'])
+            c.setFont('DemoKai',8);c.drawString(40,752,'Generated from confirmed application data. No signature or legal attestation.')
             purposes = {
                 'app': '本示意文件彙整本次公司設立申請資料，供申請人核對並展示文件生成流程。',
                 't70126': '第一條：公司名稱依下列資料。第二條：營業項目依下列資料。第三條：所在地依下列資料。第四條：資本總額依下列資料。本章程僅為展示。',
@@ -73,7 +73,7 @@ def render(source, destination):
                 't70124': '本示意文件展示建物所有權人及擬登記公司所在地資料。未有真實所有權或使用權之認證。',
                 't70135': '本示意登記表彙整公司基本資料，以及同一人作為負責人與唯一董事之資料，供展示跨文件一致性核對。',
             }
-            c.setFont('DemoTC',9)
+            c.setFont('DemoKai',9)
             for line_index, line in enumerate(textwrap.wrap(purposes.get(form['id'],'本文件僅供概念驗證展示。'),width=52)):
                 c.drawString(42,722-line_index*15,line)
             targets={};bindings={}
@@ -96,17 +96,17 @@ def render(source, destination):
                         'revision':str(source['v']),'source':'confirmed-snapshot:'+source['hash']+':'+key,
                         'confirmation':'confirmed','verification_event':None,'valid_from':'2026-01-01','valid_to':None})
                 target='field-'+str(i+1);y=180+i*45
-                c.setFont('DemoTC',10);c.drawString(42,841.89-y+10,field['label'])
+                c.setFont('DemoKai',10);c.drawString(42,841.89-y+10,field['label'])
                 c.setStrokeColorRGB(.75,.8,.82);c.rect(40,841.89-y-25,515,27,stroke=1,fill=0)
                 display=value+'有限公司' if key=='company.name' and not value.endswith('有限公司') else value
-                size=min(11,500/max(pdfmetrics.stringWidth(display,'DemoTC',1),1))
+                size=min(11,500/max(pdfmetrics.stringWidth(display,'DemoKai',1),1))
                 if size<6:raise ValueError('field_too_long:'+key)
                 targets[target]={'page':1,'rect':[42.0,float(y),510.0,22.0],'filled_by':'applicant','control':{'kind':'text','size':float(size)}}
                 # Semantic values remain exactly those confirmed by the applicant.
                 bindings[target]={'source':{'kind':'field','field':semantic},'transform':{'kind':'identity'}}
-            c.setFont('Helvetica',8);c.drawString(40,35,'ZERO FORM / SYNTHETIC TEMPLATE / NO GOVERNMENT SUBMISSION / Page 1 of 1');c.save()
+            c.setFont('DemoKai',8);c.drawString(40,35,'ZERO FORM / SYNTHETIC TEMPLATE / NO GOVERNMENT SUBMISSION / Page 1 of 1');c.save()
             templates[form['id']]={'version':'1','source':{'path':path.name,'sha256':digest(path)},
-                'font':{'asset':{'path':'font.ttf','sha256':digest(work/'font.ttf')},'family':'Noto Sans TC'},'targets':targets}
+                'font':{'asset':{'path':'font.ttf','sha256':digest(work/'font.ttf')},'family':'霞鶩文楷 TC'},'targets':targets}
             documents.append({'id':form['id'],'template':form['id'],'condition':{'op':'always'},'repeat_field':None,'bindings':bindings})
         definition={'schema_version':1,'application':{'id':'frontend-company-demo','version':'1.0.0','valid_from':'2026-01-01','valid_to':None,
             'schema':{'$schema':'https://json-schema.org/draft/2020-12/schema','type':'object','additionalProperties':False,'properties':properties,'required':list(fields)},

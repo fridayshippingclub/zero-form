@@ -5,9 +5,12 @@ import json
 import subprocess
 from pathlib import Path
 from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.colors import HexColor
 
 ROOT = Path(__file__).resolve().parents[1]
+pdfmetrics.registerFont(TTFont('DemoKai', str(ROOT / 'assets/teammate/LXGWWenKaiTC-Regular.ttf')))
 
 def sha(path):
     return hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
@@ -24,19 +27,19 @@ def synthetic(name, title, entries):
     c = canvas.Canvas(str(path), pagesize=(595.28,841.89), invariant=1)
     c.setTitle(title + ' — synthetic hackathon fixture')
     c.setFillColor(HexColor('#153F37')); c.rect(0, 795, 595.28, 46, fill=1, stroke=0)
-    c.setFillColorRGB(1,1,1); c.setFont('Helvetica-Bold',16); c.drawString(42,811,title)
-    c.setFillColor(HexColor('#53675F')); c.setFont('Helvetica',9)
+    c.setFillColorRGB(1,1,1); c.setFont('DemoKai',16); c.drawString(42,811,title)
+    c.setFillColor(HexColor('#53675F')); c.setFont('DemoKai',9)
     c.drawString(42,774,'ZERO FORM / SYNTHETIC FIXTURE / NOT A GOVERNMENT FORM')
     for field, label, t in entries:
         x,y,w,h = t['rect']
-        c.setFillColor(HexColor('#243D34')); c.setFont('Helvetica',10)
+        c.setFillColor(HexColor('#243D34')); c.setFont('DemoKai',10)
         if t['control']['kind']=='checkbox':
             c.drawString(x+w+12,841.89-y-h+3,label)
         else:
             c.drawString(x,841.89-y+12,label)
         c.setStrokeColor(HexColor('#91A79E')); c.setLineWidth(.5)
         c.rect(x-2,841.89-y-h-2,w+4,h+4,fill=0,stroke=1)
-    c.setFillColor(HexColor('#53675F')); c.setFont('Helvetica',9)
+    c.setFillColor(HexColor('#53675F')); c.setFont('DemoKai',9)
     c.drawString(42,42,'Fictional data only. Signatures and authority fields are intentionally blank.')
     c.save()
     return {f:t for f,_,t in entries}
@@ -64,7 +67,7 @@ official = {
     'representative':target(205,227,180,18),
     'email':target(148,532,127,21),
 }
-font={'asset':{'path':'assets/fonts/NotoSans-Regular.ttf','sha256':sha('assets/fonts/NotoSans-Regular.ttf')},'family':'Noto Sans'}
+font={'asset':{'path':'assets/teammate/LXGWWenKaiTC-Regular.ttf','sha256':sha('assets/teammate/LXGWWenKaiTC-Regular.ttf')},'family':'霞鶩文楷 TC'}
 templates={}
 for name, file, targets in [
     ('cover','application-cover',cover),('certificate','certificate-request',certificate),
@@ -145,6 +148,6 @@ dump('bench/demo/expected.json',{'documents':['01-overview','02-official-form','
  'note':'One official blank PDF plus three synthetic templates. This is not an official complete filing package.'})
 dump('assets/sources.json',{'official_pdf':{'url':'https://gcis.nat.gov.tw/mainNew/matterAction.do?fileNo=t70435_p&method=showFile','sha256':sha('assets/templates/taiwan-company-application.pdf'),
  'note':'Unmodified public two-page blank form. Only three supplied fields are demonstrated; not filing-ready.'},
- 'font':{'url':'https://raw.githubusercontent.com/notofonts/noto-fonts/main/hinted/ttf/NotoSans/NotoSans-Regular.ttf','sha256':font['asset']['sha256'],'license':'OFL-1.1'},
+ 'font':{'url':'https://raw.githubusercontent.com/lxgw/LxgwWenkaiTC/main/fonts/TTF/LXGWWenKaiTC-Regular.ttf','sha256':font['asset']['sha256'],'license':'OFL-1.1'},
  'synthetic_templates':['application-cover.pdf','certificate-request.pdf','branch-attachment.pdf']})
 print('Created an English fixture application with five document outputs.')

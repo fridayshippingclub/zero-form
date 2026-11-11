@@ -5,8 +5,8 @@
     "note": "Unmodified public two-page blank form. Only three supplied fields are demonstrated; not filing-ready."
   },
   "font": {
-    "url": "https://raw.githubusercontent.com/notofonts/noto-fonts/main/hinted/ttf/NotoSans/NotoSans-Regular.ttf",
-    "sha256": "b85c38ecea8a7cfb39c24e395a4007474fa5a4fc864f6ee33309eb4948d232d5",
+    "url": "https://raw.githubusercontent.com/lxgw/LxgwWenkaiTC/main/fonts/TTF/LXGWWenKaiTC-Regular.ttf",
+    "sha256": "6662480a3f95b4a90c80b189c679617a48adce3a505118a6af63ce5a482b83fa",
     "license": "OFL-1.1"
   },
   "synthetic_templates": [

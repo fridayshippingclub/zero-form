@@ -1,12 +1,34 @@
 # AXD — Zero Form Semantic Core
 
-Compile authorized semantic facts into a frozen application snapshot and a verified multi-document PDF package. This repository implements the Rust library and native CLI for the hackathon. The frontend and HTTP adapter are separate work; browsers do not execute Rust/Typst/Poppler directly.
+Compile authorized semantic facts into a frozen application snapshot and a verified multi-document PDF package. This repository includes the Rust core and the team’s applicant/reviewer web demo. The local Node server invokes native Rust/Typst/Poppler to generate verified PDFs from the confirmed applicant snapshot.
 
-**Branch:** `codex/core-engine-v0.1`. The first remotely backed-up core milestone is `9aac8dc`, based on initial `main` commit `5201c59`; use the latest commit on this branch for the handoff below. No release is tagged.
+## Run the integrated hackathon demo
 
-## Run the demo
+Requirements: Node.js, Python 3 with ReportLab (`python3 -m pip install reportlab`), and the native Rust/Typst/Poppler requirements below.
 
-Requirements: Rust 1.97.1 (selected by `rust-toolchain.toml`), [Typst 0.15.1](https://github.com/typst/typst/releases/tag/v0.15.1), and Poppler's `pdftoppm` / `pdftotext`. Poppler 26.05.0 is the tested baseline; exact runtime versions are recorded in each validation report. Python/ReportLab is only needed to rebuild synthetic source fixtures, not to run the engine.
+```sh
+npm ci
+cargo build --workspace --locked
+npm start
+```
+
+Open `http://localhost:5173/` for the applicant and `http://localhost:5173/officer.html` for the reviewer. `DATA_DIR` selects local demo storage; use a fresh directory for a clean demonstration. SMS, registry lookups and submission are simulated. Signing invokes the native core and can take around a minute; wait for generation before opening document links.
+
+The one-person case preserves applicant, representative and director as distinct roles bound to one person. It collects three new answers and reuses the other facts. Each form occurrence has its own role-aware mapping. Six generated PDFs are served by the existing document links. The applicant can download matching demonstration evidence and upload it; the reviewer sees the extracted evidence, comparisons and source PDFs before deciding.
+
+Documents use **LXGW WenKai TC Regular**, an open-source Kai-style font under **SIL Open Font License 1.1**, not proprietary DFKai-SB. Source, digest and license are in `assets/teammate/LXGW-SOURCE.json` and `assets/teammate/LXGW-OFL.txt`.
+
+The named demo date rule is `audit.certified_on == company.articles_date` and `company.articles_date <= app.date` (same-day application allowed). The articles date is a separate prefilled signed fact. Issue dates on other attachments remain independent. The capital report parser reads its visible Chinese labels from uploaded PDF bytes; the semantic sidecar is documentation, not trusted upload evidence. These are demonstration rules, not a legal eligibility determination.
+
+```sh
+node demo/integration.mjs
+```
+
+This happy-path check starts an isolated local server, confirms applicant data, generates actual PDFs, uploads three matching demonstration proofs and records reviewer approval. It requires the dependencies above. The older English reference interface under `demo/web` is separate from the team’s integrated flow.
+
+## Run the standalone core fixture demo
+
+Requirements: Rust 1.97.1 (selected by `rust-toolchain.toml`), [Typst 0.15.1](https://github.com/typst/typst/releases/tag/v0.15.1), and Poppler's `pdftoppm` / `pdftotext`. Poppler 26.05.0 is the tested baseline; exact runtime versions are recorded in each validation report. Python/ReportLab creates the integrated demo’s synthetic templates and evidence; the standalone core CLI itself does not require Python.
 
 Put these executables on PATH, place them in the ignored `.tools/bin/` directory, or set `ZERO_FORM_TYPST`, `ZERO_FORM_PDFTOPPM`, and `ZERO_FORM_PDFTOTEXT` to executable paths.
 
@@ -30,7 +52,7 @@ All entered data is fictional. The official form is only partially populated; th
 
 ## Frontend integration contract
 
-A trusted host invokes the native library/CLI. No HTTP adapter is currently provided. UI state, real authentication, MFA, persistent profile storage and government submission are not part of this core.
+The integrated `server.js` host invokes the native CLI through `scripts/render-application.py`. The CLI contract below also remains available independently. Real authentication, MFA and government submission remain outside this demonstration.
 
 For a local build:
 
@@ -148,6 +170,6 @@ The external PDF tests are explicitly ignored by the ordinary test command, so r
 
 Verified milestone evidence: five documents / six pages, exact role/value readback, conditional and repeated mapping, selected/unselected checkboxes, font coverage/fit, zero changed protected pixels at 144 and 288 DPI, and visual inspection of all demo pages. Tests also cover missing/revoked data, representative authority, conflicts, unknown conditions, snapshot forgery, exact integer sums, template drift, overflow, PDF tampering and failed publication leaving no output.
 
-**No unresolved blocker for the fixture core demo.** The next integration milestone is a host adapter that serves schema, prepare results and authorized preview/package downloads to the separately owned frontend, while keeping fixture mode visibly labeled. That adapter is not implemented here. For actual filings, a separate milestone must register complete reviewed mappings/rules for a selected application type; the demo's three populated official fields do not constitute that coverage.
+**The local integrated host is implemented.** It confirms the demo snapshot, generates native PDFs and exposes uploaded-evidence review. It remains a local PoC with simulated identity and registries. For actual filings, a separate milestone must register complete reviewed mappings/rules for a selected application type; the demo's three populated official fields do not constitute that coverage.
 
 Current limits: static, unrotated PDFs with blank targets; one pinned regular font per template; explicit single-line text and square boolean marks; repeated whole documents only. No AcroForm/XFA, encrypted/signed files, annotations, placeholder replacement, OCR, handwritten signatures, table-row expansion, profile writeback, MFA provider or government API. There is no global application registry: overwrite/locking is per output path. Pixel/text checks cover the documented assertions; they are not a hostile-PDF security sandbox, legal approval or cryptographic attestation. Tested locally on Apple Silicon; other platforms need their external-tool tests run.

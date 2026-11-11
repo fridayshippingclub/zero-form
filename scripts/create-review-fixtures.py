@@ -11,6 +11,8 @@ from pathlib import Path
 from reportlab.lib.colors import HexColor
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / 'bench' / 'review'
@@ -24,6 +26,7 @@ FIXTURES = [
 
 
 def build():
+    pdfmetrics.registerFont(TTFont('DemoKai', str(ROOT / 'assets/teammate/LXGWWenKaiTC-Regular.ttf')))
     OUTPUT.mkdir(parents=True, exist_ok=True)
     catalog = []
     for filename, kind, title, status, specifics in FIXTURES:
@@ -35,18 +38,18 @@ def build():
         pdf.setFillColor(HexColor('#142d38'))
         pdf.rect(0, height - 150, width, 150, fill=1, stroke=0)
         pdf.setFillColor(HexColor('#f8cc7b'))
-        pdf.setFont('Helvetica-Bold', 14)
+        pdf.setFont('DemoKai', 14)
         pdf.drawString(44, height - 42, 'MOCK / DEMO ONLY')
         pdf.setFillColor(HexColor('#ffffff'))
-        pdf.setFont('Helvetica-Bold', 25)
+        pdf.setFont('DemoKai', 25)
         pdf.drawString(44, height - 83, title)
-        pdf.setFont('Helvetica', 12)
+        pdf.setFont('DemoKai', 12)
         pdf.drawString(44, height - 112, 'Fictional supporting document - Harbor Labs')
         pdf.setFillColor(HexColor('#a84220'))
-        pdf.setFont('Helvetica-Bold', 14)
+        pdf.setFont('DemoKai', 14)
         pdf.drawString(44, height - 188, 'NOT VALID FOR FILING')
         pdf.setFillColor(HexColor('#263d47'))
-        pdf.setFont('Helvetica', 11)
+        pdf.setFont('DemoKai', 11)
         pdf.drawString(44, height - 216, 'No accountant, public authority or real institution issued this document.')
         fields = {'Document-Type': kind, 'Company-Name': 'Harbor Labs', **specifics,
                   'Status': status, 'Issued-On': '2026-11-11', 'Demo-Only': 'true'}
@@ -55,12 +58,12 @@ def build():
             pdf.setFillColor(HexColor('#f0f4f5'))
             pdf.roundRect(40, y - 12, width - 80, 33, 3, fill=1, stroke=0)
             pdf.setFillColor(HexColor('#142d38'))
-            pdf.setFont('Helvetica', 11)
+            pdf.setFont('DemoKai', 11)
             pdf.drawString(51, y, f'{label}: {value}')
             y -= 45
-        pdf.setFont('Helvetica-Bold', 12)
+        pdf.setFont('DemoKai', 12)
         pdf.drawString(44, y - 18, 'Scenario note')
-        pdf.setFont('Helvetica', 11)
+        pdf.setFont('DemoKai', 11)
         note = ('Mock name review returned rejected; reviewer must inspect this result.'
                 if status == 'rejected' else
                 'This document reports a different capital amount from the demo application.'
@@ -70,7 +73,7 @@ def build():
         pdf.setStrokeColor(HexColor('#d2dce0'))
         pdf.line(44, 94, width - 44, 94)
         pdf.setFillColor(HexColor('#6b7680'))
-        pdf.setFont('Helvetica', 10)
+        pdf.setFont('DemoKai', 10)
         pdf.drawString(44, 73, 'DEMO ONLY | No signature, seal, attestation or legal approval')
         pdf.drawString(44, 56, 'Generated for software integration testing. Page 1 of 1.')
         pdf.showPage()

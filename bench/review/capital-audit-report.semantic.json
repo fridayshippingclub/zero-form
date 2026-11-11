@@ -2,7 +2,7 @@
   "schema_version": 1,
   "evidence_kind": "external_document_observations",
   "pdf": "capital-audit-report.pdf",
-  "sha256": "b675c02fefee2efaf24d5af56b1591e7e4d2b4cdb8066e9c27127e1b73e14045",
+  "sha256": "4ee1abbdadea29053b7232f8eee019f143d1765ac7bcc768df79237248fdc8c9",
   "document.type": "capital_audit_report",
   "document.demo_only": true,
   "company.legal_name": "大大科技",
@@ -26,7 +26,7 @@
       "source": {
         "page": 1,
         "label": "公司名稱",
-        "machine_label": "Company-Name"
+        "machine_label": "公司名稱"
       },
       "comparison_target": "declared.company.name"
     },
@@ -39,7 +39,7 @@
       "source": {
         "page": 1,
         "label": "資本額",
-        "machine_label": "Capital-TWD"
+        "machine_label": "資本額"
       },
       "comparison_target": "declared.company.capital"
     },
@@ -49,18 +49,17 @@
       "source": {
         "page": 1,
         "label": "查核簽證日期",
-        "machine_label": "Certified-On"
+        "machine_label": "查核簽證日期"
       },
-      "comparison_target": null,
-      "comparison_policy": "Independent certification date; no default equality with application or articles dates."
+      "comparison_target": "declared.company.articles_date",
+      "comparison_policy": "Named demo rule: certification date equals articles date; articles date must be on or before application date. Application date remains a distinct fact."
     },
     {
       "key": "document.demo_only",
       "value": true,
       "source": {
         "page": 1,
-        "label": "示範文件／非正式簽證／不得送件",
-        "machine_label": "Demo-Only"
+        "label": "展示樣張・非正式簽證"
       }
     }
   ],
