@@ -8,6 +8,7 @@ name = "zero-form"
 path = "src/main.rs"
 
 [dependencies]
+tempfile.workspace = true
 zero-form-core = { path = "../zero-form-core" }
 anyhow.workspace = true
 serde_json.workspace = true

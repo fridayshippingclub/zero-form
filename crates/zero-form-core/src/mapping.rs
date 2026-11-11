@@ -150,9 +150,16 @@ pub fn validate(bundle: &DefinitionBundle, s: &Snapshot) -> Result<Vec<Issue>> {
         .should_validate_formats(true)
         .build(&bundle.application.schema)?;
     for error in validator.iter_errors(&data) {
+        let mut location = error.instance_path().to_string();
+        if let jsonschema::error::ValidationErrorKind::Required { property } = error.kind()
+            && let Some(name) = property.as_str()
+        {
+            location.push('/');
+            location.push_str(&name.replace('~', "~0").replace('/', "~1"));
+        }
         issues.push(Issue {
             code: "schema_validation".into(),
-            location: error.instance_path().to_string(),
+            location,
             message: "Application data does not satisfy its registered schema.".into(),
         });
     }

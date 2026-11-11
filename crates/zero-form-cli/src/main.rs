@@ -83,7 +83,8 @@ fn execute(cli: Cli) -> Result<serde_json::Value> {
     Ok(match cli.command {
         Commands::Doctor => doctor(&tools)?,
         Commands::Schema => {
-            serde_json::json!({"definition":zero_form_core::wire_schemas().0,"request":zero_form_core::wire_schemas().1,"fixture_facts":zero_form_core::wire_schemas().2})
+            let (definition, request, fixture_facts) = zero_form_core::wire_schemas();
+            serde_json::json!({"definition":definition,"request":request,"fixture_facts":fixture_facts})
         }
         Commands::Inspect { input } => serde_json::to_value(inspect_template(&input)?)?,
         Commands::CheckDefinition { input } => {
@@ -105,7 +106,14 @@ fn execute(cli: Cli) -> Result<serde_json::Value> {
             if let Some(parent) = out.parent() {
                 std::fs::create_dir_all(parent)?;
             }
-            write_json(&out, &prepared.snapshot)?;
+            let mut temporary = tempfile::NamedTempFile::new_in(
+                out.parent().unwrap_or_else(|| std::path::Path::new(".")),
+            )?;
+            use std::io::Write;
+            temporary.write_all(&serde_json::to_vec_pretty(&prepared.snapshot)?)?;
+            temporary
+                .persist_noclobber(&out)
+                .context("snapshot_already_exists_or_unwritable")?;
             if !prepared.issues.is_empty() {
                 println!("{}", serde_json::to_string(&prepared)?);
                 anyhow::bail!("application_needs_data");
@@ -168,7 +176,10 @@ fn execute(cli: Cli) -> Result<serde_json::Value> {
             }
             let parent = out.parent().context("output_parent_required")?;
             std::fs::create_dir_all(parent)?;
-            let candidate = parent.join(format!(".{}-candidate", prepared.snapshot.request.id));
+            let work = tempfile::Builder::new()
+                .prefix(".run-")
+                .tempdir_in(parent)?;
+            let candidate = work.path().join("candidate");
             render_application(&bundle, &prepared.snapshot, &assets, &candidate, &tools)?;
             publish_application(
                 &bundle,

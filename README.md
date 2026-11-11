@@ -1,28 +1,153 @@
-# AXD — Verified Semantic Application Workflow
+# AXD — Zero Form Semantic Core
 
-Hackathon PoC: verified semantic profile → zero-refill application assembly → confirmed immutable snapshot → multi-document generation → government-side verification and decision.
+Compile authorized semantic facts into a frozen application snapshot and a verified multi-document PDF package. This repository implements the Rust library and native CLI for the hackathon. The frontend and HTTP adapter are separate work; browsers do not execute Rust/Typst/Poppler directly.
 
-## Core engine — WIP hackathon milestone
+**Branch:** `codex/core-engine-v0.1`. The first remotely backed-up core milestone is `9aac8dc`, based on initial `main` commit `5201c59`; use the latest commit on this branch for the handoff below. No release is tagged.
 
-The Rust core now compiles fixture-authorized semantic facts into an immutable application snapshot, validates application rules, maps conditional/repeated documents, and publishes a verified PDF package atomically.
+## Run the demo
 
-The demo produces five PDFs (six pages), including three populated fields on a public Taiwan company application form. Other templates and all filled values are synthetic. This is not a complete government filing.
+Requirements: Rust 1.97.1 (selected by `rust-toolchain.toml`), [Typst 0.15.1](https://github.com/typst/typst/releases/tag/v0.15.1), and Poppler's `pdftoppm` / `pdftotext`. Poppler 26.05.0 is the tested baseline; exact runtime versions are recorded in each validation report. Python/ReportLab is only needed to rebuild synthetic source fixtures, not to run the engine.
 
-- Rust 1.97.1 / edition 2024; `zero-form-core` library and `zero-form` CLI.
-- Typst 0.15.1 generates overlays; the extracted AXD Form XObject compositor preserves existing page content.
-- Poppler 26.05.0 independently verifies field text and protected pixels at 144/288 DPI.
-- Host integration is through `FactSource`; the local adapter explicitly uses `fixture_only` trust. No real MFA, profile database, UI, or submission API is implemented.
+Put these executables on PATH, place them in the ignored `.tools/bin/` directory, or set `ZERO_FORM_TYPST`, `ZERO_FORM_PDFTOPPM`, and `ZERO_FORM_PDFTOTEXT` to executable paths.
 
 ```sh
-cargo test --workspace --locked
+./scripts/demo.sh
+# A subsequent run needs a new output destination:
+./scripts/demo.sh output/demo-next
+```
+
+The default output is `output/hackathon/`. Existing outputs are never overwritten. The demo date is deliberately fixed at `2026-11-11`; fixture grants expire on `2026-12-31`. This is fixture replay, not a live identity check.
+
+The demo creates five PDFs / six pages:
+
+1. Synthetic application overview, including separate representative and contact names.
+2. An original public Taiwan company application form with three fields populated.
+3. A conditional synthetic certificate request, with an uppercase company-name projection.
+4. A synthetic North Office branch attachment.
+5. A synthetic South Office branch attachment.
+
+All entered data is fictional. The official form is only partially populated; this is **not a filing-ready government application**. Sources, asset hashes and font licensing are under `assets/`.
+
+## Frontend integration contract
+
+A trusted host invokes the native library/CLI. No HTTP adapter is currently provided. UI state, real authentication, MFA, persistent profile storage and government submission are not part of this core.
+
+For a local build:
+
+```sh
+cargo build --workspace --locked
+./target/debug/zero-form --help
+./target/debug/zero-form schema > input-schemas.json
+```
+
+`schema` emits a JSON object with `definition`, `request`, and `fixture_facts` schemas generated directly from Rust types. Each is a complete schema with its own `$defs`; extract the desired property before validating an input. These describe input shape. Runtime definition checks and application rules still apply. Output types are owned by `crates/zero-form-core/src/contracts.rs` and `package.rs`, with concrete examples produced by the demo.
+
+| Input | Example / responsibility |
+| --- | --- |
+| Application definition | `bench/demo/definition.json`: version, effective dates, closed semantic schema, role/predicate selectors, rules, document mappings and hash-pinned physical templates |
+| Application request | `bench/demo/request.json`: ID, application type, scope, effective date, and role-to-entity IDs |
+| Authorized fixture data | `bench/demo/facts.json`: one read revision, grant, allowed IDs, approved definition hash, versioned facts and representative relationship |
+| Independent expected answers | `bench/demo/expected.json`: expected document IDs and fictional identities |
+| Asset root | Repository root (`--assets .`); template/font paths resolve inside it and must match registered hashes |
+
+Semantic keys such as `company.name` are literal keys in a flat JSON object, not nested paths. They resolve through the definition's explicit role and predicate; the representative and contact can be different people. Fact values are checked against `application.schema`. Templates use points, top-left origin, `[x, y, width, height]` rectangles.
+
+### Prepare and handle missing data
+
+```sh
+mkdir -p output
+./target/debug/zero-form prepare \
+  --definition bench/demo/definition.json \
+  --request bench/demo/request.json \
+  --fixture-facts bench/demo/facts.json \
+  --now 2026-11-11 --out output/prepared.snapshot.json
+```
+
+Success exits `0`, writes the snapshot, and emits `{ "status": "prepared", "snapshot_hash": "...", "path": "...", "trust_mode": "fixture_only" }` on stdout.
+
+If more data is needed, `prepare` still saves the diagnostic snapshot and exits `1`. Stdout contains a `Preparation` object:
+
+```json
+{
+  "snapshot": { "fields": { "contact.email": { "state": "missing" } } },
+  "issues": [
+    {
+      "code": "schema_validation",
+      "location": "/contact.email",
+      "message": "Application data does not satisfy its registered schema."
+    }
+  ]
+}
+```
+
+This is an abbreviated example; the actual snapshot also contains request, hashes, selected facts, relationships and read/grant evidence. States are `known` (with `fact`), `missing`, `unknown`, `conflict` (with fact IDs), and `not_applicable`. JSON Schema issue locations are JSON Pointers; relationship/business-rule locations are rule IDs, conflict locations are semantic keys, and mapping issues identify `documents` with a specific reason. Unknown conditions block affected documents. An unchecked boolean is explicitly `false`.
+
+On this missing-data result, stderr contains an error with code `application_needs_data`. Do not render or publish until issues are resolved and a **new** snapshot is prepared. Snapshot files are never overwritten. A frontend should display the field/rule issue and request a host-authorized correction, not edit snapshot JSON or its hash.
+
+### Render, verify and publish separately
+
+```sh
+./target/debug/zero-form render \
+  --definition bench/demo/definition.json --snapshot output/prepared.snapshot.json \
+  --assets . --candidate output/candidate
+
+./target/debug/zero-form verify \
+  --definition bench/demo/definition.json --snapshot output/prepared.snapshot.json \
+  --assets . --candidate output/candidate
+
+./target/debug/zero-form publish \
+  --definition bench/demo/definition.json --snapshot output/prepared.snapshot.json \
+  --fixture-facts bench/demo/facts.json --now 2026-11-11 \
+  --assets . --candidate output/candidate --out output/published
+```
+
+Use the executable paths/environment above when invoking these directly. `render` creates an unverified candidate suitable for inspection. `verify` returns a report on stdout. `publish` reauthorizes, copies to private staging, verifies that exact copy and atomically exposes the complete output; it does not trust a previous report. Published PDFs retain the candidate bytes. `run` combines prepare/render/publish using the same library functions; `scripts/demo.sh` shows the complete invocation.
+
+Other commands: `doctor` checks tools, `inspect <pdf>` reports supported static page geometry, and `check-definition <json>` validates a definition and prints its canonical hash. Hashing uses recursively sorted JSON object keys; the serialized Rust contract includes its defaults. Use the engine-generated hash when approving a fixture definition.
+
+### Read a successful package
+
+| Path | Consumer meaning |
+| --- | --- |
+| `manifest.json` | `state: verified_package`, application ID, trust mode, snapshot/definition hashes, omitted document IDs, artifacts with SHA-256 and `submission_document` / `internal_evidence` role |
+| `application.data.json` | Flat resolved semantic values for a host or future API adapter |
+| `application.snapshot.json` | Immutable request, roles, selected facts/relationships, revisions, provenance and grant/read references |
+| `provenance.json` | Planned documents and writes; each write has source field/fact/revision, source reference, transform, physical target and displayed value |
+| `definition.json` | The exact registered definition used for this application |
+| `validation.json` | Passed PDF checks, tool versions, document hashes, page/field counts, DPIs and protected-pixel changes |
+| `documents/*.pdf` | The only artifacts marked as submission documents; suitable for host-served preview/download |
+
+The frontend should use manifest artifact roles, not assume every file is a submission document. Internal evidence can contain personal data; a production host must apply authorization when serving it. A manifest/hash proves neither identity nor legal eligibility.
+
+Command failures return exit `1` and one JSON object on stderr:
+
+```json
+{"status":"error","code":"output_already_exists","message":"output_already_exists"}
+```
+
+Most failures have no stdout. `prepare` / `run` needing data also emit the diagnostic `Preparation` on stdout. Argument/usage errors come from Clap and exit `2`; they are not engine JSON errors. Success JSON varies by command as described above. Keep stdout and stderr separate, and treat `message` as diagnostic text; not every dependency-originated `code` is a stable enum yet.
+
+## Core ownership and old-core extraction
+
+`contracts` defines types; `definition` validates bundles and pinned assets; `facts` resolves roles and snapshots; `mapping` owns semantic rules, transforms and document composition; `pdf` / `composition` handle native rendering; `verification` independently reads PDFs; `package` owns staging and publication. The CLI calls these modules without a separate rule implementation.
+
+`composition.rs` adapts the old AXD prototype's `src/forms.rs` Form XObject compositor. Font placement also reuses its baseline-placement approach. The new implementation isolates resources, preserves source catalogs/content, and rejects unsupported forms instead of stripping their structures. It has no runtime dependency on the old repository. The new contracts, semantic rules, authorization boundary and tests live here.
+
+A production host implements `FactSource::read` and `FactSource::authorize_publish`. They must enforce authenticated scope, approved definitions, a consistent read and current permission to use the complete snapshot. Read access, representative authority and identity-update events are separate concepts. The fixture adapter authenticates its complete current read version; it intentionally rejects publication of an older snapshot after the fixture version changes. Production history/retained revisions require a host adapter.
+
+## Verification and remaining work
+
+```sh
+cargo fmt --all --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
-cargo run --locked -p zero-form-cli -- --help
+cargo test --workspace --locked
+./scripts/test-pdf.sh
 ```
 
-Set `ZERO_FORM_TYPST`, `ZERO_FORM_PDFTOPPM`, and `ZERO_FORM_PDFTOTEXT` if these tools are not on PATH. Run the external-tool tests explicitly:
+The external PDF tests are explicitly ignored by the ordinary test command, so run the last command when checking the complete pipeline. All tests use isolated temporary directories and fictional data. Rebuilding synthetic input PDFs is optional: `python3 scripts/create-demo.py` requires ReportLab and invokes the CLI to recalculate the definition approval hash.
 
-```sh
-cargo test --locked -p zero-form-core --test pdf_pipeline -- --ignored
-```
+Verified milestone evidence: five documents / six pages, exact role/value readback, conditional and repeated mapping, selected/unselected checkboxes, font coverage/fit, zero changed protected pixels at 144 and 288 DPI, and visual inspection of all demo pages. Tests also cover missing/revoked data, representative authority, conflicts, unknown conditions, snapshot forgery, exact integer sums, template drift, overflow, PDF tampering and failed publication leaving no output.
 
-Remaining before the local handoff: portable demo scripts, English implementation prompt, and final integration review. Production authorization/history adapters and comprehensive government form mappings remain outside this milestone.
+**No unresolved blocker for the fixture core demo.** The next integration milestone is a host adapter that serves schema, prepare results and authorized preview/package downloads to the separately owned frontend, while keeping fixture mode visibly labeled. That adapter is not implemented here. For actual filings, a separate milestone must register complete reviewed mappings/rules for a selected application type; the demo's three populated official fields do not constitute that coverage.
+
+Current limits: static, unrotated PDFs with blank targets; one pinned regular font per template; explicit single-line text and square boolean marks; repeated whole documents only. No AcroForm/XFA, encrypted/signed files, annotations, placeholder replacement, OCR, handwritten signatures, table-row expansion, profile writeback, MFA provider or government API. There is no global application registry: overwrite/locking is per output path. Pixel/text checks cover the documented assertions; they are not a hostile-PDF security sandbox, legal approval or cryptographic attestation. Tested locally on Apple Silicon; other platforms need their external-tool tests run.
