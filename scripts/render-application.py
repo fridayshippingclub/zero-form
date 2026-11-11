@@ -69,9 +69,9 @@ def official_background(form, output, snapshot_hash):
         mark.drawCentredString(width/2, 13, '展示樣張・未簽署・不得送件 | GCIS ' + OFFICIAL_IDS[form['id']])
         mark.setFont('Courier', 6); mark.drawCentredString(width/2, 5, 'snapshot sha256:' + snapshot_hash)
         mark.save(); buffer.seek(0)
+        page = writer.add_page(page)  # attach first: pypdf>=7 only merges pages owned by a writer
         page.merge_page(PdfReader(buffer).pages[0])
         if '/Annots' in page and not page['/Annots']: del page['/Annots']
-        writer.add_page(page)
     if extra:
         buffer = io.BytesIO(); c = canvas.Canvas(buffer, pagesize=(595.32,841.92), invariant=1)
         c.setFont('DemoKai',18);c.drawCentredString(297.66,789,form['name'] + ' — 已確認資料附頁')
