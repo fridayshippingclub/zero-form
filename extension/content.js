@@ -134,7 +134,7 @@
       </style>
       <div class="zf card">
         <span class="mark">0</span>
-        <div class="text"><b>Skip the paperwork</b> — answer 5 questions once, confirm with a text code, and Zero Form prepares all 7 forms.</div>
+        <div class="text"><b>Skip the paperwork</b> — answer 3 questions once, confirm with a text code, and Zero Form prepares all 7 forms.</div>
         <button class="start">Start</button>
       </div>
     `;

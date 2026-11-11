@@ -98,6 +98,12 @@ h1{text-align:center;font-size:26px;letter-spacing:4px;margin:0 0 32px}.s{line-h
 <div class="page">${docBody(form, snap.data)}<div class="f">Zero Form · ${snap.applicationId} · snapshot v${snap.v}<br>snapshot sha256:${snap.hash}<br>document sha256:${snap.docs[form.id]}</div></div>`;
 
 // ---------- verification (officer side) ----------
+const PDFTOTEXT = process.env.ZERO_FORM_PDFTOTEXT || (fs.existsSync(path.join(ROOT, '.tools/bin/pdftotext')) ? path.join(ROOT, '.tools/bin/pdftotext') : 'pdftotext');
+const textCache = new Map(); // path → extracted text (bytes are digest-checked before use)
+async function pdfText(file) {
+  if (!textCache.has(file)) textCache.set(file, (await execute(PDFTOTEXT, ['-enc', 'UTF-8', file, '-'], { timeout: 15000, maxBuffer: 4 * 1024 * 1024 })).stdout);
+  return textCache.get(file);
+}
 async function verifySnapshot(snap) {
   const body = { v: snap.v, prev: snap.prev, schema: snap.schema, applicationId: snap.applicationId, data: snap.data, provenance: snap.provenance, ...(snap.roles ? { roles: snap.roles } : {}) };
   const hash = sha256(canonical(body)).toString('hex');
@@ -106,7 +112,13 @@ async function verifySnapshot(snap) {
   const integrity = hash === snap.hash && sigOk;
   const c = snap.confirmation;
   const identity = sigOk && c.hash === hash && c.to === db.profile['person.phone'].value && db.profile['person.phone'].verified;
-  const docs = FORMS.filter((f) => !f.onFile).map((f) => ({ id: f.id, name: f.name, ok: !!snap.pdfs?.[f.id] && fs.existsSync(snap.pdfs[f.id].path) && sha256(fs.readFileSync(snap.pdfs[f.id].path)).toString('hex') === snap.docs[f.id] }));
+  // A document is consistent when its bytes match the sealed digest AND its text still shows every value of the current snapshot.
+  const docs = await Promise.all(FORMS.filter((f) => !f.onFile).map(async (f) => {
+    const file = snap.pdfs?.[f.id]?.path;
+    if (!file || !fs.existsSync(file) || sha256(fs.readFileSync(file)).toString('hex') !== snap.docs[f.id]) return { id: f.id, name: f.name, ok: false };
+    const text = (await pdfText(file).catch(() => '')).replace(/\s+/g, '');
+    return { id: f.id, name: f.name, ok: f.fields.every((k) => text.includes(String(snap.data[k] ?? '').replace(/\s+/g, ''))) };
+  }));
   const res = NAME_RESERVATIONS['113045678'];
   const evidence = res['company.name'] === snap.data['company.name'];
   const hh = HOUSEHOLD_REGISTRY[snap.data['person.nationalId']];
@@ -278,7 +290,7 @@ app.get('/doc/:v/:form', (q, r) => {
   const file = snap.pdfs?.[form.id];
   if (!file || !fs.existsSync(file.path)) return r.status(409).json({ error: 'Generate a new signed snapshot to create native PDFs.' });
   r.set('Content-Disposition', `${q.query.download === '1' ? 'attachment' : 'inline'}; filename="${form.id}.pdf"`);
-  r.type('pdf').sendFile(path.resolve(file.path));
+  r.type('pdf').sendFile(path.resolve(file.path), { dotfiles: 'allow' });
 });
 app.get('/api/package/:v', (q, r) => {
   const snap = db.app?.snapshots.find((s) => s.v === Number(q.params.v));
@@ -327,7 +339,7 @@ app.post('/api/attachments', express.raw({ type: 'application/pdf', limit: '10mb
 app.get('/api/attachments/:id', (q, r) => {
   const attachment = Object.values(db.app?.attachments || {}).find(x => x.id === q.params.id);
   if (!attachment) return r.status(404).end();
-  r.type('pdf').sendFile(path.resolve(attachment.path));
+  r.type('pdf').sendFile(path.resolve(attachment.path), { dotfiles: 'allow' });
 });
 app.get('/api/mock-attachments/:kind', async (q, r) => {
   const snap = db.app?.snapshots.at(-1), kind = q.params.kind;
@@ -336,7 +348,7 @@ app.get('/api/mock-attachments/:kind', async (q, r) => {
   const input = path.join(dir, 'snapshot.json'), output = path.join(dir, kind + '.pdf'); fs.writeFileSync(input, JSON.stringify(snap));
   try {
     await execute('python3', ['scripts/render-mock-evidence.py','--input',input,'--kind',kind,'--out',output], { cwd: ROOT, timeout: 30000 });
-    r.type('pdf').set('Content-Disposition', `attachment; filename="MOCK-${kind}.pdf"`).sendFile(output);
+    r.type('pdf').set('Content-Disposition', `attachment; filename="MOCK-${kind}.pdf"`).sendFile(output, { dotfiles: 'allow' });
   } catch(error) { r.status(502).json({ error: 'Mock evidence generation unavailable.', detail: error.stderr?.slice(-500) }); }
 });
 

@@ -50,7 +50,7 @@ OFFICIAL_SLOTS = {
                'person.phone': (1,400,137,138,16)},
 }
 
-def official_background(form, output):
+def official_background(form, output, snapshot_hash):
     source = ROOT / 'assets/official' / (OFFICIAL_IDS[form['id']] + '.pdf')
     reader = PdfReader(source)
     writer = PdfWriter()
@@ -67,6 +67,7 @@ def official_background(form, output):
         mark = canvas.Canvas(buffer, pagesize=(width, height), invariant=1)
         mark.setFont('DemoKai', 8)
         mark.drawCentredString(width/2, 13, '展示樣張・未簽署・不得送件 | GCIS ' + OFFICIAL_IDS[form['id']])
+        mark.setFont('Courier', 6); mark.drawCentredString(width/2, 5, 'snapshot sha256:' + snapshot_hash)
         mark.save(); buffer.seek(0)
         page.merge_page(PdfReader(buffer).pages[0])
         if '/Annots' in page and not page['/Annots']: del page['/Annots']
@@ -83,6 +84,7 @@ def official_background(form, output):
             c.setStrokeColorRGB(.6,.6,.6);c.line(42,841.92-y-26,553,841.92-y-26)
             placements[index]=(len(reader.pages)+1,43,y,505,23)
         c.setFont('DemoKai',8);c.drawCentredString(297.66,25,'展示樣張・未簽署・不得送件 | 語意資料附頁')
+        c.setFont('Courier',6);c.drawCentredString(297.66,16,'snapshot sha256:'+snapshot_hash)
         c.save();buffer.seek(0);writer.add_page(PdfReader(buffer).pages[0])
     with output.open('wb') as stream:writer.write(stream)
     return placements
@@ -117,7 +119,7 @@ def render(source, destination):
             if not 1 <= len(form['fields']) <= 12:
                 raise ValueError('invalid_field_count')
             path=work/(form['id']+'.pdf')
-            placements=official_background(form,path)
+            placements=official_background(form,path,source['hash'])
             targets={};bindings={}
             for i,field in enumerate(form['fields']):
                 key=field['key']; value=data.get(key)
