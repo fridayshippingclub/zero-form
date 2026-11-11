@@ -44,6 +44,8 @@ flowchart LR
 
 AI agents can draft answers through `GET /api/agent/schema` and `POST /api/agent/draft`. Only the human can confirm and sign. See [Agent API and self-review setup](docs/AGENT_API.md) for endpoints and opt-in Haiku configuration; missing credentials never produce a simulated LLM success.
 
+Use the [Zero Form Agent Skill](.agents/skills/zero-form/SKILL.md) to discover a workflow's semantic schema, trace facts across forms, draft authorized answers and review the sources behind each check.
+
 ## Demo
 
 [`demo/zero-form-all-forms.webm`](demo/zero-form-all-forms.webm) is the current all-forms run: agency setup over all 7 official forms (Claude reads them in parallel; 36 fields → 11 facts → 3 to type), the applicant flow, and a contact sheet of every generated official PDF (`ZF_APP=http://localhost:<port> npm run record` if 5173 is taken).

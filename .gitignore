@@ -12,4 +12,7 @@ __pycache__/
 
 # GStack runtime and machine-specific generated registrations
 /.gstack-runtime/
-/.agents/
+/.agents/*
+!/.agents/skills/
+/.agents/skills/*
+!/.agents/skills/zero-form/
