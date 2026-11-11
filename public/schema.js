@@ -8,8 +8,6 @@ export const FIELDS = {
   'company.address':    { label: '公司所在地', en: 'Registered address', type: 'address' },
   'company.capital':    { label: '資本總額', en: 'Capital (NT$)', type: 'money' },
   'company.items':      { label: '所營事業', en: 'Business items', type: 'text' },
-  'director2.name':     { label: '董事姓名', en: 'Second director', type: 'text' },
-  'director2.nationalId': { label: '董事身分證字號', en: 'Director national ID', type: 'nationalId' },
   'owner.name':         { label: '建物所有權人', en: 'Building owner', type: 'text' },
   'app.date':           { label: '申請日期', en: 'Application date', type: 'date' },
 };
@@ -20,15 +18,15 @@ export const FORMS = [
   { id: 'app', name: '公司設立登記申請書', en: 'Application letter',
     fields: ['company.name', 'company.address', 'company.capital', 'person.name', 'person.phone', 'app.date'] },
   { id: 't70126', name: '章程', en: 'Articles of incorporation',
-    fields: ['company.name', 'company.address', 'company.capital', 'company.items', 'person.name', 'director2.name', 'app.date'] },
+    fields: ['company.name', 'company.address', 'company.capital', 'company.items', 'person.name', 'app.date'] },
   { id: 't70130', name: '股東同意書', en: 'Shareholder consent',
-    fields: ['company.name', 'person.name', 'director2.name', 'app.date'] },
+    fields: ['company.name', 'person.name', 'app.date'] },
   { id: 't70132', name: '董事願任同意書', en: 'Director consent',
-    fields: ['company.name', 'director2.name', 'app.date'] },
+    fields: ['company.name', 'person.name', 'app.date'] },
   { id: 't70124', name: '建物所有權人同意書', en: 'Building owner consent',
     fields: ['company.name', 'company.address', 'owner.name', 'app.date'] },
   { id: 't70135', name: '設立登記表', en: 'Registration form',
-    fields: ['company.name', 'company.address', 'company.capital', 'company.items', 'person.name', 'person.nationalId', 'person.address', 'person.phone', 'director2.name', 'director2.nationalId', 'app.date'] },
+    fields: ['company.name', 'company.address', 'company.capital', 'company.items', 'person.name', 'person.nationalId', 'person.address', 'person.phone', 'app.date'] },
 ];
 
 export const usedIn = (key) => FORMS.filter((f) => f.fields.includes(key)).length;

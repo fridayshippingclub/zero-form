@@ -7,12 +7,11 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<
 const ASK = {
   'company.address': { q: 'Where will the company be registered?', ph: '臺北市大安區復興南路一段 390 號 5 樓' },
   'company.capital': { q: 'How much capital are you starting with?', ph: '1,000,000', pre: 'NT$', num: true },
-  'director2.name': { q: 'Who is the second director?', ph: '吳小明' },
-  'director2.nationalId': { q: 'What is their national ID number?', ph: 'F123456784', upper: true },
   'owner.name': { q: 'Who owns the building at that address?', ph: '林美華', hint: "We'll prepare their consent letter for them." },
 };
 const ORDER = Object.keys(ASK);
 const DOCS = FORMS.filter((f) => !f.onFile);
+const EVIDENCE = { capital_verification: 'Accountant capital verification', address_approval: 'Address approval', name_approval: 'Company-name approval' };
 const fmt = (k, v) => (k === 'company.capital' ? `NT$ ${money(v)}` : k === 'company.name' ? `${v}有限公司` : k === 'app.date' ? rocDate(v) : v);
 
 let S = null;                       // server state (source of truth)
@@ -38,7 +37,7 @@ function render() {
   const pct = s === 'q' ? 15 + (75 * ui.i) / Math.max(ui.qs.length, 1) : progress[s];
   $('progress').style.width = pct + '%';
   $('app').innerHTML = `<section class="screen">${VIEWS[s]()}</section>`;
-  const inp = document.querySelector('input'); if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+  const inp = document.getElementById('qi'); if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
 }
 
 const source = (f) => !f ? '' : f.source === 'Applicant' ? '<span class="tag you">You</span>'
@@ -110,7 +109,7 @@ const VIEWS = {
     <h2>Check once, sign once.</h2>
     <p class="lead">Signing locks this exact version. All ${DOCS.length} documents are generated from it — nothing can change without your confirmation.</p>
     ${group('Company', ['company.name', 'company.address', 'company.capital', 'company.items'])}
-    ${group('People', ['person.name', 'person.nationalId', 'director2.name', 'director2.nationalId', 'owner.name'])}
+    ${group('People', ['person.name', 'person.nationalId', 'owner.name'])}
     <div class="err">${esc(ui.err)}</div>
     <button class="btn primary blue" data-go="sign" ${ui.busy ? 'disabled' : ''}>${ui.busy ? '<i class="spin"></i>' : ''}Sign & submit <span style="opacity:.6">↵</span></button>
     <div class="note">We'll text a one-time code to ${esc(S.phone)}. It signs a SHA-256 fingerprint of everything above.</div>`;
@@ -142,6 +141,18 @@ const VIEWS = {
       <div class="s">${sn.prev ? `Replaces v${sn.v - 1} · ` : ''}Confirmed by SMS code to ${esc(sn.to)} · ${new Date(sn.signedAt).toLocaleString()}</div></div>
     <div class="group"><h3>${DOCS.length} documents generated</h3><div class="docs">${DOCS.map((f) => `
       <a href="/doc/${sn.v}/${f.id}" target="_blank"><div class="ic">📄</div><div><div class="n zh">${f.name}</div><div class="e">${f.en}</div></div><span class="open">Open ↗</span></a>`).join('')}</div></div>
+    <div class="group"><h3>Supporting evidence · demo PDFs</h3>
+      <p class="lead" style="font-size:14px;margin-bottom:12px">Download the marked sample documents, then upload them for the officer’s cross-document checks.</p>
+      <div class="facts">${Object.entries(EVIDENCE).map(([kind, title]) => {
+        const attachment = (a.attachments || []).find((item) => item.kind === kind);
+        return `<div class="fact"><div class="grow"><label class="k" for="evidence-${kind}">${title}</label>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin:7px 0"><a class="edit" href="/api/mock-attachments/${kind}" target="_blank" rel="noopener">Download demo PDF ↗</a>${attachment ? `<a class="edit" href="${esc(attachment.url)}" target="_blank" rel="noopener">Uploaded PDF ✓</a>` : ''}</div>
+          <input id="evidence-${kind}" data-upload="${kind}" type="file" accept=".pdf,application/pdf" aria-label="Upload ${title}" style="font:12px Inter,sans-serif;max-width:100%" ${ui.busy || a.status === 'approved' ? 'disabled' : ''}>
+        </div></div>`;
+      }).join('')}</div>
+      <div class="note" style="margin-top:10px">Fictional evidence only · up to 10 MB per PDF · ${ui.busy ? 'Uploading and checking…' : 'Select a PDF to upload.'}</div>
+      <div class="err" role="alert">${esc(ui.err)}</div>
+    </div>
     <div class="callout blue"><b>Next time: 0 questions</b><span>Your company details are saved to your verified profile for future forms.</span></div>`;
   },
 };
@@ -205,6 +216,20 @@ document.addEventListener('click', (e) => {
   if (ed) ACTIONS.edit(ed);
 });
 document.addEventListener('submit', (e) => { e.preventDefault(); ui.step === 'otp' ? ACTIONS.verify() : ACTIONS.answer(); });
+document.addEventListener('change', async (event) => {
+  const kind = event.target.dataset.upload;
+  if (!kind || ui.busy || !event.target.files?.length) return;
+  const file = event.target.files[0];
+  if (file.size > 10 * 1024 * 1024) { ui.err = 'Choose a PDF no larger than 10 MB.'; return render(); }
+  ui.busy = true; ui.err = ''; render();
+  try {
+    const response = await fetch(`/api/attachments?kind=${encodeURIComponent(kind)}`, { method: 'POST', headers: { 'content-type': 'application/pdf' }, body: file });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Upload failed. Please try again.');
+    S = await api('/api/state');
+  } catch (error) { ui.err = error.message; }
+  finally { ui.busy = false; render(); }
+});
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Enter' || e.target.tagName === 'INPUT' || ui.busy) return;
   const btn = document.querySelector('.btn.primary'); if (btn) btn.click();

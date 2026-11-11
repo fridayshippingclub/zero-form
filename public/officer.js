@@ -5,7 +5,7 @@ import { FORMS, money, rocDate } from '/schema.js';
 const $root = document.getElementById('root');
 const $live = document.getElementById('live');
 const MOCK = new URLSearchParams(location.search).get('mock');
-const ORDER = ['company.name', 'company.items', 'company.address', 'company.capital', 'person.name', 'person.nationalId', 'person.phone', 'person.address', 'director2.name', 'director2.nationalId', 'owner.name', 'app.date'];
+const ORDER = ['company.name', 'company.items', 'company.address', 'company.capital', 'person.name', 'person.nationalId', 'person.phone', 'person.address', 'owner.name', 'app.date'];
 const STATUS = { submitted: 'Submitted', revision: 'Change requested', approved: 'Approved', rejected: 'Rejected', draft: 'Draft' };
 const TOTAL_FORMS = FORMS.length;
 
@@ -205,14 +205,14 @@ function mockInit() {
   const data = {
     'company.name': '大大科技', 'company.items': 'F119010 電子材料批發業、F113050 事務性機器設備批發業', 'company.address': '臺北市信義區松仁路 100 號 12 樓',
     'company.capital': '1000000', 'person.name': '陳大文', 'person.nationalId': 'A123456789', 'person.phone': '0912-345-678', 'person.address': '臺北市大安區仁愛路四段 1 號',
-    'director2.name': '林小美', 'director2.nationalId': 'B223456781', 'owner.name': '王建國', 'app.date': '2026-11-11',
+    'owner.name': '王建國', 'app.date': '2026-11-11',
   };
   const src = (s, v = true) => ({ source: s, verified: v });
   const provenance = {
     'company.name': src('Name reservation 預查 #113045678'), 'company.items': src('Name reservation 預查 #113045678'), 'company.address': src('Applicant', false),
     'company.capital': src('Applicant', false), 'person.name': src('MOI identity'), 'person.nationalId': src('MOI identity'),
     'person.phone': src('Verified by SMS'), 'person.address': src('Household registration'), 'director2.name': src('Applicant', false),
-    'director2.nationalId': src('Applicant', false), 'owner.name': src('Applicant', false), 'app.date': src('System'),
+    'owner.name': src('Applicant', false), 'app.date': src('System'),
   };
   const FIELDS_MOCK = {}; // filled lazily from schema module
   const v1 = 'a3f19c04e2b7d8155c0e6f9a1b2c3d4e5f60718293a4b5c6d7e8f9012ab4c9e1';
