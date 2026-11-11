@@ -17,6 +17,8 @@ const DOCS = FORMS.filter((f) => !f.onFile);
 const N_FORMS = FORMS.length, N_GEN = DOCS.length, N_FILE = N_FORMS - N_GEN, N_Q = ORDER.length;
 const EVIDENCE = { capital_verification: ['會計師驗資證明', 'Capital audit report'], address_approval: ['地址預查核准函', 'Address precheck'], name_approval: ['名稱預查核准函', 'Name reservation'] };
 const KINDS = Object.keys(EVIDENCE);
+// Marked sample PDFs are a rehearsal aid: only offered with ?demo=1 (the extension drawer opens with it).
+const DEMO_SAMPLES = new URLSearchParams(location.search).get('demo') === '1';
 const GOV_SOURCE = /MOI|Household|SMS|Name reservation|預查/;
 const fmt = (k, v) => (k === 'company.capital' ? `NT$ ${money(v)}` : k === 'company.name' ? `${v}有限公司` : FIELDS[k]?.type === 'date' ? rocDate(v) : v);
 
@@ -118,6 +120,7 @@ function paintCode() {
 // ---------- evidence ----------
 const attachmentFor = (kind) => (S.app.attachments || []).find((item) => item.kind === kind);
 const uploadedCount = () => KINDS.filter(attachmentFor).length;
+const missingKinds = () => KINDS.filter((kind) => !attachmentFor(kind));
 async function uploadFile(kind, file) {
   if (file.size > 10 * 1024 * 1024) { ui.err = t('請選擇 10 MB 以下的 PDF。', 'Choose a PDF up to 10 MB.'); return render(); }
   const response = await fetch(`/api/attachments?kind=${encodeURIComponent(kind)}`, { method: 'POST', headers: { 'content-type': 'application/pdf' }, body: file });
@@ -136,7 +139,7 @@ function evidenceTiles() {
   const a = S.app, n = uploadedCount(), locked = ui.busy || a.status === 'approved';
   return `<div class="group evidence">
     <div class="ghead"><h3>${t('佐證文件', 'Evidence')} <span class="cnt ${n === KINDS.length ? 'ok' : ''}">${n}/${KINDS.length}</span></h3>
-      <button class="btn outline sm" data-go="demoEvidence" ${locked ? 'disabled' : ''}>${t('使用示範文件', 'Use demo samples')}</button></div>
+      ${DEMO_SAMPLES && ['draft', 'revision'].includes(a.status) && n < KINDS.length ? `<button class="btn outline sm" data-go="loadDemoEvidence" ${locked ? 'disabled' : ''}>${t('使用示範文件', 'Use demo samples')}</button>` : ''}</div>
     <div class="tiles">${KINDS.map((kind) => {
       const title = t(...EVIDENCE[kind]), att = attachmentFor(kind), busy = ui.uploading === kind;
       return `<label class="tile ${att ? 'ok' : ''} ${busy ? 'busy' : ''}" for="evidence-${kind}" data-drop="${kind}">
@@ -392,8 +395,9 @@ const ACTIONS = {
   },
   edit(k) { ui.live = undefined; ui.qs = ui.qs.includes(k) ? ui.qs : ORDER; ui.i = ui.qs.indexOf(k); ui.step = 'q'; ui.returnTo = 'review'; render(); },
   fix() { ui.live = undefined; ui.qs = [S.app.reopen]; ui.i = 0; ui.step = 'q'; render(); },
-  demoEvidence() {
-    return withUpload(KINDS, async (kind) => {
+  loadDemoEvidence() {
+    if (!DEMO_SAMPLES || !['draft', 'revision'].includes(S.app.status)) return;
+    return withUpload(missingKinds(), async (kind) => {
       const r = await fetch(`/api/mock-attachments/${kind}`);
       if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || t('無法取得示範文件。', 'Demo sample unavailable.'));
       return r.blob();
@@ -418,7 +422,7 @@ document.addEventListener('click', (e) => {
   const go = e.target.closest('[data-go]')?.dataset.go;
   const ed = e.target.closest('[data-edit]')?.dataset.edit;
   if (go && !ui.busy) { if (e.target.closest('summary')) e.preventDefault(); ACTIONS[go](); }
-  if (ed) ACTIONS.edit(ed);
+  if (ed && !ui.busy) ACTIONS.edit(ed);
 });
 document.addEventListener('toggle', (e) => { if (e.target.classList?.contains('factsum')) ui.factsOpen = e.target.open; }, true);
 document.addEventListener('submit', (e) => { e.preventDefault(); ui.step === 'otp' ? ACTIONS.verify() : ACTIONS.answer(); });

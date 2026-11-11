@@ -5,7 +5,7 @@
   if (window.__zeroFormInjected) return;
   window.__zeroFormInjected = true;
 
-  const APP_URL = 'http://localhost:5173/?embed=1';
+  const APP_URL = 'http://localhost:5173/?embed=1&demo=1';
   const FONT = `"Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`;
   // Same glyph as public/logo-mark.svg.
   const GLYPH = 'M31 12C21.6 12 16 18.4 16 28v8c0 10 5.7 16 16 16s16-6 16-16V25L35 12h-4Zm0 8c-4.7 0-7 3-7 8v8c0 5.5 2.5 8 8 8s8-2.5 8-8v-8l-8-8h-1Z';
