@@ -4605,6 +4605,3028 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "OYf7j",
+      "x": 0,
+      "y": 3320,
+      "name": "Judge scorecard — 2026-11-11",
+      "clip": true,
+      "width": 1440,
+      "fill": "$bg",
+      "layout": "vertical",
+      "gap": 40,
+      "padding": 56,
+      "children": [
+        {
+          "type": "frame",
+          "id": "zdzEY",
+          "name": "Header",
+          "width": "fill_container",
+          "gap": 48,
+          "alignItems": "end",
+          "children": [
+            {
+              "type": "frame",
+              "id": "beG8R",
+              "name": "Verdict",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 14,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "T5vCKQ",
+                  "name": "ZERO FORM  ·  JUDGE SCOR",
+                  "fill": "$ink-3",
+                  "content": "ZERO FORM  ·  JUDGE SCORECARD  ·  11 NOV 2026",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 1
+                },
+                {
+                  "type": "text",
+                  "id": "Vfqvp",
+                  "name": "Finalist, not yet a winn",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Finalist, not yet a winner.",
+                  "lineHeight": 1.1,
+                  "fontFamily": "$font",
+                  "fontSize": 44,
+                  "fontWeight": "700",
+                  "letterSpacing": -1
+                },
+                {
+                  "type": "text",
+                  "id": "P0Vdqu",
+                  "name": "The story is strong and ",
+                  "fill": "$ink-2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The story is strong and the crypto is real, but the one runnable proof is red: the feature check fails 6 lines in this checkout and signing returns 502 because the Rust engine is not built. One green end-to-end run with one consistent set of numbers makes this a contender.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font",
+                  "fontSize": 17,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Gx35R",
+              "name": "Overall",
+              "layout": "vertical",
+              "gap": 4,
+              "alignItems": "end",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "nBOoX",
+                  "name": "Overall number",
+                  "gap": 6,
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hTZa9",
+                      "name": "6.2",
+                      "fill": "$ink",
+                      "content": "6.2",
+                      "lineHeight": 1,
+                      "fontFamily": "$font",
+                      "fontSize": 72,
+                      "fontWeight": "700",
+                      "letterSpacing": -2
+                    },
+                    {
+                      "type": "text",
+                      "id": "slotW",
+                      "name": "/ 10",
+                      "fill": "$ink-3",
+                      "content": "/ 10",
+                      "fontFamily": "$font",
+                      "fontSize": 20,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "kAUbp",
+                  "name": "mean of six scores",
+                  "fill": "$ink-3",
+                  "content": "mean of six scores",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "A2db3",
+          "name": "Body",
+          "width": "fill_container",
+          "gap": 32,
+          "children": [
+            {
+              "type": "frame",
+              "id": "H4q50",
+              "name": "Criteria card",
+              "width": 820,
+              "fill": "$surface",
+              "cornerRadius": 12,
+              "stroke": "$line",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "padding": [
+                24,
+                28,
+                12,
+                28
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "suhxi",
+                  "name": "Criteria header",
+                  "width": "fill_container",
+                  "padding": [
+                    0,
+                    0,
+                    14,
+                    0
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "j3e1uM",
+                      "name": "GOAL.md acceptance crite",
+                      "fill": "$ink",
+                      "content": "GOAL.md acceptance criteria",
+                      "fontFamily": "$font",
+                      "fontSize": 18,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "JmsLG",
+                      "name": "4 done · 4 partial · 3 u",
+                      "fill": "$ink-3",
+                      "content": "4 done · 4 partial · 3 unknown",
+                      "fontFamily": "$font",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "tqhyc",
+                  "name": "Row 1",
+                  "width": "fill_container",
+                  "stroke": "$line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 16,
+                  "padding": [
+                    13,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jV8GI",
+                      "name": "01",
+                      "fill": "$ink-3",
+                      "textGrowth": "fixed-width",
+                      "width": 22,
+                      "content": "01",
+                      "fontFamily": "$mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "UQMEM",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "uUjVA",
+                          "name": "Embedded on the real sit",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Embedded on the real site",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "RmxJu",
+                          "name": "Extension matches tcooc-",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Extension matches tcooc-co.gov.taipei, injects launcher + localhost iframe drawer. Read in code, not re-run live.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "uBnal",
+                      "name": "Pill slot",
+                      "width": 84,
+                      "justifyContent": "end",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "j4bvG",
+                          "name": "Pill Done",
+                          "fill": "$ok-soft",
+                          "cornerRadius": 999,
+                          "padding": [
+                            4,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ijMWm",
+                              "name": "Done",
+                              "fill": "$ok",
+                              "content": "Done",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ypMeR",
+                  "name": "Row 2",
+                  "width": "fill_container",
+                  "stroke": "$line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 16,
+                  "padding": [
+                    13,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Y2lDcf",
+                      "name": "02",
+                      "fill": "$ink-3",
+                      "textGrowth": "fixed-width",
+                      "width": 22,
+                      "content": "02",
+                      "fontFamily": "$mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Z3lZnV",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "A14dJt",
+                          "name": "Two-step via known phone",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Two-step via known phone",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "N5cacx",
+                          "name": "check PASS. Code shown i",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "check PASS. Code shown in on-screen SMS preview; any 6 digits are accepted.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "zdzK7",
+                      "name": "Pill slot",
+                      "width": 84,
+                      "justifyContent": "end",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "KSDVc",
+                          "name": "Pill Done",
+                          "fill": "$ok-soft",
+                          "cornerRadius": 999,
+                          "padding": [
+                            4,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "CdA3p",
+                              "name": "Done",
+                              "fill": "$ok",
+                              "content": "Done",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "rSs6m",
+                  "name": "Row 3",
+                  "width": "fill_container",
+                  "stroke": "$line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 16,
+                  "padding": [
+                    13,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "r8diiy",
+                      "name": "03",
+                      "fill": "$ink-3",
+                      "textGrowth": "fixed-width",
+                      "width": 22,
+                      "content": "03",
+                      "fontFamily": "$mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "P7R361",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "yKjYd",
+                          "name": "Zero refill",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Zero refill",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "ny3KQ",
+                          "name": "check PASS. Six known fa",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "check PASS. Six known facts prefilled, each with its source.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "gfiAj",
+                      "name": "Pill slot",
+                      "width": 84,
+                      "justifyContent": "end",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "aXO0c",
+                          "name": "Pill Done",
+                          "fill": "$ok-soft",
+                          "cornerRadius": 999,
+                          "padding": [
+                            4,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "amyqU",
+                              "name": "Done",
+                              "fill": "$ok",
+                              "content": "Done",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "A6Byc",
+                  "name": "Row 4",
+                  "width": "fill_container",
+                  "stroke": "$line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 16,
+                  "padding": [
+                    13,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yshrR",
+                      "name": "04",
+                      "fill": "$ink-3",
+                      "textGrowth": "fixed-width",
+                      "width": 22,
+                      "content": "04",
+                      "fontFamily": "$mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "neVNi",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Tt6z3",
+                          "name": "Ask once (~5 questions)",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Ask once (~5 questions)",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "wdorx",
+                          "name": "Now 3 questions. Second ",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Now 3 questions. Second director + national ID were removed, so the checksum catch has no screen. check FAIL.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "rFOc8",
+                      "name": "Pill slot",
+                      "width": 84,
+                      "justifyContent": "end",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "RBNK5",
+                          "name": "Pill Partial",
+                          "fill": "$warn-soft",
+                          "cornerRadius": 999,
+                          "padding": [
+                            4,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "tPDBO",
+                              "name": "Partial",
+                              "fill": "$warn",
+                              "content": "Partial",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "K4QM0T",
+                  "name": "Row 5",
+                  "width": "fill_container",
+                  "stroke": "$line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 16,
+                  "padding": [
+                    13,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "AWFWX",
+                      "name": "05",
+                      "fill": "$ink-3",
+                      "textGrowth": "fixed-width",
+                      "width": 22,
+                      "content": "05",
+                      "fontFamily": "$mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "hfDT2",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "JL0ZS",
+                          "name": "Sign once",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Sign once",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "M5QOHf",
+                          "name": "Hash-bound code and Ed25",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Hash-bound code and Ed25519 seal are in server.js, but signing returns 502 core_not_built here.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "l1aTbR",
+                      "name": "Pill slot",
+                      "width": 84,
+                      "justifyContent": "end",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "TSUCc",
+                          "name": "Pill Partial",
+                          "fill": "$warn-soft",
+                          "cornerRadius": 999,
+                          "padding": [
+                            4,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Gugex",
+                              "name": "Partial",
+                              "fill": "$warn",
+                              "content": "Partial",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "J5vhwa",
+                  "name": "Row 6",
+                  "width": "fill_container",
+                  "stroke": "$line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 16,
+                  "padding": [
+                    13,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "rGwQy",
+                      "name": "06",
+                      "fill": "$ink-3",
+                      "textGrowth": "fixed-width",
+                      "width": 22,
+                      "content": "06",
+                      "fontFamily": "$mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "S5Kga7",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "uv1bT",
+                          "name": "Every form generated",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Every form generated",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "qYwGJ",
+                          "name": "PDFs come from the Rust ",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "PDFs come from the Rust engine; binary absent in this checkout. Hash footer on PDFs not verified.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "d07OBw",
+                      "name": "Pill slot",
+                      "width": 84,
+                      "justifyContent": "end",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "KoFna",
+                          "name": "Pill Unknown",
+                          "fill": "#ECECE8",
+                          "cornerRadius": 999,
+                          "padding": [
+                            4,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "N4sySD",
+                              "name": "Unknown",
+                              "fill": "$ink-2",
+                              "content": "Unknown",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "nmlUi",
+                  "name": "Row 7",
+                  "width": "fill_container",
+                  "stroke": "$line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 16,
+                  "padding": [
+                    13,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "z55W0",
+                      "name": "07",
+                      "fill": "$ink-3",
+                      "textGrowth": "fixed-width",
+                      "width": 22,
+                      "content": "07",
+                      "fontFamily": "$mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PzZjf",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "YMTW9",
+                          "name": "Officer console",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Officer console",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "p45Km",
+                          "name": "5 server-computed checks",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "5 server-computed checks, facts table with source and form count, Approve / Change one field / Reject.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "a5aor",
+                      "name": "Pill slot",
+                      "width": 84,
+                      "justifyContent": "end",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "XCIpw",
+                          "name": "Pill Done",
+                          "fill": "$ok-soft",
+                          "cornerRadius": 999,
+                          "padding": [
+                            4,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "BMb2f",
+                              "name": "Done",
+                              "fill": "$ok",
+                              "content": "Done",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "APCHL",
+                  "name": "Row 8",
+                  "width": "fill_container",
+                  "stroke": "$line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 16,
+                  "padding": [
+                    13,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "E0KJ3",
+                      "name": "08",
+                      "fill": "$ink-3",
+                      "textGrowth": "fixed-width",
+                      "width": 22,
+                      "content": "08",
+                      "fontFamily": "$mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "y8JJQ",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "dWfFk",
+                          "name": "Tamper demo",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Tamper demo",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "H2aOd",
+                          "name": "Tamper edits snapshot da",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Tamper edits snapshot data only: Identity + Integrity go red, Consistency compares PDF files and stays green.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "sTvG3",
+                      "name": "Pill slot",
+                      "width": 84,
+                      "justifyContent": "end",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "CFjjM",
+                          "name": "Pill Partial",
+                          "fill": "$warn-soft",
+                          "cornerRadius": 999,
+                          "padding": [
+                            4,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "HjRMs",
+                              "name": "Partial",
+                              "fill": "$warn",
+                              "content": "Partial",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "rY1x7",
+                  "name": "Row 9",
+                  "width": "fill_container",
+                  "stroke": "$line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 16,
+                  "padding": [
+                    13,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "y7tunL",
+                      "name": "09",
+                      "fill": "$ink-3",
+                      "textGrowth": "fixed-width",
+                      "width": 22,
+                      "content": "09",
+                      "fontFamily": "$mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "h87dVN",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "naYQ5",
+                          "name": "Revision loop",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Revision loop",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "v5kIuK",
+                          "name": "Reopen-one-field and pre",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Reopen-one-field and prev-hash logic present; not runnable without engine. Approve is now gated on evidence uploads.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "MfF9f",
+                      "name": "Pill slot",
+                      "width": 84,
+                      "justifyContent": "end",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "D0qaS",
+                          "name": "Pill Unknown",
+                          "fill": "#ECECE8",
+                          "cornerRadius": 999,
+                          "padding": [
+                            4,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "f1PqG",
+                              "name": "Unknown",
+                              "fill": "$ink-2",
+                              "content": "Unknown",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "GLxtr",
+                  "name": "Row 10",
+                  "width": "fill_container",
+                  "stroke": "$line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 16,
+                  "padding": [
+                    13,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "O21XVi",
+                      "name": "10",
+                      "fill": "$ink-3",
+                      "textGrowth": "fixed-width",
+                      "width": 22,
+                      "content": "10",
+                      "fontFamily": "$mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Hy8Ef",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "rMLw0",
+                          "name": "Agent API",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Agent API",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "RV7ve",
+                          "name": "check PASS. Schema + dra",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "check PASS. Schema + draft endpoints work; agent cannot sign.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "sKZzv",
+                      "name": "Pill slot",
+                      "width": 84,
+                      "justifyContent": "end",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "rkbbt",
+                          "name": "Pill Done",
+                          "fill": "$ok-soft",
+                          "cornerRadius": 999,
+                          "padding": [
+                            4,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "hVoYE",
+                              "name": "Done",
+                              "fill": "$ok",
+                              "content": "Done",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "yRKiK",
+                  "name": "Row 11",
+                  "width": "fill_container",
+                  "stroke": "$line",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "gap": 16,
+                  "padding": [
+                    13,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "wQ2zj",
+                      "name": "11",
+                      "fill": "$ink-3",
+                      "textGrowth": "fixed-width",
+                      "width": 22,
+                      "content": "11",
+                      "fontFamily": "$mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "SBSfk",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 3,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "PkkoO",
+                          "name": "Feature check",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Feature check",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 15,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Oswv8",
+                          "name": "npm run check exists but",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "npm run check exists but prints 6 FAILED: it still expects director2 and HTML documents.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mnsVj",
+                      "name": "Pill slot",
+                      "width": 84,
+                      "justifyContent": "end",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "gQS1j",
+                          "name": "Pill Partial",
+                          "fill": "$warn-soft",
+                          "cornerRadius": 999,
+                          "padding": [
+                            4,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "jIBN1",
+                              "name": "Partial",
+                              "fill": "$warn",
+                              "content": "Partial",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "o6IJfT",
+              "name": "Right column",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 32,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Ha37V",
+                  "name": "Scores card",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 12,
+                  "stroke": "$line",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 18,
+                  "padding": 28,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "B0STH",
+                      "name": "Scores",
+                      "fill": "$ink",
+                      "content": "Scores",
+                      "fontFamily": "$font",
+                      "fontSize": 18,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nQfpD",
+                      "name": "Score Problem clarity",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 7,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "tJcnj",
+                          "name": "Label row",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ZUWqU",
+                              "name": "Problem clarity",
+                              "fill": "$ink",
+                              "content": "Problem clarity",
+                              "fontFamily": "$font",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "OY5CS",
+                              "name": "8 / 10",
+                              "fill": "$ink-2",
+                              "content": "8 / 10",
+                              "fontFamily": "$mono",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "pJn6G",
+                          "name": "Track",
+                          "width": 420,
+                          "height": 8,
+                          "fill": "#ECECE8",
+                          "cornerRadius": 4,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 4,
+                              "id": "m0jumH",
+                              "x": 0,
+                              "y": 0,
+                              "name": "Fill",
+                              "fill": "$ok",
+                              "width": 336,
+                              "height": 8
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "EqhZi",
+                          "name": "Seven forms asking the s",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Seven forms asking the same facts is instantly felt.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "b71rDW",
+                      "name": "Score Wow moment",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 7,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "U3AVF",
+                          "name": "Label row",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "tAZ24",
+                              "name": "Wow moment",
+                              "fill": "$ink",
+                              "content": "Wow moment",
+                              "fontFamily": "$font",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "Vath2",
+                              "name": "6 / 10",
+                              "fill": "$ink-2",
+                              "content": "6 / 10",
+                              "fontFamily": "$mono",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "z1ZPGN",
+                          "name": "Track",
+                          "width": 420,
+                          "height": 8,
+                          "fill": "#ECECE8",
+                          "cornerRadius": 4,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 4,
+                              "id": "bKNC6",
+                              "x": 0,
+                              "y": 0,
+                              "name": "Fill",
+                              "fill": "$accent",
+                              "width": 252,
+                              "height": 8
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "f15eX",
+                          "name": "Forms filling live is go",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Forms filling live is good; the AI read is an animation.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "glmyu",
+                      "name": "Score Technical credibility",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 7,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "alamq",
+                          "name": "Label row",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "w2FWEa",
+                              "name": "Technical credibility",
+                              "fill": "$ink",
+                              "content": "Technical credibility",
+                              "fontFamily": "$font",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "nEHlY",
+                              "name": "6 / 10",
+                              "fill": "$ink-2",
+                              "content": "6 / 10",
+                              "fontFamily": "$mono",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "DuQLQ",
+                          "name": "Track",
+                          "width": 420,
+                          "height": 8,
+                          "fill": "#ECECE8",
+                          "cornerRadius": 4,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 4,
+                              "id": "s9BX2o",
+                              "x": 0,
+                              "y": 0,
+                              "name": "Fill",
+                              "fill": "$accent",
+                              "width": 252,
+                              "height": 8
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "WWw4l",
+                          "name": "Real hash, seal and engi",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Real hash, seal and engine; SMS, registries, AI mocked.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "M2GcM",
+                      "name": "Score UX polish",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 7,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Zl6XC",
+                          "name": "Label row",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "xAYqp",
+                              "name": "UX polish",
+                              "fill": "$ink",
+                              "content": "UX polish",
+                              "fontFamily": "$font",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "Mnva9",
+                              "name": "7 / 10",
+                              "fill": "$ink-2",
+                              "content": "7 / 10",
+                              "fontFamily": "$mono",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "J8TeAp",
+                          "name": "Track",
+                          "width": 420,
+                          "height": 8,
+                          "fill": "#ECECE8",
+                          "cornerRadius": 4,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 4,
+                              "id": "DJjTl",
+                              "x": 0,
+                              "y": 0,
+                              "name": "Fill",
+                              "fill": "$ok",
+                              "width": 294,
+                              "height": 8
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "TIfZC",
+                          "name": "Calm and focused, but do",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Calm and focused, but doubled bilingual copy adds weight.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "KaYWB",
+                      "name": "Score Demo safety",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 7,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "lOQ3e",
+                          "name": "Label row",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "LJ5MC",
+                              "name": "Demo safety",
+                              "fill": "$ink",
+                              "content": "Demo safety",
+                              "fontFamily": "$font",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "E40ced",
+                              "name": "4 / 10",
+                              "fill": "$ink-2",
+                              "content": "4 / 10",
+                              "fontFamily": "$mono",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "HGUx6",
+                          "name": "Track",
+                          "width": 420,
+                          "height": 8,
+                          "fill": "#ECECE8",
+                          "cornerRadius": 4,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 4,
+                              "id": "uHtN0",
+                              "x": 0,
+                              "y": 0,
+                              "name": "Fill",
+                              "fill": "$warn",
+                              "width": 168,
+                              "height": 8
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "deK2m",
+                          "name": "Red check, missing binar",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Red check, missing binary, ~1 min signing wait, stale video.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nMU87",
+                      "name": "Score Story completeness",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 7,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "E58zwZ",
+                          "name": "Label row",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "m55ZnJ",
+                              "name": "Story completeness",
+                              "fill": "$ink",
+                              "content": "Story completeness",
+                              "fontFamily": "$font",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "AVsQ8",
+                              "name": "6 / 10",
+                              "fill": "$ink-2",
+                              "content": "6 / 10",
+                              "fontFamily": "$mono",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "k6oYQa",
+                          "name": "Track",
+                          "width": 420,
+                          "height": 8,
+                          "fill": "#ECECE8",
+                          "cornerRadius": 4,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 4,
+                              "id": "z1pul",
+                              "x": 0,
+                              "y": 0,
+                              "name": "Fill",
+                              "fill": "$accent",
+                              "width": 252,
+                              "height": 8
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "i3IDB",
+                          "name": "Setup → apply → officer ",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Setup → apply → officer exists, but the numbers disagree.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "y5EDD",
+                  "name": "Real vs mocked",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 12,
+                  "stroke": "$line",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 28,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "d1H0P",
+                      "name": "Real vs mocked",
+                      "fill": "$ink",
+                      "content": "Real vs mocked",
+                      "fontFamily": "$font",
+                      "fontSize": 18,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "gSS1i",
+                      "name": "Columns",
+                      "width": "fill_container",
+                      "gap": 24,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "W0ibt",
+                          "name": "REAL",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 9,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "PDXyD",
+                              "name": "REAL",
+                              "fill": "$ok",
+                              "content": "REAL",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "600",
+                              "letterSpacing": 1
+                            },
+                            {
+                              "type": "frame",
+                              "id": "UyUVf",
+                              "name": "Item",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "MKwox",
+                                  "name": "Dot slot",
+                                  "padding": [
+                                    6,
+                                    0,
+                                    0,
+                                    0
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "KIpyG",
+                                      "name": "Dot",
+                                      "fill": "$ok",
+                                      "width": 6,
+                                      "height": 6
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "dfZa4",
+                                  "name": "SHA-256 over canonical s",
+                                  "fill": "$ink-2",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "SHA-256 over canonical snapshot",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "$font",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "kFh48",
+                              "name": "Item",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "bvKqC",
+                                  "name": "Dot slot",
+                                  "padding": [
+                                    6,
+                                    0,
+                                    0,
+                                    0
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "JAV3u",
+                                      "name": "Dot",
+                                      "fill": "$ok",
+                                      "width": 6,
+                                      "height": 6
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "iYGHG",
+                                  "name": "Ed25519 server seal",
+                                  "fill": "$ink-2",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Ed25519 server seal",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "$font",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "m8h3tg",
+                              "name": "Item",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "fkMTO",
+                                  "name": "Dot slot",
+                                  "padding": [
+                                    6,
+                                    0,
+                                    0,
+                                    0
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "U5ah4J",
+                                      "name": "Dot",
+                                      "fill": "$ok",
+                                      "width": 6,
+                                      "height": 6
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "J4fnFe",
+                                  "name": "Rust engine renders the ",
+                                  "fill": "$ink-2",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Rust engine renders the PDFs",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "$font",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "u7UYv",
+                              "name": "Item",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "Xjt8a",
+                                  "name": "Dot slot",
+                                  "padding": [
+                                    6,
+                                    0,
+                                    0,
+                                    0
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "ruB97",
+                                      "name": "Dot",
+                                      "fill": "$ok",
+                                      "width": 6,
+                                      "height": 6
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "o2jjhC",
+                                  "name": "Revision chain via prev ",
+                                  "fill": "$ink-2",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Revision chain via prev hash",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "$font",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "sO9xZ",
+                              "name": "Item",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "r7Bj8",
+                                  "name": "Dot slot",
+                                  "padding": [
+                                    6,
+                                    0,
+                                    0,
+                                    0
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "aPOQy",
+                                      "name": "Dot",
+                                      "fill": "$ok",
+                                      "width": 6,
+                                      "height": 6
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "G2vRin",
+                                  "name": "Field boxes read from of",
+                                  "fill": "$ink-2",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Field boxes read from official PDFs",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "$font",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "s1CsrI",
+                          "name": "MOCKED",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 9,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "OK6ae",
+                              "name": "MOCKED",
+                              "fill": "$warn",
+                              "content": "MOCKED",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "600",
+                              "letterSpacing": 1
+                            },
+                            {
+                              "type": "frame",
+                              "id": "g5GJz",
+                              "name": "Item",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "guxNh",
+                                  "name": "Dot slot",
+                                  "padding": [
+                                    6,
+                                    0,
+                                    0,
+                                    0
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "oql4G",
+                                      "name": "Dot",
+                                      "fill": "$warn",
+                                      "width": 6,
+                                      "height": 6
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "nzQ45",
+                                  "name": "SMS delivery and code ch",
+                                  "fill": "$ink-2",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "SMS delivery and code check",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "$font",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "uyU2M",
+                              "name": "Item",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "wr9o3",
+                                  "name": "Dot slot",
+                                  "padding": [
+                                    6,
+                                    0,
+                                    0,
+                                    0
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "BPJgD",
+                                      "name": "Dot",
+                                      "fill": "$warn",
+                                      "width": 6,
+                                      "height": 6
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "l9Qzwt",
+                                  "name": "Household + name-reserva",
+                                  "fill": "$ink-2",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Household + name-reservation lookups",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "$font",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "q90V0a",
+                              "name": "Item",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "nwMRx",
+                                  "name": "Dot slot",
+                                  "padding": [
+                                    6,
+                                    0,
+                                    0,
+                                    0
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "dlyyI",
+                                      "name": "Dot",
+                                      "fill": "$warn",
+                                      "width": 6,
+                                      "height": 6
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "uDoRY",
+                                  "name": "AI reading the forms (an",
+                                  "fill": "$ink-2",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "AI reading the forms (animation)",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "$font",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "tDPxD",
+                              "name": "Item",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "DIYK6",
+                                  "name": "Dot slot",
+                                  "padding": [
+                                    6,
+                                    0,
+                                    0,
+                                    0
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "gdotJ",
+                                      "name": "Dot",
+                                      "fill": "$warn",
+                                      "width": 6,
+                                      "height": 6
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "n3Gfk",
+                                  "name": "Evidence PDFs (synthetic",
+                                  "fill": "$ink-2",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Evidence PDFs (synthetic)",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "$font",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "xQG9R",
+                              "name": "Item",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "l7ffEQ",
+                                  "name": "Dot slot",
+                                  "padding": [
+                                    6,
+                                    0,
+                                    0,
+                                    0
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "ellipse",
+                                      "id": "k9gw5",
+                                      "name": "Dot",
+                                      "fill": "$warn",
+                                      "width": 6,
+                                      "height": 6
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "pZO6M",
+                                  "name": "Embed script tag and gov",
+                                  "fill": "$ink-2",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Embed script tag and gov submission",
+                                  "lineHeight": 1.45,
+                                  "fontFamily": "$font",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "VROPK",
+          "name": "Top 5 gaps",
+          "width": "fill_container",
+          "fill": "$surface",
+          "cornerRadius": 12,
+          "stroke": "$line",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "padding": [
+            24,
+            28,
+            12,
+            28
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "colz0",
+              "name": "Gaps header",
+              "width": "fill_container",
+              "padding": [
+                0,
+                0,
+                14,
+                0
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "wXfi8",
+                  "name": "Top 5 gaps, ranked by ju",
+                  "fill": "$ink",
+                  "content": "Top 5 gaps, ranked by judging points per hour",
+                  "fontFamily": "$font",
+                  "fontSize": 18,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "e6RXk",
+                  "name": "effort · impact",
+                  "fill": "$ink-3",
+                  "content": "effort · impact",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "aZuDz",
+              "name": "Gap 1",
+              "width": "fill_container",
+              "stroke": "$line",
+              "strokeWidth": {
+                "top": 1
+              },
+              "gap": 20,
+              "padding": [
+                16,
+                0
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Fpwpz",
+                  "name": "Rank",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "$accent-soft",
+                  "cornerRadius": 16,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "rzUxr",
+                      "name": "1",
+                      "fill": "$accent",
+                      "content": "1",
+                      "fontFamily": "$font",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "wv9Cs",
+                  "name": "Text",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "I41lvJ",
+                      "name": "Get one green end-to-end",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Get one green end-to-end run",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$font",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jqvEP",
+                      "name": "Build the engine in the ",
+                      "fill": "$ink-2",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Build the engine in the demo checkout (cargo build) and update scripts/check.mjs to the 3-question schema and PDF documents, so it prints ALL FEATURES PASS.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$font",
+                      "fontSize": 13.5,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "YsA5U",
+                  "name": "Meta",
+                  "width": 190,
+                  "gap": 8,
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "O7i1uM",
+                      "name": "Pill 1 h",
+                      "fill": "#ECECE8",
+                      "cornerRadius": 999,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "U5EdB",
+                          "name": "1 h",
+                          "fill": "$ink-2",
+                          "content": "1 h",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mxY4E",
+                      "name": "Pill High impact",
+                      "fill": "$accent-soft",
+                      "cornerRadius": 999,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "NVbG3",
+                          "name": "High impact",
+                          "fill": "$accent",
+                          "content": "High impact",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "m8l2gt",
+              "name": "Gap 2",
+              "width": "fill_container",
+              "stroke": "$line",
+              "strokeWidth": {
+                "top": 1
+              },
+              "gap": 20,
+              "padding": [
+                16,
+                0
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "XS211",
+                  "name": "Rank",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "$accent-soft",
+                  "cornerRadius": 16,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Znq3z",
+                      "name": "2",
+                      "fill": "$accent",
+                      "content": "2",
+                      "fontFamily": "$font",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "vfP9e",
+                  "name": "Text",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "h5mE6o",
+                      "name": "Make the numbers agree e",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Make the numbers agree everywhere",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$font",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "sYHKB",
+                      "name": "7 forms / 5 questions / ",
+                      "fill": "$ink-2",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "7 forms / 5 questions / 6 documents / 3 questions / 3 forms / 2 typed all appear. Pick one set and fix GOAL.md, extension banner + manifest, recorder captions and the setup page.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$font",
+                      "fontSize": 13.5,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "taQrt",
+                  "name": "Meta",
+                  "width": 190,
+                  "gap": 8,
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "rlpNf",
+                      "name": "Pill 45 min",
+                      "fill": "#ECECE8",
+                      "cornerRadius": 999,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "LasQv",
+                          "name": "45 min",
+                          "fill": "$ink-2",
+                          "content": "45 min",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "oeHne",
+                      "name": "Pill High impact",
+                      "fill": "$accent-soft",
+                      "cornerRadius": 999,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "cy7CJ",
+                          "name": "High impact",
+                          "fill": "$accent",
+                          "content": "High impact",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "CHvWs",
+              "name": "Gap 3",
+              "width": "fill_container",
+              "stroke": "$line",
+              "strokeWidth": {
+                "top": 1
+              },
+              "gap": 20,
+              "padding": [
+                16,
+                0
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "fKu4I",
+                  "name": "Rank",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "$accent-soft",
+                  "cornerRadius": 16,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hbH8k",
+                      "name": "3",
+                      "fill": "$accent",
+                      "content": "3",
+                      "fontFamily": "$font",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "NQfPR",
+                  "name": "Text",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "U4kNHG",
+                      "name": "Kill the dead air at sig",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Kill the dead air at signing",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$font",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "G5jPmI",
+                      "name": "PDF generation can take ",
+                      "fill": "$ink-2",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "PDF generation can take about a minute of a 3-minute demo. Show per-document progress, pre-warm the renderer, and keep a pre-signed DATA_DIR as fallback.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$font",
+                      "fontSize": 13.5,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "O85gLr",
+                  "name": "Meta",
+                  "width": 190,
+                  "gap": 8,
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "i8JO0",
+                      "name": "Pill 1.5 h",
+                      "fill": "#ECECE8",
+                      "cornerRadius": 999,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "JlLBV",
+                          "name": "1.5 h",
+                          "fill": "$ink-2",
+                          "content": "1.5 h",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "O60zM",
+                      "name": "Pill High impact",
+                      "fill": "$accent-soft",
+                      "cornerRadius": 999,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "XUWIs",
+                          "name": "High impact",
+                          "fill": "$accent",
+                          "content": "High impact",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ePmfL",
+              "name": "Gap 4",
+              "width": "fill_container",
+              "stroke": "$line",
+              "strokeWidth": {
+                "top": 1
+              },
+              "gap": 20,
+              "padding": [
+                16,
+                0
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "gir4g",
+                  "name": "Rank",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "$accent-soft",
+                  "cornerRadius": 16,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "IIBYi",
+                      "name": "4",
+                      "fill": "$accent",
+                      "content": "4",
+                      "fontFamily": "$font",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "j8XwLI",
+                  "name": "Text",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ORmbz",
+                      "name": "Make the agency setup re",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Make the agency setup real and open with it",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$font",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hbdBl",
+                      "name": "public/setup/ (fields.js",
+                      "fill": "$ink-2",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "public/setup/ (fields.json, page images) is untracked, so the page is empty on main. Commit it, replace the animation with one real model proposal, and feed its result into the applicant questions.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$font",
+                      "fontSize": 13.5,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "orpjy",
+                  "name": "Meta",
+                  "width": 190,
+                  "gap": 8,
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ljH9p",
+                      "name": "Pill 2 h",
+                      "fill": "#ECECE8",
+                      "cornerRadius": 999,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "xsM4H",
+                          "name": "2 h",
+                          "fill": "$ink-2",
+                          "content": "2 h",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "SCGwG",
+                      "name": "Pill High impact",
+                      "fill": "$accent-soft",
+                      "cornerRadius": 999,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "dJQl3",
+                          "name": "High impact",
+                          "fill": "$accent",
+                          "content": "High impact",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "GlArc",
+              "name": "Gap 5",
+              "width": "fill_container",
+              "stroke": "$line",
+              "strokeWidth": {
+                "top": 1
+              },
+              "gap": 20,
+              "padding": [
+                16,
+                0
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "JXaH4",
+                  "name": "Rank",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "$accent-soft",
+                  "cornerRadius": 16,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Sf2ET",
+                      "name": "5",
+                      "fill": "$accent",
+                      "content": "5",
+                      "fontFamily": "$font",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Lol28",
+                  "name": "Text",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "prkMa",
+                      "name": "Fix tamper, then re-reco",
+                      "fill": "$ink",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Fix tamper, then re-record",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$font",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "cZMvN",
+                      "name": "Tamper should also break",
+                      "fill": "$ink-2",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Tamper should also break Consistency (re-derive documents from data), approval should not stall on evidence uploads, and the video predates the engine merge and the 3-question flow.",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$font",
+                      "fontSize": 13.5,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "XX7ot",
+                  "name": "Meta",
+                  "width": 190,
+                  "gap": 8,
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "TSGfb",
+                      "name": "Pill 1 h",
+                      "fill": "#ECECE8",
+                      "cornerRadius": 999,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "yhcFc",
+                          "name": "1 h",
+                          "fill": "$ink-2",
+                          "content": "1 h",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "vPM7e",
+                      "name": "Pill Medium impact",
+                      "fill": "$warn-soft",
+                      "cornerRadius": 999,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "lMv5s",
+                          "name": "Medium impact",
+                          "fill": "$warn",
+                          "content": "Medium impact",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "qTOeM",
+          "name": "Evidence: origin/main at",
+          "fill": "$ink-3",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Evidence: origin/main at aeeacae, code read of server.js, public/, extension/, scripts/, demo/record.mjs; node scripts/check.mjs run on a spare port (3 PASS, 6 FAIL); one manual signing attempt (502 core_not_built). UI judged from code and extension screenshots, not a live browser session.",
+          "lineHeight": 1.45,
+          "fontFamily": "$font",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        }
+      ]
     }
   ],
   "variables": {
