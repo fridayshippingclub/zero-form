@@ -1,6 +1,6 @@
 {
   "available": true,
-  "text": "檢查結果如下（僅為示範模式，依固定規則比對）：推薦結論為 request_documents（需補件），此結論未經改寫，亦非核准結果。\n1. Capital-TWD：預期值 10000，實際值 12000，狀態為 mismatch（不符）。需確認資本額數字並提供對應文件以釐清差異。\n2. Certified-On：預期值與實際值皆為 2026-11-11，狀態為 passed（符合）。\n補件事項：針對 Capital-TWD 不符項目補充相關佐證文件，並說明 12000 與 10000 之差異原因。\n限制說明：本次僅依輸入的固定規則欄位比對，未包含政府送件狀態，無法確認簽證真實性或申請人身分已驗證；其他未列於 checks 的欄位不在本次檢查範圍，無法判斷其狀態。",
+  "text": "Demo-only result from fixed-rule comparisons: the recommendation is request_documents. This is not an approval. Capital-TWD: expected 10000, observed 12000, mismatch. Confirm the capital amount and provide supporting evidence explaining the difference. Certified-On: expected and observed values are both 2026-11-11, passed. This explanation covers only the supplied checks; it does not verify government submission, report authenticity, applicant identity, or unspecified fields.",
   "authority": "explanation_only",
   "provider": {
     "model": "claude-haiku-5-5",
@@ -20,5 +20,9 @@
       "inference_geo": "global",
       "speed": "standard"
     }
-  }
+  },
+  "text_origin": "English translation of the recorded Chinese model response; no additional model call.",
+  "original_language": "zh-Hant",
+  "translation_language": "en",
+  "original_text": "檢查結果如下（僅為示範模式，依固定規則比對）：推薦結論為 request_documents（需補件），此結論未經改寫，亦非核准結果。\n1. Capital-TWD：預期值 10000，實際值 12000，狀態為 mismatch（不符）。需確認資本額數字並提供對應文件以釐清差異。\n2. Certified-On：預期值與實際值皆為 2026-11-11，狀態為 passed（符合）。\n補件事項：針對 Capital-TWD 不符項目補充相關佐證文件，並說明 12000 與 10000 之差異原因。\n限制說明：本次僅依輸入的固定規則欄位比對，未包含政府送件狀態，無法確認簽證真實性或申請人身分已驗證；其他未列於 checks 的欄位不在本次檢查範圍，無法判斷其狀態。"
 }

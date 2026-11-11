@@ -1,0 +1,78 @@
+{
+  "status": "passed",
+  "snapshot_hash": "e2afbe0a1272ef9b82445bb0202c2e26adc8b7a06fbddb8d04f4e8c6a8ea15e9",
+  "definition_hash": "08e690c01a298e7ba1eb95933d4df3e92c94646f8cbc78c900354b0ed23c3a60",
+  "renderer_versions": {
+    "pdftoppm": "pdftoppm version 26.05.0",
+    "pdftotext": "pdftotext version 26.05.0",
+    "typst": "typst 0.15.1 (9dfd3a08)"
+  },
+  "documents": [
+    {
+      "id": "app",
+      "sha256": "56bcbc1bb34f5a50c7c8cd40fa4b1f99a0b7a04345ca8eb06abef80406aca886",
+      "pages": 3,
+      "fields_checked": 6,
+      "dpis": [
+        144,
+        288
+      ],
+      "changed_protected_pixels": 0
+    },
+    {
+      "id": "t70126",
+      "sha256": "eebd7403a257eaf4a910c28e8e47144c5b7dff5ac19c2aa74c25cbd84c9b0d7b",
+      "pages": 4,
+      "fields_checked": 7,
+      "dpis": [
+        144,
+        288
+      ],
+      "changed_protected_pixels": 0
+    },
+    {
+      "id": "t70130",
+      "sha256": "42acb839ff277a6f4496f1c4ff9bef7b38a06ed1cc4bd1bccc0d9a2aca87dedd",
+      "pages": 3,
+      "fields_checked": 4,
+      "dpis": [
+        144,
+        288
+      ],
+      "changed_protected_pixels": 0
+    },
+    {
+      "id": "t70132",
+      "sha256": "063c5206168d1b8414f815c8d14b2b0b4dd38aa6a7721a9049063d8290a8b362",
+      "pages": 2,
+      "fields_checked": 3,
+      "dpis": [
+        144,
+        288
+      ],
+      "changed_protected_pixels": 0
+    },
+    {
+      "id": "t70124",
+      "sha256": "d6933759c9f1ddebbb670c77f51d8160fdfff8ed1221c7158a228aa0dce1dc73",
+      "pages": 2,
+      "fields_checked": 4,
+      "dpis": [
+        144,
+        288
+      ],
+      "changed_protected_pixels": 0
+    },
+    {
+      "id": "t70135",
+      "sha256": "c9a41d5a91acde047ac95c079021e865bcb400ecd123f2612d04f79876cf3111",
+      "pages": 4,
+      "fields_checked": 11,
+      "dpis": [
+        144,
+        288
+      ],
+      "changed_protected_pixels": 0
+    }
+  ]
+}

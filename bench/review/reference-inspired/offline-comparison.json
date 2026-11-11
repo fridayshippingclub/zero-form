@@ -1,0 +1,521 @@
+{
+  "live_model_tested": false,
+  "results": [
+    {
+      "file": "address-letter.pdf",
+      "kind": "address_approval",
+      "synthetic_expected": {
+        "company_name": "大大科技",
+        "address": "示範市測試區虛構路 10 號 2 樓",
+        "issued_on": "2026-11-11"
+      },
+      "actual_extraction": {
+        "source_sha256": "01657f45914f579f91cd253f0c76489666913c5285fdff0d9f3e87c79d823e2f",
+        "mode": "deterministic",
+        "status": "partial",
+        "fields": {
+          "Company-Name": "大大科技",
+          "Address": "示範市測試區虛構路 10 號 2 樓",
+          "Issued-On": "2026-11-11"
+        },
+        "observations": [
+          {
+            "field": "Company-Name",
+            "value": "大大科技",
+            "status": "observed",
+            "confidence": "exact_label",
+            "source": {
+              "page": 1,
+              "bbox": [
+                48.0,
+                218.310626,
+                108.0,
+                12.0
+              ],
+              "text": "公司名稱：大大科技",
+              "span_id": "p1-s5"
+            },
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  48.0,
+                  218.310626,
+                  108.0,
+                  12.0
+                ],
+                "text": "公司名稱：大大科技",
+                "span_id": "p1-s5"
+              }
+            ],
+            "page": 1,
+            "quote": "公司名稱：大大科技",
+            "bbox": [
+              48.0,
+              218.310626,
+              108.0,
+              12.0
+            ]
+          },
+          {
+            "field": "Address",
+            "value": "示範市測試區虛構路 10 號 2 樓",
+            "status": "observed",
+            "confidence": "exact_label",
+            "source": {
+              "page": 1,
+              "bbox": [
+                48.0,
+                263.310626,
+                210.0,
+                12.0
+              ],
+              "text": "地址：示範市測試區虛構路 10 號 2 樓",
+              "span_id": "p1-s6"
+            },
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  48.0,
+                  263.310626,
+                  210.0,
+                  12.0
+                ],
+                "text": "地址：示範市測試區虛構路 10 號 2 樓",
+                "span_id": "p1-s6"
+              }
+            ],
+            "page": 1,
+            "quote": "地址：示範市測試區虛構路 10 號 2 樓",
+            "bbox": [
+              48.0,
+              263.310626,
+              210.0,
+              12.0
+            ]
+          },
+          {
+            "field": "Issued-On",
+            "value": "2026-11-11",
+            "status": "observed",
+            "confidence": "exact_label",
+            "source": {
+              "page": 1,
+              "bbox": [
+                48.0,
+                173.310626,
+                120.0,
+                12.0
+              ],
+              "text": "發文日期：2026-11-11",
+              "span_id": "p1-s4"
+            },
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  48.0,
+                  173.310626,
+                  120.0,
+                  12.0
+                ],
+                "text": "發文日期：2026-11-11",
+                "span_id": "p1-s4"
+              }
+            ],
+            "page": 1,
+            "quote": "發文日期：2026-11-11",
+            "bbox": [
+              48.0,
+              173.310626,
+              120.0,
+              12.0
+            ]
+          },
+          {
+            "field": "Status",
+            "value": null,
+            "status": "unknown",
+            "confidence": "unknown",
+            "source": null,
+            "sources": [],
+            "page": null,
+            "quote": null,
+            "bbox": null,
+            "reason": "not_observed"
+          }
+        ],
+        "llm": {
+          "available": false,
+          "configured": true,
+          "provider": "anthropic",
+          "model": "claude-haiku-5-5",
+          "reason": "live_calls_disabled_pending_user_authorization"
+        },
+        "coordinate_system": "PDF points, top-left; bbox=[x,y,width,height]",
+        "page_limit": 10,
+        "original_preserved": true
+      }
+    },
+    {
+      "file": "address-table.pdf",
+      "kind": "address_approval",
+      "synthetic_expected": {
+        "company_name": "大大科技",
+        "address": "示範市測試區虛構路 10 號 2 樓",
+        "issued_on": "2026-11-11"
+      },
+      "actual_extraction": {
+        "source_sha256": "1bcc583ae9bfd642e45a7a9b2a3b7fee9c85fe279492769e1d7992763b95fa2e",
+        "mode": "deterministic",
+        "status": "unavailable",
+        "fields": {},
+        "observations": [
+          {
+            "field": "Company-Name",
+            "value": null,
+            "status": "unknown",
+            "confidence": "unknown",
+            "source": null,
+            "sources": [],
+            "page": null,
+            "quote": null,
+            "bbox": null,
+            "reason": "not_observed"
+          },
+          {
+            "field": "Address",
+            "value": null,
+            "status": "unknown",
+            "confidence": "unknown",
+            "source": null,
+            "sources": [],
+            "page": null,
+            "quote": null,
+            "bbox": null,
+            "reason": "not_observed"
+          },
+          {
+            "field": "Issued-On",
+            "value": null,
+            "status": "unknown",
+            "confidence": "unknown",
+            "source": null,
+            "sources": [],
+            "page": null,
+            "quote": null,
+            "bbox": null,
+            "reason": "not_observed"
+          },
+          {
+            "field": "Status",
+            "value": null,
+            "status": "unknown",
+            "confidence": "unknown",
+            "source": null,
+            "sources": [],
+            "page": null,
+            "quote": null,
+            "bbox": null,
+            "reason": "not_observed"
+          }
+        ],
+        "llm": {
+          "available": false,
+          "configured": true,
+          "provider": "anthropic",
+          "model": "claude-haiku-5-5",
+          "reason": "live_calls_disabled_pending_user_authorization"
+        },
+        "coordinate_system": "PDF points, top-left; bbox=[x,y,width,height]",
+        "page_limit": 10,
+        "original_preserved": true
+      }
+    },
+    {
+      "file": "client-declaration-not-audit.pdf",
+      "kind": "capital_verification",
+      "synthetic_expected": {
+        "company_name": "大大科技",
+        "address": null,
+        "issued_on": null
+      },
+      "actual_extraction": {
+        "source_sha256": "a3867cf1e0ea5560b8dcb54ab827c0120c17555a54a02e254aeb46185e6d1865",
+        "mode": "deterministic",
+        "status": "partial",
+        "fields": {
+          "Company-Name": "大大科技"
+        },
+        "observations": [
+          {
+            "field": "Company-Name",
+            "value": "大大科技",
+            "status": "observed",
+            "confidence": "exact_label",
+            "source": {
+              "page": 1,
+              "bbox": [
+                48.0,
+                214.310626,
+                108.0,
+                12.0
+              ],
+              "text": "公司名稱：大大科技",
+              "span_id": "p1-s5"
+            },
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  48.0,
+                  214.310626,
+                  108.0,
+                  12.0
+                ],
+                "text": "公司名稱：大大科技",
+                "span_id": "p1-s5"
+              }
+            ],
+            "page": 1,
+            "quote": "公司名稱：大大科技",
+            "bbox": [
+              48.0,
+              214.310626,
+              108.0,
+              12.0
+            ]
+          },
+          {
+            "field": "Capital-TWD",
+            "value": null,
+            "status": "unknown",
+            "confidence": "unknown",
+            "source": null,
+            "sources": [],
+            "page": null,
+            "quote": null,
+            "bbox": null,
+            "reason": "not_observed"
+          },
+          {
+            "field": "Certified-On",
+            "value": null,
+            "status": "unknown",
+            "confidence": "unknown",
+            "source": null,
+            "sources": [],
+            "page": null,
+            "quote": null,
+            "bbox": null,
+            "reason": "not_observed"
+          },
+          {
+            "field": "Status",
+            "value": null,
+            "status": "unknown",
+            "confidence": "unknown",
+            "source": null,
+            "sources": [],
+            "page": null,
+            "quote": null,
+            "bbox": null,
+            "reason": "no_explicit_report_disposition"
+          }
+        ],
+        "llm": {
+          "available": false,
+          "configured": true,
+          "provider": "anthropic",
+          "model": "claude-haiku-5-5",
+          "reason": "live_calls_disabled_pending_user_authorization"
+        },
+        "coordinate_system": "PDF points, top-left; bbox=[x,y,width,height]",
+        "page_limit": 10,
+        "original_preserved": true
+      }
+    },
+    {
+      "file": "name-letter.pdf",
+      "kind": "name_approval",
+      "synthetic_expected": {
+        "company_name": "大大科技",
+        "address": null,
+        "issued_on": "2026-11-11"
+      },
+      "actual_extraction": {
+        "source_sha256": "19ee23c4c28c1bc4f6677984ebf100e16f9c0b50a70a33aef182e1e14df19227",
+        "mode": "deterministic",
+        "status": "partial",
+        "fields": {
+          "Company-Name": "大大科技",
+          "Issued-On": "2026-11-11"
+        },
+        "observations": [
+          {
+            "field": "Company-Name",
+            "value": "大大科技",
+            "status": "observed",
+            "confidence": "exact_label",
+            "source": {
+              "page": 1,
+              "bbox": [
+                52.0,
+                260.310626,
+                108.0,
+                12.0
+              ],
+              "text": "公司名稱：大大科技",
+              "span_id": "p1-s8"
+            },
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  52.0,
+                  260.310626,
+                  108.0,
+                  12.0
+                ],
+                "text": "公司名稱：大大科技",
+                "span_id": "p1-s8"
+              }
+            ],
+            "page": 1,
+            "quote": "公司名稱：大大科技",
+            "bbox": [
+              52.0,
+              260.310626,
+              108.0,
+              12.0
+            ]
+          },
+          {
+            "field": "Issued-On",
+            "value": "2026-11-11",
+            "status": "observed",
+            "confidence": "exact_label",
+            "source": {
+              "page": 1,
+              "bbox": [
+                52.0,
+                167.310626,
+                120.0,
+                12.0
+              ],
+              "text": "發文日期：2026-11-11",
+              "span_id": "p1-s5"
+            },
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  52.0,
+                  167.310626,
+                  120.0,
+                  12.0
+                ],
+                "text": "發文日期：2026-11-11",
+                "span_id": "p1-s5"
+              }
+            ],
+            "page": 1,
+            "quote": "發文日期：2026-11-11",
+            "bbox": [
+              52.0,
+              167.310626,
+              120.0,
+              12.0
+            ]
+          },
+          {
+            "field": "Status",
+            "value": null,
+            "status": "unknown",
+            "confidence": "unknown",
+            "source": null,
+            "sources": [],
+            "page": null,
+            "quote": null,
+            "bbox": null,
+            "reason": "not_observed"
+          }
+        ],
+        "llm": {
+          "available": false,
+          "configured": true,
+          "provider": "anthropic",
+          "model": "claude-haiku-5-5",
+          "reason": "live_calls_disabled_pending_user_authorization"
+        },
+        "coordinate_system": "PDF points, top-left; bbox=[x,y,width,height]",
+        "page_limit": 10,
+        "original_preserved": true
+      }
+    },
+    {
+      "file": "name-table.pdf",
+      "kind": "name_approval",
+      "synthetic_expected": {
+        "company_name": "大大科技",
+        "address": null,
+        "issued_on": "2026-11-11"
+      },
+      "actual_extraction": {
+        "source_sha256": "1a0815cbf908ee35722ca33aa1b80d1e6f388afd6dbe6d2085b80d3a09f621b3",
+        "mode": "deterministic",
+        "status": "unavailable",
+        "fields": {},
+        "observations": [
+          {
+            "field": "Company-Name",
+            "value": null,
+            "status": "unknown",
+            "confidence": "unknown",
+            "source": null,
+            "sources": [],
+            "page": null,
+            "quote": null,
+            "bbox": null,
+            "reason": "not_observed"
+          },
+          {
+            "field": "Issued-On",
+            "value": null,
+            "status": "unknown",
+            "confidence": "unknown",
+            "source": null,
+            "sources": [],
+            "page": null,
+            "quote": null,
+            "bbox": null,
+            "reason": "not_observed"
+          },
+          {
+            "field": "Status",
+            "value": null,
+            "status": "unknown",
+            "confidence": "unknown",
+            "source": null,
+            "sources": [],
+            "page": null,
+            "quote": null,
+            "bbox": null,
+            "reason": "not_observed"
+          }
+        ],
+        "llm": {
+          "available": false,
+          "configured": true,
+          "provider": "anthropic",
+          "model": "claude-haiku-5-5",
+          "reason": "live_calls_disabled_pending_user_authorization"
+        },
+        "coordinate_system": "PDF points, top-left; bbox=[x,y,width,height]",
+        "page_limit": 10,
+        "original_preserved": true
+      }
+    }
+  ]
+}

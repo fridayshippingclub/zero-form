@@ -6,7 +6,7 @@ Compile authorized semantic facts into a frozen application snapshot and a verif
 
 ## Run the integrated hackathon demo
 
-Requirements: Node.js, Python 3 with ReportLab, pypdf and fonttools (`python3 -m pip install reportlab pypdf fonttools`), and the native Rust/Typst/Poppler requirements below.
+Requirements: Node.js, Python 3 with ReportLab, pypdf and fonttools (`python3 -m pip install reportlab 'pypdf<7' fonttools`), and the native Rust/Typst/Poppler requirements below.
 
 ```sh
 npm ci
@@ -14,7 +14,7 @@ cargo build --workspace --locked
 npm start
 ```
 
-Open `http://localhost:5173/` for the applicant and `http://localhost:5173/officer.html` for the reviewer. `DATA_DIR` selects local demo storage; use a fresh directory for a clean demonstration. SMS, registry lookups and submission are simulated. Signing invokes the native core and can take around a minute; wait for generation before opening document links.
+Open `http://localhost:5173/` for the applicant and `http://localhost:5173/officer.html` for the reviewer. `DATA_DIR` selects local demo storage; use a fresh directory for a clean demonstration. SMS and registry lookups are simulated. There is no government submission connection. Signing invokes the native core and can take around a minute; wait for generation before opening document links.
 
 The one-person case preserves applicant, representative and director as distinct roles bound to one person. It collects three new answers and reuses the other facts. Each form occurrence has its own role-aware mapping. Six generated PDFs are served by the existing document links. The applicant can download matching demonstration evidence and upload it; the reviewer sees the extracted evidence, comparisons and source PDFs before deciding.
 
@@ -172,6 +172,6 @@ The external PDF tests are explicitly ignored by the ordinary test command, so r
 
 Verified milestone evidence: five documents / six pages, exact role/value readback, conditional and repeated mapping, selected/unselected checkboxes, font coverage/fit, zero changed protected pixels at 144 and 288 DPI, and visual inspection of all demo pages. Tests also cover missing/revoked data, representative authority, conflicts, unknown conditions, snapshot forgery, exact integer sums, template drift, overflow, PDF tampering and failed publication leaving no output.
 
-**The local integrated host is implemented.** It confirms the demo snapshot, generates native PDFs and exposes uploaded-evidence review. It remains a local PoC with simulated identity and registries. For actual filings, a separate milestone must register complete reviewed mappings/rules for a selected application type; the demo's three populated official fields do not constitute that coverage.
+**The local integrated host is implemented.** It confirms the demo snapshot, generates native PDFs and exposes uploaded-evidence review. It remains a local PoC with simulated identity and registries. For actual filings, a separate milestone must register complete reviewed mappings/rules for a selected application type; the current host maps 14 of 35 occurrences into original blanks and places 21 in appendices; that is not complete filing coverage.
 
 Current limits: static, unrotated PDFs with blank targets; one pinned regular font per template; explicit single-line text and square boolean marks; repeated whole documents only. No AcroForm/XFA, encrypted/signed files, annotations, placeholder replacement, OCR, handwritten signatures, table-row expansion, profile writeback, MFA provider or government API. There is no global application registry: overwrite/locking is per output path. Pixel/text checks cover the documented assertions; they are not a hostile-PDF security sandbox, legal approval or cryptographic attestation. Tested locally on Apple Silicon; other platforms need their external-tool tests run.

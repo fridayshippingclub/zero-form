@@ -5,11 +5,11 @@
   <img alt="Zero Form" src="assets/brand/logo-light.svg" height="72">
 </picture>
 
-### Answer once. Confirm once. Every government form is filled.
+### Answer once. Review the evidence. Generate a document package.
 
-One input layer for government applications: verified facts are reused, only missing fields are asked, and every official document is generated from one signed snapshot.
+A local company-incorporation demo: reuse profile facts, answer three missing questions, review uploaded evidence, and generate six PDFs from one confirmed snapshot. Identity and registry sources are simulated; official forms are partially populated.
 
-[Demo video](demo/zero-form-demo.webm) · [Quick start](#quick-start) · [Chrome extension](#chrome-extension) · [Engine reference](docs/ENGINE.md)
+[Demo video](demo/zero-form-demo.webm) · [Quick start](#quick-start) · [Chrome extension](#chrome-extension) · [Engine reference](docs/ENGINE.md) · [Pixel verification](docs/VERIFICATION.md) · [Semantic test results](bench/review/haiku-live-results/README.md)
 
 </div>
 
@@ -17,27 +17,27 @@ One input layer for government applications: verified facts are reused, only mis
 
 ## Why
 
-- **Governments ask for the same facts many times.** Incorporating a company in Taipei takes 7 forms with heavily overlapping fields. Zero Form asks about 5 questions instead.
+- **Forms repeat the same facts.** The selected demo has seven form definitions and asks three new questions, reusing the remaining seeded facts.
 - **Applicants confirm once, not seven times.** One text-code confirmation is bound to the SHA-256 of an immutable snapshot and sealed with an Ed25519 server signature.
-- **Officers verify instead of re-typing.** Identity, integrity, cross-document consistency, evidence and registry records are checked live, and a correction reopens one field, not the whole application.
+- **Reviewers compare evidence with confirmed facts.** The console checks snapshot integrity, generated files and uploaded evidence. Identity and registry comparisons use simulated sources; a requested correction reopens one field.
 
 ## How it works
 
-1. **Zero refill.** Facts already verified on the applicant's profile (name, national ID, phone, address, company name, business items) are shown with their source and confirmed with one click.
+1. **Zero refill.** Seeded facts marked verified in the simulated profile (name, national ID, phone, address, company name, business items) are shown with their source and confirmed with one click.
 2. **Ask once.** Only missing fields are asked, one question per screen. Each shows "used in N of 7 forms". National IDs are checksum-validated.
 3. **Self-review before signing.** Upload the three evidence PDFs. Source-grounded extraction feeds deterministic company, capital and date checks; an optional LLM explanation describes the result. Missing or uncertain evidence stays visible and blocks this review workflow from signing.
-4. **Confirm once.** The applicant reviews, then enters a code sent to their known phone. The code is bound to the snapshot hash; the server seals `{hash, confirmation}` with Ed25519.
-5. **Generate every document.** The native Rust core renders all official documents from that one snapshot. Each document carries the snapshot hash and its own hash.
-6. **Officer review.** The console at `/officer.html` runs five live checks, then the officer approves, rejects, or requests a change to one field. The re-signed snapshot v2 links to v1 through `prev`.
+4. **Confirm once.** The applicant reviews, then enters the demonstration code displayed on screen. The code is bound to the snapshot hash; the server seals `{hash, confirmation}` with Ed25519.
+5. **Generate every document.** The native Rust core generates six PDFs using official-source backgrounds. Fourteen of 35 mapped occurrences populate original blanks; 21 appear in labeled appendices. The package records the snapshot and PDF hashes.
+6. **Officer review.** The console at `/officer.html` displays snapshot and evidence checks, then the local reviewer approves, rejects, or requests a change to one field. The re-signed snapshot v2 links to v1 through `prev`.
 
 ```mermaid
 flowchart LR
-  P[Verified profile] --> A[Ask only missing fields]
+  P[Simulated profile] --> A[Ask only missing fields]
   A --> R[Upload evidence<br/>Self-review]
-  R --> C[Confirm once<br/>SMS code + SHA-256]
+  R --> C[Confirm once<br/>Demo code + SHA-256]
   C --> S[(Signed snapshot<br/>Ed25519)]
-  S --> D[Rust core<br/>renders every PDF]
-  D --> O[Officer console<br/>5 live checks]
+  S --> D[Rust core<br/>generates six PDFs]
+  D --> O[Officer console<br/>snapshot and evidence checks]
   O -- approve / reject --> Done[Decision]
   O -- change 1 field --> A
 ```
@@ -46,7 +46,7 @@ AI agents can draft answers through `GET /api/agent/schema` and `POST /api/agent
 
 ## Demo
 
-[`demo/zero-form-demo.webm`](demo/zero-form-demo.webm) is a narrated end-to-end recording, produced by `npm run record`:
+[`demo/zero-form-demo.webm`](demo/zero-form-demo.webm) is an earlier narrated demonstration (its five-question sequence predates the current three-question UI), produced by `npm run record`:
 
 1. The real [Taipei City incorporation page](https://tcooc-co.gov.taipei/cp.aspx?n=1ddc8c221b97a1bd&s=5BA095ECA5D6FAB3) with the extension's **Fill all 7 forms with Zero Form** launcher, opening the side drawer.
 2. Sign-in with a text code, known facts prefilled, five missing questions (including a caught national-ID checksum error), and the single confirmation that seals 6 generated documents.
@@ -75,7 +75,7 @@ npm run dev
 | Rust | 1.97.1 (selected by `rust-toolchain.toml`) |
 | [Typst](https://github.com/typst/typst/releases/tag/v0.15.1) | 0.15.1 |
 | Poppler (`pdftoppm`, `pdftotext`) | 26.05.0 tested |
-| Python 3 + ReportLab + pypdf + fonttools | `python3 -m pip install reportlab pypdf fonttools` |
+| Python 3 + ReportLab + pypdf + fonttools | `python3 -m pip install reportlab 'pypdf<7' fonttools` |
 
 ```sh
 cargo build --workspace --locked

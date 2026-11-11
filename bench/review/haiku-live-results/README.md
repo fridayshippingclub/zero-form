@@ -1,44 +1,28 @@
-# Haiku semantic extraction test — 2026-11-11
+# Haiku test results — 2026-11-11
 
-Authorized live model: `claude-haiku-5-5`. Five actual API calls, zero retries:
-four forced semantic PDF extractions and one explanation. Total provider usage:
-6,170 input tokens and 1,731 output tokens. No credentials or provider response
-identifiers are included in these files. The temporary test credential was removed.
+![Measured capital extraction comparison](capital-comparison.png)
 
-| Fixture | Actual extracted capital | Comparison to declared TWD 10,000 | Evidence page |
-| --- | ---: | --- | ---: |
-| prose-roc.pdf | 10,000 | Match | 1 |
-| table-units.pdf | 10,000 | Match | 1 |
-| two-page-letter.pdf | 10,000 | Match | 2 |
-| prose-mismatch.pdf | 12,000 | Mismatch correctly retained | 1 |
+Five authorized live calls to `claude-haiku-5-5`, zero retries: four forced
+extractions and one explanation. Usage: 6,170 input / 1,731 output tokens.
 
-All four extracts identified the company and certification date, retained actual
-page/quote/bounding-box evidence, and left the original PDF bytes unchanged.
-Expected application values were not sent to extraction; comparison happened
-subsequently in deterministic code. `explanation.json` records the fifth call's
-explanation, which cannot change the rule result.
+| Test | Observed result |
+| --- | --- |
+| prose-roc.pdf | Company and certification date extracted; TWD 10,000 matches |
+| table-units.pdf | Table amount normalized to TWD 10,000; company/date match |
+| two-page-letter.pdf | Evidence correctly located on page 2; TWD 10,000 matches |
+| prose-mismatch.pdf | TWD 12,000 retained; deterministic comparison flags mismatch |
+| Explanation | Described the mismatch without changing the rule result |
+| Offline browser flow | 3 uploads → 12 checks → unknown PDF blocks signing → restored evidence → simulated OTP → 6 verified PDFs → local reviewer approval; no browser errors |
 
-These are synthetic, text-bearing accountant examples, not an accuracy benchmark
-for arbitrary PDFs or OCR. The four source PDFs are in `../accountant-variants/`.
-`summary.json`, per-PDF extraction JSON, and deterministic comparison JSON provide
-the observed results rather than a proposed test plan.
+These are **four synthetic, text-bearing examples**, not real-firm validation or
+an accuracy benchmark. Poppler supplies text and coordinates; the LLM selects
+existing spans. This is not image vision or OCR. Original-file hashes stayed
+unchanged, proving read-only extraction, not optical preservation or authenticity.
+Native protected-pixel checks are separate. Identity/OTP are simulated; there is
+no government submission connection.
 
-Reproduce after explicitly configuring your own key outside the repository:
-
-```sh
-ZERO_FORM_ENABLE_LLM=1 python3 demo/evidence_extract.py \
-  --input bench/review/accountant-variants/two-page-letter.pdf \
-  --kind capital_verification --force-llm
-python3 -m unittest discover -s demo -p test_evidence_extract.py
-node demo/self-review-smoke.mjs
-```
-
-The last two commands are offline tests; the live extraction command incurs API
-usage. Server live calls remain disabled unless explicitly opted in. Missing or
-unreadable evidence remains unknown rather than being presented as a match.
-
-The integrated browser flow also passed with live calls explicitly disabled:
-three draft PDF uploads → 12 passing checks → unknown PDF blocks signing →
-restored evidence and a new passing review → OTP → six verified native PDFs →
-officer approval. `browser-self-review.json` records this separate UI result;
-zero browser errors were observed. This is a local demo, not a government submission.
+The JSON files retain the measured results and source quotes. `explanation.json`
+labels its English translation and retains the original response. Source fixtures
+are in `../accountant-variants/`; reproduction commands are in
+[Agent API](../../../docs/AGENT_API.md). Provider response IDs and credentials are
+omitted, and the temporary key was deleted. Live calls remain off by default.

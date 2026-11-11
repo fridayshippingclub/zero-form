@@ -9,7 +9,7 @@ curl http://localhost:5173/api/agent/review
 
 `GET /api/agent/schema` returns field definitions, applicant/representative/director bindings to the same person entity, expanded per-form bindings, computed input/placement/document counts, missing draft fields, and endpoint links.
 
-`GET /api/agent/review` returns `404` until a signed snapshot exists. Its `mode` is `demo_only`. It includes the signed application ID/version/hash, current evidence revision, data/provenance, six generated PDF hashes/URLs and role bindings, uploaded PDF observations with page-one source links, verification checks and recommendation. Certification date references the uploaded report and declared articles date; the separate articles-before-application rule references both declared dates.
+`GET /api/agent/review` returns `404` until a signed snapshot exists. Its `mode` is `demo_only`. It includes the signed application ID/version/hash, current evidence revision, data/provenance, six generated PDF hashes/URLs and role bindings, uploaded PDF observations with source-page links (legacy fixed-label observations default to page one), verification checks and recommendation. Certification date references the uploaded report and declared articles date; the separate articles-before-application rule references both declared dates.
 
 Generated documents have `source: generated` and `confidence: verified_render` when their stored native-core output digest still matches. Their bindings describe confirmed inputs; they are **not independently extracted observed text**. Uploaded attachment observations come from the PDF parser, not the fixture catalog. A recommendation of `approve` does not set a human decision: `decision` remains `null` until the officer acts in the UI.
 
@@ -49,7 +49,7 @@ evidence. It returns `stage: "draft"`, `draft_hash`, `evidence_revision`, `curre
 - `unknown`: evidence cannot establish the needed facts.
 
 Extraction observations retain PDF page, quote, bounding box and original-file
-SHA256. The model selects existing text spans; deterministic rules compare company
+SHA256. Poppler supplies text spans and coordinates from the first ten pages. The model selects those spans; this is not PDF-image vision. Deterministic rules compare company
 name, capital and address, enforce certification date = articles date, and articles
 date ≤ application date. These are this demonstration's agreed workflow rules,
 not a claim of legal filing eligibility. Receipt of a capital report is separate
@@ -79,3 +79,5 @@ ZERO_FORM_ENABLE_LLM=1 python3 demo/evidence_extract.py \
 
 The credential is not a CLI argument or repository file. Offline transport tests:
 `python3 -m unittest discover -s demo -p test_evidence_extract.py`.
+
+Original-file SHA256 equality establishes that uploaded bytes were not changed by extraction. It does not establish visual correctness, authenticity, or OCR accuracy. The native PDF generator separately checks protected pixels at configured resolutions; those rendering checks are not performed by the semantic extraction adapter.
