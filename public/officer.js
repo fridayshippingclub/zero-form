@@ -252,7 +252,7 @@ async function mockApi(path, opts) {
     const app = structuredClone(mock.app);
     if (t) app.data['company.capital'] = String(Number(app.data['company.capital']) * 10);
     return { app, fields: mock.fields, verify: { docs, checks: [
-      { key: 'identity', label: 'Identity', ok: true, detail: 'Passkey signed this exact snapshot' },
+      { key: 'identity', label: 'Identity', ok: true, detail: 'SMS code confirmed this exact snapshot' },
       { key: 'integrity', label: 'Integrity', ok: !t, detail: t ? 'Contents changed after signing' : 'Hash + server signature match' },
       { key: 'consistency', label: 'Consistency', ok: docs.every((d) => d.ok), detail: `${docs.filter((d) => d.ok).length} of ${docs.length} documents match` },
       { key: 'evidence', label: 'Evidence', ok: true, detail: 'Name reservation #113045678 valid' },

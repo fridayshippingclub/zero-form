@@ -5,9 +5,9 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<
 
 // The questions we ask, in conversational order. Anything else comes from verified sources.
 const ASK = {
-  'company.address': { q: 'Where will the company be registered?', ph: '臺北市大安區復興南路一段 390 號 5 樓' },
+  'company.address': { q: 'Where will the company be registered?', ph: 'e.g. 臺北市○○區○○路 1 號' },
   'company.capital': { q: 'How much capital are you starting with?', ph: '1,000,000', pre: 'NT$', num: true },
-  'owner.name': { q: 'Who owns the building at that address?', ph: '林美華', hint: "We'll prepare their consent letter for them." },
+  'owner.name': { q: 'Who owns the building at that address?', ph: 'e.g. 王小明', hint: "We'll prepare their consent letter for them." },
 };
 const ORDER = Object.keys(ASK);
 const DOCS = FORMS.filter((f) => !f.onFile);
@@ -147,7 +147,7 @@ const VIEWS = {
     <div class="callout warn"><b>Officer's note · <span class="zh">${f.label}</span> ${f.en}</b><span>${esc(dec.note || 'Please check this field.')}</span></div>
     <p class="lead">Everything else stays exactly as you signed it. Only this field is reopened.</p>
     <div class="spacer"></div>
-    <button class="btn primary" data-go="fix">Fix ${f.en.toLowerCase()} <span style="opacity:.6">↵</span></button>`;
+    <button class="btn primary" data-go="fix">Fix ${f.en.replace(/\s*\(.*\)/, '').toLowerCase()} <span style="opacity:.6">↵</span></button>`;
   },
 
   done: () => {
@@ -256,6 +256,7 @@ document.addEventListener('change', async (event) => {
 });
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Enter' || e.target.tagName === 'INPUT' || ui.busy) return;
+  e.preventDefault(); // stop the same keystroke from submitting the next screen's input
   const btn = document.querySelector('.btn.primary'); if (btn) btn.click();
 });
 
