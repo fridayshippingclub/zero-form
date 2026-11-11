@@ -1,0 +1,1 @@
+We pointed Zero Form at three real Taiwanese company-registration forms. Claude read each one and boxed 18 fields — but there are only 6 different facts behind them. Zero Form asks each fact once.

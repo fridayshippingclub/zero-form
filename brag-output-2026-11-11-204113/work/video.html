@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Zero Form brag, real forms</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=block" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;transition:none!important}
+  html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#F5F5F2;font-family:Inter,"Noto Sans TC",sans-serif;color:#0E1116}
+  .layer{position:absolute;inset:0}
+  .cap{position:absolute;left:0;right:0;top:58px;text-align:center;font:700 58px/1.1 Inter,sans-serif;letter-spacing:-1.8px}
+  .cap em{font-style:normal;color:#2B50FF}
+  #pages{position:absolute;left:120px;top:200px;width:1680px;height:760px}
+  .page{position:absolute;top:0;width:520px;height:735px;background:#fff;border-radius:6px;box-shadow:0 30px 60px -24px rgba(14,17,22,.3),0 0 0 1px #E6E6E1;overflow:hidden}
+  .page img{width:100%;height:100%;display:block}
+  .scan{position:absolute;left:0;right:0;height:3px;background:#2B50FF;box-shadow:0 0 18px 6px rgba(43,80,255,.35)}
+  .bx{position:absolute;border-radius:3px}
+  .bx b{position:absolute;left:-2px;top:-15px;font:600 10.5px/14px Inter,sans-serif;color:#fff;padding:0 4px;border-radius:3px;white-space:nowrap}
+  .pname{position:absolute;top:752px;width:520px;text-align:center;font:600 20px/1.3 "Noto Sans TC",Inter,sans-serif}
+  .pname span{display:block;font:500 16px Inter,sans-serif;color:#4A5160}
+  .pname i{font-style:normal;color:#2B50FF;font-weight:700}
+  #chip{position:absolute;left:50%;top:138px;transform:translateX(-50%);display:flex;align-items:center;gap:12px;background:#fff;border-radius:999px;padding:8px 22px 8px 10px;font:600 24px Inter,"Noto Sans TC",sans-serif;box-shadow:0 0 0 1px #E6E6E1,0 10px 30px -12px rgba(14,17,22,.3);white-space:nowrap;z-index:5}
+  #chip i{width:26px;height:26px;border-radius:7px}
+  #chip .zh{color:#4A5160;font-weight:500}
+  #chip .n{color:#2B50FF}
+  /* facts card */
+  #card{position:absolute;left:50%;top:200px;width:1080px;margin-left:-540px;background:#fff;border-radius:20px;box-shadow:0 40px 90px -30px rgba(14,17,22,.3),0 0 0 1px #E6E6E1;padding:22px 36px}
+  .row{display:grid;grid-template-columns:30px 280px 1fr 300px;align-items:center;gap:18px;padding:16px 0;border-top:1px solid #EEEEEA;font-size:26px}
+  .row:first-child{border-top:0}
+  .row .sw{width:26px;height:26px;border-radius:7px}
+  .row .zh{font:600 28px "Noto Sans TC",sans-serif}
+  .row .en{color:#4A5160;font-weight:500}
+  .row .dots{display:flex;gap:10px;justify-content:flex-end;align-items:center;font:600 20px Inter,sans-serif;color:#4A5160}
+  .row .dots s{width:20px;height:28px;border-radius:3px;border:2px solid #D5D7DC;display:block;text-decoration:none}
+  .logo{position:absolute;left:50%;top:38%;width:840px;transform:translate(-50%,-50%)}
+  .tag2{position:absolute;left:0;right:0;top:560px;text-align:center;font:700 72px/1.15 Inter,sans-serif;letter-spacing:-2.4px}
+  .tag2 em{font-style:normal;color:#2B50FF}
+</style>
+</head>
+<body>
+<div class="layer" id="s1"><div class="cap" id="cap"></div><div id="chip"></div><div id="pages"></div></div>
+<div class="layer" id="s4"><div class="cap" id="cap4"><em>18 boxes.</em> 6 facts. Asked once.</div><div id="card"></div></div>
+<div class="layer" id="s5"><img class="logo" id="logo" src="logo-light.svg"><div class="tag2" id="tag5">Read each form once.<br><em>Ask each fact once.</em></div></div>
+<script type="module">
+const $ = (id) => document.getElementById(id);
+const clamp = (x) => Math.max(0, Math.min(1, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const out = (x) => 1 - Math.pow(1 - x, 3);
+const outBack = (x) => { const c = 1.5; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const show = (el, o, y = 0) => { el.style.opacity = o; el.style.transform = `translateY(${y}px)`; };
+
+const FORMS = await (await fetch('boxes.json')).json();
+const FACT = {
+  'company.name': ['#E0A800', '公司名稱', 'Company name'], 'person.name': ['#2B50FF', '代表人姓名', 'Representative'],
+  'company.address': ['#E5484D', '公司所在地', 'Registered address'], 'person.phone': ['#12A594', '聯絡電話', 'Phone'],
+  'reservation.id': ['#8E4EC6', '預查編號', 'Name reservation no.'], 'company.capital': ['#0F8A4F', '資本總額', 'Capital'],
+};
+const ORDER = ['company.name', 'person.name', 'company.address', 'person.phone', 'reservation.id', 'company.capital'];
+const NAMES = [['有限公司設立（變更）登記申請書', 'Application letter'], ['有限公司設立登記表', 'Registration form'], ['有限公司變更登記表', 'Change registration form']];
+
+// ---------- build pages ----------
+$('pages').innerHTML = FORMS.map((f, i) => `
+  <div class="page" style="left:${i * 580}px"><img src="${f.id}.png"><div class="scan"></div>
+    ${f.fields.map((x) => `<div class="bx" data-f="${x.fact}" style="left:${x.box[0]}%;top:${x.box[1]}%;width:${x.box[2]}%;height:${x.box[3]}%"><b style="background:${FACT[x.fact][0]}">${FACT[x.fact][2]}</b></div>`).join('')}
+  </div>
+  <div class="pname" style="left:${i * 580}px">${NAMES[i][0]}<span>${NAMES[i][1]} · <i>0</i> boxes</span></div>`).join('');
+const pages = [...document.querySelectorAll('.page')], pnames = [...document.querySelectorAll('.pname')];
+const boxes = FORMS.map((f, i) => [...pages[i].querySelectorAll('.bx')].map((el, j) => ({ el, ...f.fields[j] })));
+const TOTAL = FORMS.reduce((n, f) => n + f.fields.length, 0);
+
+// ---------- facts card ----------
+const formsWith = (k) => FORMS.map((f) => f.fields.some((x) => x.fact === k));
+$('card').innerHTML = ORDER.map((k) => { const [c, zh, en] = FACT[k], w = formsWith(k);
+  return `<div class="row"><i class="sw" style="background:${c}"></i><span class="zh">${zh}</span><span class="en">${en}</span>
+    <span class="dots">${w.map((on) => `<s style="${on ? `background:${c};border-color:${c}` : ''}"></s>`).join('')}<span style="margin-left:8px">${w.filter(Boolean).length} of 3 forms</span></span></div>`; }).join('');
+const rows = [...document.querySelectorAll('.row')];
+
+// ---------- captions ----------
+const CAPS = [[0.1, 4.0, '<em>3 real</em> company-registration forms.'], [4.15, 10.0, 'Claude reads each form and <em>finds every box.</em>'], [10.15, 16.0, 'The same facts, <em>on every form.</em>']];
+const SPOT = [['company.name', 10.5], ['person.name', 11.75], ['company.address', 13.0], ['person.phone', 14.25]];  // 2.5 beats each
+
+window.render = (t) => {
+  // scene 1-3: the real pages
+  const on13 = t < 16.05; $('s1').style.opacity = on13 ? 1 : 0;
+  if (on13) {
+    const ex = seg(t, 15.7, 16.0);
+    const c = CAPS.find(([a, b]) => t >= a - 0.15 && t < b) || CAPS[0];
+    $('cap').innerHTML = c[2];
+    const ci = out(seg(t, c[0], c[0] + 0.35)), co = seg(t, c[1] - 0.25, c[1] - 0.05);
+    show($('cap'), ci * (1 - co), (1 - ci) * 20);
+    pages.forEach((p, i) => {
+      const a = out(seg(t, 0.4 + i * 0.25, 0.85 + i * 0.25));
+      p.style.opacity = Math.min(1, a * 1.5) * (1 - ex); p.style.transform = `translateY(${(1 - outBack(seg(t, 0.4 + i * 0.25, 0.85 + i * 0.25))) * 80 - ex * 20}px)`;
+      pnames[i].style.opacity = a * (1 - ex);
+      // scan line: page i from 4.5+1.5i over 1.5s
+      const s0 = 4.5 + i * 1.5, sp = seg(t, s0, s0 + 1.5), scan = p.querySelector('.scan');
+      scan.style.top = sp * 100 + '%'; scan.style.opacity = t > s0 && t < s0 + 1.55 ? 1 : 0;
+      let n = 0;
+      boxes[i].forEach((b) => {
+        const bp = seg(t, b.t, b.t + 0.25); if (t >= b.t) n++;
+        // spotlight: one fact at a time across all pages
+        const spot = SPOT.find(([, at]) => t >= at && t < at + 1.25);
+        const dim = spot && spot[0] !== b.fact ? 0.12 : 1;
+        const lit = spot && spot[0] === b.fact;
+        const [col] = FACT[b.fact];
+        b.el.style.opacity = Math.min(1, bp * 2) * dim;
+        b.el.style.transform = `scale(${0.9 + 0.1 * outBack(bp)})`;
+        b.el.style.outline = `${lit ? 4 : 2.5}px solid ${col}`;
+        b.el.style.background = col + (lit ? '40' : '22');
+      });
+      pnames[i].querySelector('i').textContent = n;
+    });
+    const spot = SPOT.find(([, at]) => t >= at && t < at + 1.25);
+    if (spot) {
+      const [k, at] = spot, [col, zh, en] = FACT[k], n = formsWith(k).filter(Boolean).length;
+      $('chip').innerHTML = `<i style="background:${col}"></i><span class="zh">${zh}</span>${en} · <span class="n">on ${n} of 3 forms</span>`;
+      const p = out(seg(t, at, at + 0.2)); $('chip').style.opacity = p; $('chip').style.transform = `translateX(-50%) translateY(${(1 - p) * 10}px)`;
+    } else $('chip').style.opacity = 0;
+  }
+  // scene 4: facts card
+  const on4 = t >= 15.95 && t < 20.05; $('s4').style.opacity = on4 ? 1 : 0;
+  if (on4) {
+    const o = seg(t, 19.7, 19.95), ci = out(seg(t, 16.05, 16.4));
+    show($('cap4'), ci * (1 - o), (1 - ci) * 20);
+    const k = out(seg(t, 16.0, 16.4)); $('card').style.opacity = k * (1 - o); $('card').style.transform = `translateY(${(1 - k) * 60}px)`;
+    rows.forEach((r, i) => { const p = out(seg(t, 16.25 + i * 0.25, 16.55 + i * 0.25)); r.style.opacity = p; r.style.transform = `translateX(${(1 - p) * 24}px)`; });
+  }
+  // scene 5: outro
+  const on5 = t >= 20.0; $('s5').style.opacity = on5 ? 1 : 0;
+  if (on5) {
+    const a = seg(t, 20.1, 20.55);
+    $('logo').style.opacity = out(a); $('logo').style.transform = `translate(-50%,-50%) scale(${0.84 + 0.16 * outBack(a)})`;
+    const b = out(seg(t, 20.55, 20.95)); show($('tag5'), b, (1 - b) * 26);
+  }
+};
+window.ready = (async () => {
+  await document.fonts.ready;
+  await document.fonts.load('600 28px "Noto Sans TC"', '有限公司設立變更登記申請書表代表人姓名所在地聯絡電話預查編號資本總額');
+  await Promise.all([...document.images].map((i) => i.complete ? 0 : new Promise((r) => (i.onload = i.onerror = r))));
+  window.render(0); return true;
+})();
+</script>
+</body>
+</html>
