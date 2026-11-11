@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zero Form extension test page</title>
+<style>
+  /* Deliberately hostile gov-site-like CSS to check Shadow DOM isolation */
+  body { font-family: "Times New Roman", serif; font-size: 13px; color: #333; margin: 0; background: #f5f5f5; }
+  * { box-sizing: content-box; }
+  button { background: red !important; border: 3px dashed lime; font-size: 30px; }
+  div { padding: 4px; }
+  main { max-width: 900px; margin: 0 auto; padding: 24px; background: #fff; min-height: 150vh; }
+  table { border-collapse: collapse; } td, th { border: 1px solid #999; padding: 6px; }
+</style>
+</head>
+<body>
+<!-- Open via file:// and load ../extension/content.js below, or let Playwright inject it. -->
+<main>
+  <h4>Step 3： 取得目的事業主管機關許可</h4>
+  <p>公司業務，依法律或基於法律授權所定之命令，規定其業務須經目的事業主管機關許可者…</p>
+  <h4>Step 4 ：應備文件</h4>
+  <table border="1" style="width:100%">
+    <tbody>
+      <tr><th>1.</th><td>公司設立登記申請書</td><td><a href="#">pdf</a></td><td><a href="#">odt</a></td></tr>
+      <tr><th>2.</th><td>公司章程</td><td><a href="#">pdf</a></td><td><a href="#">odt</a></td></tr>
+      <tr><th>3.</th><td>股東同意書</td><td><a href="#">pdf</a></td><td><a href="#">odt</a></td></tr>
+      <tr><th>4.</th><td>董事願任同意書</td><td><a href="#">pdf</a></td><td><a href="#">odt</a></td></tr>
+      <tr><th>5.</th><td>資本額查核報告書</td><td><a href="#">pdf</a></td><td><a href="#">odt</a></td></tr>
+      <tr><th>6.</th><td>建物所有權人同意書</td><td><a href="#">pdf</a></td><td><a href="#">odt</a></td></tr>
+      <tr><th>7.</th><td>公司登記表</td><td><a href="#">pdf</a></td><td><a href="#">odt</a></td></tr>
+    </tbody>
+  </table>
+</main>
+<script src="content.js"></script>
+</body>
+</html>
