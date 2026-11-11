@@ -100,7 +100,8 @@ def render(source, destination):
     if destination.exists():
         raise ValueError('output_already_exists')
     destination.parent.mkdir(parents=True,exist_ok=True)
-    executable = ROOT / 'target/debug/zero-form'
+    # Prefer the optimized build (~10x faster PDF verification); same code, same outputs. ZERO_FORM_BIN overrides.
+    executable = Path(os.environ['ZERO_FORM_BIN']) if os.environ.get('ZERO_FORM_BIN') else next((ROOT/p for p in ('target/release/zero-form','target/debug/zero-form') if (ROOT/p).is_file()), ROOT/'target/debug/zero-form')
     if not executable.is_file():
         raise ValueError('core_not_built')
     env = os.environ.copy()
@@ -113,12 +114,17 @@ def render(source, destination):
     with tempfile.TemporaryDirectory(prefix='zero-form-dynamic-') as temporary:
         work=Path(temporary)
         subset_font(work/'font.ttf', ''.join(str(value) for value in data.values()))
-        fields={};facts=[];templates={};documents=[];properties={};fact_keys=set()
         roles={'applicant':'person-applicant','representative':'person-applicant','director':'person-applicant','company':'company-applicant','owner':'property-owner'}
+        # Each form is an independent single-document package: prepared, rendered, verified and published by its own
+        # engine process, all in parallel (the engine's PDF verification dominates and is single-threaded per run).
+        jobs=[]
         for form in forms:
             if not 1 <= len(form['fields']) <= 12:
                 raise ValueError('invalid_field_count')
-            path=work/(form['id']+'.pdf')
+            assets=work/form['id'];assets.mkdir()
+            shutil.copyfile(work/'font.ttf',assets/'font.ttf')
+            fields={};facts=[];properties={};fact_keys=set()
+            path=assets/(form['id']+'.pdf')
             placements=official_background(form,path,source['hash'])
             targets={};bindings={}
             for i,field in enumerate(form['fields']):
@@ -146,25 +152,32 @@ def render(source, destination):
                 targets[target]={'page':page,'rect':[float(x),float(y),float(width),float(height)],'filled_by':'applicant','control':{'kind':'text','size':float(size)}}
                 # Semantic values remain exactly those confirmed by the applicant.
                 bindings[target]={'source':{'kind':'field','field':semantic},'transform':{'kind':'identity'}}
-            templates[form['id']]={'version':'1','source':{'path':path.name,'sha256':digest(path)},
-                'font':{'asset':{'path':'font.ttf','sha256':digest(work/'font.ttf')},'family':SUBSET_FAMILY},'targets':targets}
-            documents.append({'id':form['id'],'template':form['id'],'condition':{'op':'always'},'repeat_field':None,'bindings':bindings})
-        definition={'schema_version':1,'application':{'id':'frontend-company-demo','version':'1.0.0','valid_from':'2026-01-01','valid_to':None,
-            'schema':{'$schema':'https://json-schema.org/draft/2020-12/schema','type':'object','additionalProperties':False,'properties':properties,'required':list(fields)},
-            'fields':fields,'rules':[],'documents':documents},'templates':templates}
-        dump(work/'definition.json',definition)
-        definition_hash=run([str(executable),'check-definition',str(work/'definition.json')],env)['definition_hash']
-        request={'id':'application-v'+str(source['v']),'application_type':'frontend-company-demo','scope':'demo-frontend',
-            'as_of':'2026-11-11','roles':roles}
-        bundle={'scope':'demo-frontend','read_revision':source['hash'],'grant_id':'demo-confirmed-snapshot','expires_on':'2099-12-31',
-            'allowed_fact_ids':[f['id'] for f in facts],'allowed_relationship_ids':[],'approved_definition_hashes':[definition_hash],'facts':facts,'relationships':[]}
-        dump(work/'request.json',request);dump(work/'facts.json',bundle)
-        run([str(executable),'run','--definition',str(work/'definition.json'),'--request',str(work/'request.json'),
-            '--fixture-facts',str(work/'facts.json'),'--now','2026-11-11','--assets',str(work),'--out',str(destination)],env)
-        manifest=json.loads((destination/'manifest.json').read_text())
+            templates={form['id']:{'version':'1','source':{'path':path.name,'sha256':digest(path)},
+                'font':{'asset':{'path':'font.ttf','sha256':digest(assets/'font.ttf')},'family':SUBSET_FAMILY},'targets':targets}}
+            documents=[{'id':form['id'],'template':form['id'],'condition':{'op':'always'},'repeat_field':None,'bindings':bindings}]
+            definition={'schema_version':1,'application':{'id':'frontend-company-demo-'+form['id'],'version':'1.0.0','valid_from':'2026-01-01','valid_to':None,
+                'schema':{'$schema':'https://json-schema.org/draft/2020-12/schema','type':'object','additionalProperties':False,'properties':properties,'required':list(fields)},
+                'fields':fields,'rules':[],'documents':documents},'templates':templates}
+            dump(assets/'definition.json',definition)
+            definition_hash=run([str(executable),'check-definition',str(assets/'definition.json')],env)['definition_hash']
+            request={'id':'application-v'+str(source['v'])+'-'+form['id'],'application_type':'frontend-company-demo-'+form['id'],'scope':'demo-frontend',
+                'as_of':'2026-11-11','roles':roles}
+            bundle={'scope':'demo-frontend','read_revision':source['hash'],'grant_id':'demo-confirmed-snapshot','expires_on':'2099-12-31',
+                'allowed_fact_ids':[f['id'] for f in facts],'allowed_relationship_ids':[],'approved_definition_hashes':[definition_hash],'facts':facts,'relationships':[]}
+            dump(assets/'request.json',request);dump(assets/'facts.json',bundle)
+            out=destination/form['id']
+            jobs.append((form['id'],out,subprocess.Popen([str(executable),'run','--definition',str(assets/'definition.json'),'--request',str(assets/'request.json'),
+                '--fixture-facts',str(assets/'facts.json'),'--now','2026-11-11','--assets',str(assets),'--out',str(out)],
+                cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)))
+        failures=[]
+        for form_id,_,process in jobs:
+            stdout,stderr=process.communicate(timeout=300)
+            if process.returncode:failures.append(form_id+': '+(stderr.strip() or stdout.strip() or 'core_failed'))
+        if failures:raise RuntimeError('; '.join(failures))
+        hashes={form_id:json.loads((out/'manifest.json').read_text())['snapshot_hash'] for form_id,out,_ in jobs}
         return {'mode':'demo_only','application_id':source['applicationId'],'frontend_snapshot_hash':source['hash'],
-            'snapshot_hash':manifest['snapshot_hash'],'documents':{f['id']:{'path':str(destination/'documents'/(f['id']+'.pdf')),
-                'sha256':digest(destination/'documents'/(f['id']+'.pdf'))} for f in forms}}
+            'snapshot_hash':hashlib.sha256(json.dumps(hashes,sort_keys=True).encode()).hexdigest(),'core_snapshot_hashes':hashes,
+            'documents':{form_id:{'path':str(out/'documents'/(form_id+'.pdf')),'sha256':digest(out/'documents'/(form_id+'.pdf'))} for form_id,out,_ in jobs}}
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--input',required=True,type=Path);parser.add_argument('--out',required=True,type=Path)

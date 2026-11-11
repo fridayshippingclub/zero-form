@@ -39,7 +39,7 @@ const answer = async (f, text, pause = 1400) => { await f.fill('#qi', ''); await
 // Signing runs the native engine (Rust + Typst + Poppler), which takes ~15 s: wait for the result screen, never a fixed sleep.
 const signAndWait = async (f, cap) => {
   await f.click('[data-go="sign"]'); await f.waitForSelector('.sms'); await wait(1500); await f.click('.sms');
-  await caption(cap + ' (Generation takes ~45 s; sped up ×10 here.)'); await wait(2500);
+  await caption(cap + ' (PDF generation is sped up ×10 in this video.)'); await wait(2500);
   const from = (Date.now() - T0) / 1000;
   await f.waitForSelector('.hash', { timeout: 300000 });
   fast.push([from, (Date.now() - T0) / 1000 - 0.3]); await wait(800);

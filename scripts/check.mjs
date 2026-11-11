@@ -25,7 +25,7 @@ const pdfText = (buf) => { const f = path.join(DATA_DIR, 'probe.pdf'); fs.writeF
 
 let fails = 0;
 const check = (name, ok, info = '') => { console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${info ? '  — ' + info : ''}`); if (!ok) fails++; };
-const sign = async () => { const s = await call('/api/sign/send', {}); return { hash: s.hash, st: await call('/api/sign/verify', { code: s.demoCode }) }; };
+const sign = async () => { const s = await call('/api/sign/send', {}); const t = Date.now(); const st = await call('/api/sign/verify', { code: s.demoCode }); return { hash: s.hash, st, secs: ((Date.now() - t) / 1000).toFixed(1) }; };
 const attach = async (kind) => {
   const pdf = await bytes(`/api/mock-attachments/${kind}`);
   const r = await fetch(`${BASE}/api/attachments?kind=${kind}`, { method: 'POST', headers: { 'content-type': 'application/pdf' }, body: pdf.buf });
@@ -56,7 +56,7 @@ try {
   const v1 = await sign();
   const pkg1 = await call('/api/package/1');
   const sigOk = pkg1.serverSig && crypto.verify(null, Buffer.from(canonical({ hash: pkg1.hash, confirmation: pkg1.confirmation })), pkg1.serverPublicKey, Buffer.from(pkg1.serverSig, 'base64'));
-  check('5  sign once: snapshot v1 sealed (SMS code bound to SHA-256, Ed25519)', v1.st.app?.status === 'submitted' && v1.st.app.snapshot.hash === v1.hash && pkg1.confirmation?.hash === v1.hash && sigOk, v1.st.error ? `${v1.st.status} ${v1.st.error} ${v1.st.detail || ''}` : v1.hash?.slice(0, 16));
+  check('5  sign once: snapshot v1 sealed (SMS code bound to SHA-256, Ed25519)', v1.st.app?.status === 'submitted' && v1.st.app.snapshot.hash === v1.hash && pkg1.confirmation?.hash === v1.hash && sigOk, v1.st.error ? `${v1.st.status} ${v1.st.error} ${v1.st.detail || ''}` : `${v1.hash?.slice(0, 16)} · signed + 6 PDFs in ${v1.secs}s`);
 
   const pdfs = await Promise.all(DOCS.map(async (f) => ({ f, r: await bytes(`/doc/1/${f.id}`) })));
   const pdfOk = pdfs.filter(({ f, r }) => r.status === 200 && r.type?.includes('pdf') && r.buf.subarray(0, 5).toString() === '%PDF-' && sha(r.buf) === pkg1.docs?.[f.id]);
@@ -82,7 +82,7 @@ try {
   await call('/api/answer', { values: { 'company.capital': '800000' } });
   const v2 = await sign();
   off = await call('/api/officer');
-  check('9  re-sign creates v2 linked to v1', off.app.v === 2 && off.app.prev === v1.hash && off.app.hash === v2.hash && off.verify.checks.every((c) => c.ok), v2.st.error || '');
+  check('9  re-sign creates v2 linked to v1', off.app.v === 2 && off.app.prev === v1.hash && off.app.hash === v2.hash && off.verify.checks.every((c) => c.ok), v2.st.error || `re-signed in ${v2.secs}s`);
   const stale = off.verify.externalReview.checks.find((c) => c.kind === 'capital_verification' && c.field === 'Capital-TWD');
   check('9  old capital evidence flagged against v2', off.verify.externalReview.recommendation !== 'approve' && stale?.status === 'mismatch', `${stale?.expected} vs ${stale?.actual}`);
   const reup = await attach('capital_verification');

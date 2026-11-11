@@ -8,7 +8,8 @@
     "dev": "node --watch server.js",
     "start": "node server.js",
     "check": "node scripts/check.mjs",
-    "record": "node demo/record.mjs"
+    "record": "node demo/record.mjs",
+    "build:engine": "cargo build --release --locked -p zero-form-cli"
   },
   "keywords": [],
   "author": "",
