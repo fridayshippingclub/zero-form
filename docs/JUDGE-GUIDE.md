@@ -5,7 +5,7 @@ Enter shared facts once to fill six incorporation forms. Upload the three extern
 ## Demo walkthrough
 
 1. Confirm the prefilled details and answer the three questions about the registered address, capital and building owner.
-2. Upload the capital audit report, premises precheck and name reservation notice. Use the [three sample PDFs and matching answers](../bench/review/demo-uploads/README.md) or download samples in the local rehearsal at `/?demo=1`.
+2. Upload the capital audit report, premises precheck and name reservation notice. In the local rehearsal at `/?demo=1`, select **Load demo PDFs** and use **Preview PDF** to inspect each attachment. The [sample PDFs and matching answers](../bench/review/demo-uploads/README.md) are also available for a manual upload.
 3. Select **Run self-review**. Compare the application value, the extracted value and the quoted source. A mismatch such as TWD 10,000,000 declared versus TWD 1,000,000 in the report blocks signing.
 4. Replace the inconsistent evidence and run the review again. **Sign & submit** uses a demo confirmation code and generates six PDFs. The **Officer console** shows the package and its evidence checks.
 
