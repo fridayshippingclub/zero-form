@@ -67,7 +67,7 @@
     </style>
     <div class="zf">
       <button class="launcher" part="launcher" aria-label="線上填寫 7 份設立文件 · Fill all 7 forms online (Zero Form)">
-        ${logo(16)}<span>線上填寫</span>
+        ${logo(16)}<span>線上填寫 · Fill online</span>
       </button>
       <div class="scrim"></div>
       <aside class="drawer" role="dialog" aria-label="Zero Form" aria-modal="true">
@@ -139,7 +139,8 @@
       <section class="zf notice" aria-label="線上辦理 · Zero Form">
         <div class="txt">
           <p class="l1">線上辦理：回答 3 題，自動產生全部 7 份設立文件</p>
-          <div class="l2"><span>簡訊驗證 · 送出前可逐項核對 · 展示版，非政府送件</span><span aria-hidden="true">·</span><span class="by">${logo(14, false, '#6B7280')}Zero Form</span></div>
+          <p class="l1" style="font-size:14px;font-weight:500;color:#4A5160;margin-top:2px">Apply online: answer 3 questions, all 7 registration forms are prepared for you.</p>
+          <div class="l2"><span>簡訊驗證 · 送出前可逐項核對 · 展示版，非政府送件 / SMS-verified · review before sending · demo, not a government submission</span><span aria-hidden="true">·</span><span class="by">${logo(14, false, '#6B7280')}Zero Form</span></div>
         </div>
         <button class="go">線上填寫 · Start online</button>
       </section>`, (h) => row.parentNode.insertBefore(h, row));
@@ -172,7 +173,7 @@
         .start:focus-visible { outline: 2px solid #2B50FF; outline-offset: 2px; }
         small { font-size: 12px; color: #6B7280; margin-left: 6px; }
       </style>
-      <p class="zf" style="margin:0"><button class="go start">這 7 份文件可線上一次填寫（回答 3 題）→</button><small>Zero Form 展示版</small></p>`, (h) => table.parentNode.insertBefore(h, table));
+      <p class="zf" style="margin:0"><button class="go start">這 7 份文件可線上一次填寫（回答 3 題）· Fill all 7 online (3 questions) →</button><small>Zero Form 展示版 · Demo</small></p>`, (h) => table.parentNode.insertBefore(h, table));
   }
 
   const tryAll = () => insertHero() & insertBanner();
