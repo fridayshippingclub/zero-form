@@ -1,0 +1,55 @@
+---
+name: learn
+preamble-tier: 2
+version: 1.1.0
+description: |
+  Manage project learnings. Review, search, prune, and export what gstack
+  has learned across sessions. Use when asked to "what have we learned",
+  "show learnings", "prune stale learnings", or "export learnings".
+triggers:
+  - show learnings
+  - what have we learned
+  - manage project learnings
+allowed-tools:
+  - Bash
+  - Read
+  - Write
+  - Edit
+  - AskUserQuestion
+  - Glob
+  - Grep
+---
+
+{{PREAMBLE}}
+
+# /learn: project learnings
+
+**Hard gate:** manage learnings only. Make no code changes, even when a learning names a fix.
+
+`gstack-learnings-search` reads this project's learnings (latest entry per key+type); `gstack-learnings-log`
+appends one. Both live in `~/.claude/skills/gstack/bin/` and take `--help`. Pick the mode from the request:
+
+| Request | Run | Then |
+|---|---|---|
+| show (default) | `~/.claude/skills/gstack/bin/gstack-learnings-search --limit 20` | group by type; if empty, say none are recorded yet and that /review, /ship and other skills record them as they work |
+| search | `~/.claude/skills/gstack/bin/gstack-learnings-search --query "<words>" --limit 20` | show the matches |
+| other projects | add `--cross-project` | only user-stated learnings from other projects appear |
+| stats | `~/.claude/skills/gstack/bin/gstack-learnings-search --stats` | show the counts as a table |
+| export | `~/.claude/skills/gstack/bin/gstack-learnings-search --limit 50` | a `## Project Learnings` section, `### <Type>s` per type, lines `- **key**: insight (confidence: N/10)`; show it, and write it into CLAUDE.md or a file only if the user asks |
+| add | `~/.claude/skills/gstack/bin/gstack-learnings-log '<json>'` | ask only for what is missing: type, kebab-case key, one-sentence insight, confidence 1-10, files; `"source":"user-stated"` |
+| prune | `~/.claude/skills/gstack/bin/gstack-learnings-search --limit 100` | see Prune |
+
+## Prune
+
+Flag each learning that is:
+- **STALE**: a path in its `files` no longer exists in the repo.
+- **CONFLICT**: the same key appears under two types with opposing insights (within one type the latest entry already wins).
+
+For each flagged entry, ask: remove, keep, or update. Only a request that already names the action for these entries ("remove the stale ones without asking") answers it; never infer approval.
+- Remove: delete its lines (that key and type) from the file this prints, leaving every other line as it is:
+  ```bash
+  SLUG=$(~/.claude/skills/gstack/bin/gstack-slug --get SLUG)
+  GSTACK_STATE_ROOT=$(~/.claude/skills/gstack/bin/gstack-paths --get GSTACK_STATE_ROOT); : "${GSTACK_STATE_ROOT:?gstack-paths failed; reinstall with ./setup or /gstack-upgrade}"
+  echo "$GSTACK_STATE_ROOT/projects/$SLUG/learnings.jsonl"
+  ```
+- Update: log a corrected entry with the same key and type; the latest one wins.

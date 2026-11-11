@@ -9,3 +9,7 @@ dist/
 /output/
 data/
 __pycache__/
+
+# GStack runtime and machine-specific generated registrations
+/.gstack-runtime/
+/.agents/

@@ -1,0 +1,675 @@
+/**
+ * Tests for bin/gstack-diff-scope — verifies scope signal detection.
+ *
+ * Creates temp git repos with specific file patterns and verifies
+ * the correct SCOPE_* variables are output.
+ */
+import { describe, test, expect, afterAll } from 'bun:test';
+import { mkdtempSync, writeFileSync, mkdirSync, rmSync, readFileSync } from 'fs';
+import { join } from 'path';
+import { tmpdir } from 'os';
+import { spawnSync } from 'child_process';
+import { resolveBase } from '../lib/gate-diff/git';
+
+const SCRIPT = join(import.meta.dir, '..', 'bin', 'gstack-diff-scope');
+
+const dirs: string[] = [];
+
+function createRepo(files: string[]): string {
+  const dir = mkdtempSync(join(tmpdir(), 'diff-scope-test-'));
+  dirs.push(dir);
+
+  const run = (cmd: string, args: string[]) =>
+    spawnSync(cmd, args, { cwd: dir, stdio: 'pipe', timeout: 5000 });
+
+  run('git', ['init', '-b', 'main']);
+  run('git', ['config', 'user.email', 'test@test.com']);
+  run('git', ['config', 'user.name', 'Test']);
+
+  // Base commit
+  writeFileSync(join(dir, 'README.md'), '# test\n');
+  run('git', ['add', '.']);
+  run('git', ['commit', '-m', 'initial']);
+
+  // Feature branch with specified files
+  run('git', ['checkout', '-b', 'feature/test']);
+  for (const f of files) {
+    const fullPath = join(dir, f);
+    const dirPath = fullPath.substring(0, fullPath.lastIndexOf('/'));
+    if (dirPath !== dir) mkdirSync(dirPath, { recursive: true });
+    writeFileSync(fullPath, '# test content\n');
+  }
+  run('git', ['add', '.']);
+  run('git', ['commit', '-m', 'add files']);
+
+  return dir;
+}
+
+function runScope(dir: string): Record<string, string> {
+  const result = spawnSync('bash', [SCRIPT, 'main'], {
+    cwd: dir, stdio: 'pipe', timeout: 5000,
+  });
+  const output = result.stdout.toString().trim();
+  const vars: Record<string, string> = {};
+  for (const line of output.split('\n')) {
+    const [key, val] = line.split('=');
+    if (key && val) vars[key] = val;
+  }
+  return vars;
+}
+
+afterAll(() => {
+  for (const d of dirs) {
+    try { rmSync(d, { recursive: true, force: true }); } catch {}
+  }
+});
+
+describe('gstack-diff-scope', () => {
+  // --- Existing scope signals ---
+
+  // Value: protects=a stale local base branch does not stand in for the base: a docs-only branch that merged a newer
+  //   origin/main is docs, not the backend change origin/main already has (GST-462, GBRA-218); fails_when=the script
+  //   diffs against the local branch whenever it resolves (with the name given, or the default it detects); seam=a
+  //   tracking ref moved with update-ref, as a fetch would; no_claim=nothing about remotes other than origin.
+  test('a stale local main yields to origin/main, named or defaulted; a tag, a qualified ref or a pinned sha is never redirected', () => {
+    const dir = createRepo([]);
+    const git = (...a: string[]) => spawnSync('git', a, { cwd: dir, stdio: 'pipe', timeout: 5000 });
+    git('checkout', '-q', 'main');
+    mkdirSync(join(dir, 'lib'), { recursive: true });
+    writeFileSync(join(dir, 'lib', 'server.ts'), 'export const port = 1;\n');
+    git('add', '.'); git('commit', '-qm', 'upstream backend');
+    git('update-ref', 'refs/remotes/origin/main', 'HEAD');
+    git('reset', '-q', '--hard', 'HEAD~1');
+    git('checkout', '-q', '-b', 'topic', 'origin/main');
+    mkdirSync(join(dir, 'docs'), { recursive: true });
+    writeFileSync(join(dir, 'docs', 'howto.md'), '# How to\n');
+    git('add', '.'); git('commit', '-qm', 'docs');
+    for (const args of [['main'], []]) {
+      const out = spawnSync(SCRIPT, args, { cwd: dir, stdio: 'pipe', timeout: 5000 }).stdout.toString();
+      expect(out).toContain('SCOPE_DOCS=true');
+      expect(out).toContain('SCOPE_BACKEND=false');
+    }
+    const scopeOf = (args: string[]) => spawnSync(SCRIPT, args, { cwd: dir, stdio: 'pipe', timeout: 5000 }).stdout.toString();
+    git('tag', 'origin/main', 'HEAD');
+    expect(scopeOf(['main'])).toContain('SCOPE_DOCS=true');
+    git('tag', '-d', 'origin/main');
+    git('update-ref', 'refs/remotes/origin/origin/main', 'HEAD');
+    expect(scopeOf(['origin/main'])).toContain('SCOPE_DOCS=true');
+    git('tag', 'origin/main', 'HEAD');
+    expect(scopeOf(['origin/main'])).toContain('SCOPE_DOCS=true');
+    git('tag', '-d', 'origin/main');
+    const pinned = git('rev-parse', 'origin/main').stdout.toString().trim();
+    git('update-ref', `refs/remotes/origin/${pinned}`, 'HEAD');
+    expect(scopeOf([pinned])).toContain('SCOPE_DOCS=true');
+    git('symbolic-ref', 'refs/remotes/origin/HEAD', 'refs/remotes/origin/main');
+    expect(spawnSync(SCRIPT, ['HEAD'], { cwd: dir, stdio: 'pipe', timeout: 5000 }).stdout.toString()).toContain('SCOPE_DOCS=false');
+    git('update-ref', 'refs/remotes/origin/main', git('commit-tree', git('rev-parse', 'HEAD^{tree}').stdout.toString().trim(), '-m', 'unrelated').stdout.toString().trim());
+    const unrelated = spawnSync(SCRIPT, ['main'], { cwd: dir, stdio: 'pipe', timeout: 5000 }).stdout.toString();
+    expect(unrelated).toContain('SCOPE_BACKEND=true');
+  });
+
+  // Value: protects=diff-scope reads the base gstack-review-plan's path list reads (origin/<base>), so a test file a local
+  //   main carries but origin lacks counts when the branch includes it; fails_when=a related local main ahead of origin/main
+  //   stays the base (fix-check, pass 2: SCOPE_TESTS=false beside a path list naming the test); seam=a tracking ref set with
+  //   update-ref; no_claim=remotes other than origin
+  test('a local main ahead of origin/main yields to it, so its unpushed test file is in scope', () => {
+    const dir = createRepo([]);
+    const git = (...a: string[]) => spawnSync('git', a, { cwd: dir, stdio: 'pipe', timeout: 5000 });
+    git('checkout', '-q', 'main');
+    git('update-ref', 'refs/remotes/origin/main', 'HEAD');
+    mkdirSync(join(dir, 'test'), { recursive: true });
+    writeFileSync(join(dir, 'test', 'a.test.ts'), "test.skip('b', () => {});\n");
+    git('add', '.'); git('commit', '-qm', 'unpushed test');
+    git('checkout', '-q', '-b', 'topic', 'main');
+    mkdirSync(join(dir, 'docs'), { recursive: true });
+    writeFileSync(join(dir, 'docs', 'x.md'), '# x\n');
+    git('add', '.'); git('commit', '-qm', 'docs');
+    expect(spawnSync(SCRIPT, ['main'], { cwd: dir, stdio: 'pipe', timeout: 5000 }).stdout.toString()).toContain('SCOPE_TESTS=true');
+  });
+
+  test('detects frontend files', () => {
+    const dir = createRepo(['styles.css', 'component.tsx']);
+    const scope = runScope(dir);
+    expect(scope.SCOPE_FRONTEND).toBe('true');
+  });
+
+  test('detects backend files', () => {
+    const dir = createRepo(['app.rb', 'service.py']);
+    const scope = runScope(dir);
+    expect(scope.SCOPE_BACKEND).toBe('true');
+  });
+
+  // #1810: ESM/CJS and explicit-module TS extensions matched no category, so an
+  // .mjs/.cjs/.mts/.cts-only PR skipped the backend reviewer entirely.
+  test('detects ESM/CJS/explicit-module backend files (#1810)', () => {
+    for (const f of ['server.mjs', 'worker.cjs', 'config.mts', 'legacy.cts']) {
+      const scope = runScope(createRepo([f]));
+      expect(scope.SCOPE_BACKEND).toBe('true');
+    }
+  });
+
+  // A Dart change matched no category but its test file, so a Flutter widget PR
+  // set SCOPE_TESTS alone and skipped the design, performance and security passes.
+  test('detects Dart as both frontend and backend; pubspec.lock is config', () => {
+    const scope = runScope(createRepo(['lib/theme.dart', 'lib/widgets/drawer.dart', 'test/drawer_test.dart']));
+    expect(scope.SCOPE_FRONTEND).toBe('true');
+    expect(scope.SCOPE_BACKEND).toBe('true');
+    expect(scope.SCOPE_TESTS).toBe('true');
+    expect(runScope(createRepo(['pubspec.lock'])).SCOPE_CONFIG).toBe('true');
+    // Value: protects=a workspace package's pubspec.lock still reads as config; fails_when=the */pubspec.lock arm is dropped;
+    //   why_new=only the root lock was checked; seam=none; no_claim=none beyond protects
+    expect(runScope(createRepo(['packages/cache/pubspec.lock'])).SCOPE_CONFIG).toBe('true');
+  });
+
+  test('detects test files', () => {
+    const dir = createRepo(['test/app.test.ts']);
+    const scope = runScope(dir);
+    expect(scope.SCOPE_TESTS).toBe('true');
+  });
+
+  // --- New scope signals (Review Army) ---
+
+  test('detects migrations via db/migrate/', () => {
+    const dir = createRepo(['db/migrate/20260330_create_users.rb']);
+    const scope = runScope(dir);
+    expect(scope.SCOPE_MIGRATIONS).toBe('true');
+  });
+
+  test('detects migrations via generic migrations/', () => {
+    const dir = createRepo(['app/migrations/0001_initial.py']);
+    const scope = runScope(dir);
+    expect(scope.SCOPE_MIGRATIONS).toBe('true');
+  });
+
+  test('detects migrations via prisma', () => {
+    const dir = createRepo(['prisma/migrations/20260330/migration.sql']);
+    const scope = runScope(dir);
+    expect(scope.SCOPE_MIGRATIONS).toBe('true');
+  });
+
+  test('detects API via controller files', () => {
+    const dir = createRepo(['app/controllers/users_controller.rb']);
+    const scope = runScope(dir);
+    expect(scope.SCOPE_API).toBe('true');
+  });
+
+  test('detects API via route files', () => {
+    const dir = createRepo(['src/routes/api.ts']);
+    const scope = runScope(dir);
+    expect(scope.SCOPE_API).toBe('true');
+  });
+
+  test('detects API via GraphQL schemas', () => {
+    const dir = createRepo(['schema.graphql']);
+    const scope = runScope(dir);
+    expect(scope.SCOPE_API).toBe('true');
+  });
+
+  test('detects auth files', () => {
+    const dir = createRepo(['app/services/auth_service.rb']);
+    const scope = runScope(dir);
+    expect(scope.SCOPE_AUTH).toBe('true');
+  });
+
+  test('detects session files', () => {
+    const dir = createRepo(['lib/session_manager.ts']);
+    const scope = runScope(dir);
+    expect(scope.SCOPE_AUTH).toBe('true');
+  });
+
+  test('detects JWT files', () => {
+    const dir = createRepo(['utils/jwt_helper.py']);
+    const scope = runScope(dir);
+    expect(scope.SCOPE_AUTH).toBe('true');
+  });
+
+  // Value: protects=auth matches as a word or path segment, so docs about authors stay out of the gate class;
+  //   fails_when=the auth match is a bare substring again (author-spec.md, AUTHORS, authority.ts raise SCOPE_AUTH);
+  //   why_new=GST-1065 (author-spec.md raised a docs bundle to gate class with four full readers); seam=bin/gstack-diff-scope
+  for (const file of ['docs/author-spec.md', 'AUTHORS', 'lib/authority.ts', 'docs/authored-by.md', 'src/coauthors.ts', 'AUTHORS.md']) {
+    test(`${file} is not an auth path`, () => {
+      expect(runScope(createRepo([file])).SCOPE_AUTH).toBe('false');
+    });
+  }
+
+  // Value: protects=real auth paths still raise SCOPE_AUTH after the word-boundary fix (negative controls for GST-1065);
+  //   fails_when=the boundary drops a segment, a separator, a camelCase name, an authn/authz/oauth spelling or a glued token (auth0, basicauth, nextauth);
+  //   why_new=GST-1065 and its review (the first word-only matcher dropped glued tokens the old glob caught); seam=bin/gstack-diff-scope
+  for (const file of ['src/auth.ts', 'app/auth/login.rb', 'lib/oauth.ts', 'src/oauth2/token.ts', 'lib/authn/check.go', 'src/authz.py', 'src/authService.ts',
+    'src/useAuth.ts', 'lib/OAuthClient.ts', 'lib/authentication.rb', 'lib/authorization_policy.rb', 'src/Authorize.tsx', 'config/AUTH_KEYS.md', 'pkg/auth-middleware.go',
+    'lib/auth0.ts', 'src/basicauth.go', 'src/authguard.ts', 'lib/reauth.ts', 'pages/api/nextauth.ts', 'src/authtoken.ts', 'lib/preauth.rb', 'src/HTTPAuth.ts',
+    'src/unauthenticated.ts', 'lib/reauthentication.ts', 'src/deauthorize.ts', 'app/oauth2client.py', 'api/HTTPAuthorization.ts',
+    'src/nextauthmiddleware.ts', 'src/reauthn.ts', 'src/noauthrequired.ts']) {
+    test(`${file} is an auth path`, () => {
+      expect(runScope(createRepo([file])).SCOPE_AUTH).toBe('true');
+    });
+  }
+
+  test('detects config via bun.lock (Bun v1.2+ text lockfile)', () => {
+    const dir = createRepo(['bun.lock']);
+    const scope = runScope(dir);
+    expect(scope.SCOPE_CONFIG).toBe('true');
+  });
+
+  test('returns false for all new signals when no matching files', () => {
+    const dir = createRepo(['docs/readme.md', 'config.yml']);
+    const scope = runScope(dir);
+    expect(scope.SCOPE_MIGRATIONS).toBe('false');
+    expect(scope.SCOPE_API).toBe('false');
+    expect(scope.SCOPE_AUTH).toBe('false');
+  });
+
+  test('outputs all 9 scope variables', () => {
+    const dir = createRepo(['app.ts']);
+    const scope = runScope(dir);
+    expect(Object.keys(scope)).toHaveLength(9);
+    expect(scope).toHaveProperty('SCOPE_FRONTEND');
+    expect(scope).toHaveProperty('SCOPE_BACKEND');
+    expect(scope).toHaveProperty('SCOPE_PROMPTS');
+    expect(scope).toHaveProperty('SCOPE_TESTS');
+    expect(scope).toHaveProperty('SCOPE_DOCS');
+    expect(scope).toHaveProperty('SCOPE_CONFIG');
+    expect(scope).toHaveProperty('SCOPE_MIGRATIONS');
+    expect(scope).toHaveProperty('SCOPE_API');
+    expect(scope).toHaveProperty('SCOPE_AUTH');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// #2526 / #2455 / #2299 — glob classes, exit-code contract, dirty-tree union,
+// independent categories.
+// ---------------------------------------------------------------------------
+
+function runScopeFull(dir: string): { vars: Record<string, string>; status: number; stdout: string } {
+  const result = spawnSync('bash', [SCRIPT, 'main'], {
+    cwd: dir, stdio: 'pipe', timeout: 5000,
+  });
+  const stdout = result.stdout.toString();
+  const vars: Record<string, string> = {};
+  for (const line of stdout.trim().split('\n')) {
+    if (line.startsWith('#')) continue;
+    const [key, val] = line.split('=');
+    if (key && val) vars[key] = val;
+  }
+  return { vars, status: result.status ?? -1, stdout };
+}
+
+describe('glob classes (table-driven, #2526 + #2455)', () => {
+  // One row per glob class the case arms cover. `expects` lists every scope
+  // that MUST be true; categories are independent (#2299), so extra true
+  // flags beyond `expects` are asserted per-row via `alsoFalse`.
+  const TABLE: { name: string; file: string; expects: string[]; alsoFalse?: string[] }[] = [
+    // API — the #2526 headline: root-level api/ (Vercel/serverless layout).
+    { name: 'root-level api/ (#2526)', file: 'api/ipospays/process-payment.ts', expects: ['SCOPE_API', 'SCOPE_BACKEND'] },
+    { name: 'nested */api/*', file: 'src/api/foo.ts', expects: ['SCOPE_API', 'SCOPE_BACKEND'] },
+    { name: 'controller name', file: 'app/controllers/users_controller.rb', expects: ['SCOPE_API', 'SCOPE_BACKEND'] },
+    { name: 'openapi schema', file: 'openapi.yaml', expects: ['SCOPE_API', 'SCOPE_CONFIG'] },
+    // Migrations — root-level migrations/ + the data_migrate gem's db/data (#2455).
+    { name: 'root-level migrations/ (#2526)', file: 'migrations/0001_initial.sql', expects: ['SCOPE_MIGRATIONS'] },
+    { name: 'nested */migrations/*', file: 'app/migrations/0001_initial.py', expects: ['SCOPE_MIGRATIONS', 'SCOPE_BACKEND'] },
+    {
+      name: 'db/data data migration (#2455) — MIGRATIONS and BACKEND both',
+      file: 'db/data/20260804123456_backfill_x.rb',
+      expects: ['SCOPE_MIGRATIONS', 'SCOPE_BACKEND'],
+    },
+    { name: 'data_migrations/ dir', file: 'data_migrations/backfill.rb', expects: ['SCOPE_MIGRATIONS', 'SCOPE_BACKEND'] },
+    { name: 'db/migrate schema migration', file: 'db/migrate/20260330_create_users.rb', expects: ['SCOPE_MIGRATIONS', 'SCOPE_BACKEND'] },
+    // Independent categories (#2299): test-suffixed frontend files carry BOTH.
+    {
+      name: 'Button.test.jsx is FRONTEND and TESTS (#2299)',
+      file: 'src/Button.test.jsx',
+      expects: ['SCOPE_FRONTEND', 'SCOPE_TESTS'],
+      alsoFalse: ['SCOPE_BACKEND'], // frontend files never claim backend
+    },
+    { name: 'util.test.ts is BACKEND and TESTS (#2299)', file: 'src/util.test.ts', expects: ['SCOPE_BACKEND', 'SCOPE_TESTS'] },
+    { name: 'auth code carries AUTH and BACKEND', file: 'src/lib/auth.ts', expects: ['SCOPE_AUTH', 'SCOPE_BACKEND'] },
+    // Plain classes unchanged.
+    { name: 'plain component', file: 'src/A.jsx', expects: ['SCOPE_FRONTEND'], alsoFalse: ['SCOPE_TESTS', 'SCOPE_BACKEND'] },
+    { name: 'plain backend', file: 'server.go', expects: ['SCOPE_BACKEND'], alsoFalse: ['SCOPE_FRONTEND'] },
+    { name: 'docs', file: 'docs/guide.md', expects: ['SCOPE_DOCS'] },
+    { name: 'prompts', file: 'app/services/prompt_builder.rb', expects: ['SCOPE_PROMPTS', 'SCOPE_BACKEND'] },
+    // Python tests and nested test dirs (#3335): the issue's three paths.
+    { name: 'nested tests/test_*.py (#3335)', file: 'components/orch/services/shared/tests/test_native_store_custody.py', expects: ['SCOPE_TESTS', 'SCOPE_BACKEND'] },
+    { name: 'second nested tests/test_*.py (#3335)', file: 'components/orch/services/shared/tests/test_infra_promoted_first_apply.py', expects: ['SCOPE_TESTS', 'SCOPE_BACKEND'] },
+    { name: 'hyphenated service tests/test_*.py (#3335)', file: 'components/orch/services/api-gateway/tests/test_native_chat_checkpoint_store.py', expects: ['SCOPE_TESTS', 'SCOPE_BACKEND'] },
+    { name: 'test_*.py outside a tests dir', file: 'pkg/test_store.py', expects: ['SCOPE_TESTS', 'SCOPE_BACKEND'] },
+    { name: 'Django tests.py', file: 'shop/tests.py', expects: ['SCOPE_TESTS', 'SCOPE_BACKEND'] },
+    { name: 'pytest conftest.py', file: 'services/api/conftest.py', expects: ['SCOPE_TESTS', 'SCOPE_BACKEND'] },
+    { name: 'nested __tests__ dir', file: 'packages/ui/__tests__/render.ts', expects: ['SCOPE_TESTS', 'SCOPE_BACKEND'] },
+    { name: 'nested spec dir', file: 'engines/billing/spec/invoice_checker.rb', expects: ['SCOPE_TESTS', 'SCOPE_BACKEND'] },
+    // Controls: a name that only contains "test" is not a test file.
+    { name: 'latest.py is not a test', file: 'pkg/latest.py', expects: ['SCOPE_BACKEND'], alsoFalse: ['SCOPE_TESTS'] },
+    { name: 'contest_rules.py is not a test', file: 'pkg/contest_rules.py', expects: ['SCOPE_BACKEND'], alsoFalse: ['SCOPE_TESTS'] },
+    { name: 'testing/ dir is not a test dir', file: 'pkg/testing/fixtures_loader.py', expects: ['SCOPE_BACKEND'], alsoFalse: ['SCOPE_TESTS'] },
+    { name: 'attest_*.py is not a test', file: 'pkg/attest_signer.py', expects: ['SCOPE_BACKEND'], alsoFalse: ['SCOPE_TESTS'] },
+  ];
+
+  for (const row of TABLE) {
+    test(row.name, () => {
+      const { vars, status } = runScopeFull(createRepo([row.file]));
+      expect(status).toBe(0);
+      for (const key of row.expects) {
+        expect(`${key}=${vars[key]}`).toBe(`${key}=true`);
+      }
+      for (const key of row.alsoFalse ?? []) {
+        expect(`${key}=${vars[key]}`).toBe(`${key}=false`);
+      }
+      expect(vars.SCOPE_ERROR).toBeUndefined();
+    });
+  }
+});
+
+describe('one test-path rule (#3335)', () => {
+  test('TEST_PATH_RE is byte-identical to the test-bootstrap TESTFILES regex', () => {
+    const script = readFileSync(SCRIPT, 'utf8');
+    const scriptRe = script.match(/^TEST_PATH_RE='([^']+)'$/m)?.[1];
+    const resolver = readFileSync(join(import.meta.dir, '..', 'scripts', 'resolvers', 'testing.ts'), 'utf8');
+    const resolverRe = resolver.match(/git ls-files \| grep -cE '([^']+)'/)?.[1]?.replace(/\\\\/g, '\\');
+    expect(scriptRe).toBeDefined();
+    expect(resolverRe).toBeDefined();
+    expect(scriptRe).toBe(resolverRe);
+  });
+});
+
+describe('exit-code contract (#2526)', () => {
+  test('clean tree, no changes → all false, exit 0, no SCOPE_ERROR', () => {
+    const dir = createRepo([]);
+    const { vars, status } = runScopeFull(dir);
+    expect(status).toBe(0);
+    expect(vars.SCOPE_ERROR).toBeUndefined();
+    expect(Object.values(vars).every((v) => v === 'false')).toBe(true);
+  });
+
+  test('changed files but ZERO matches → SCOPE_ERROR=unmatched + exit 2 + paths listed', () => {
+    const dir = createRepo(['Makefile.custom', 'weird/layout.xyz']);
+    const { vars, status, stdout } = runScopeFull(dir);
+    expect(status).toBe(2);
+    expect(vars.SCOPE_ERROR).toBe('unmatched');
+    expect(stdout).toContain('# unmatched: weird/layout.xyz');
+    // Still prints all nine flags so `source <(...)` consumers get vars.
+    expect(vars.SCOPE_FRONTEND).toBe('false');
+    expect(vars.SCOPE_API).toBe('false');
+  });
+
+  test('unresolvable base → SCOPE_ERROR=no_base + exit 2 (a green would mean "could not look")', () => {
+    const dir = createRepo(['app.ts']);
+    const result = spawnSync('bash', [SCRIPT, 'no-such-branch'], { cwd: dir, stdio: 'pipe', timeout: 5000 });
+    expect(result.status).toBe(2);
+    const out = result.stdout.toString();
+    expect(out).toContain('SCOPE_ERROR=no_base');
+    expect(out).toContain('SCOPE_FRONTEND=false');
+  });
+
+  test('output stays shell-safe for sourcing consumers in every state', () => {
+    // eval'd rather than `source <(...)`: macOS system bash 3.2 sources a
+    // process substitution as 0 bytes (st_size-based buffer on a FIFO), which
+    // would test the shell, not the script. The property under test is that
+    // every output line is a valid assignment or comment.
+    const dir = createRepo(['weird/layout.xyz']);
+    const result = spawnSync('bash', ['-c', `out="$(bash "${SCRIPT}" main)"; eval "$out"; echo "ERR=$SCOPE_ERROR FRONT=$SCOPE_FRONTEND"`], {
+      cwd: dir, stdio: 'pipe', timeout: 5000,
+    });
+    expect(result.stdout.toString()).toContain('ERR=unmatched FRONT=false');
+  });
+});
+
+describe('a bare base name reads origin/<base> when it exists (#3650)', () => {
+  function behindBase(base: string) {
+    const dir = createRepo(['README2.md']);
+    const git = (...args: string[]) => spawnSync('git', args, { cwd: dir, stdio: 'pipe', timeout: 5000 }).stdout.toString().trim();
+    const seed = git('rev-parse', 'main');
+    git('checkout', '-q', '-B', base, 'main');
+    writeFileSync(join(dir, 'service.py'), 'print(1)\n');
+    git('add', '.');
+    git('commit', '-qm', 'upstream backend change');
+    git('update-ref', `refs/remotes/origin/${base}`, 'HEAD');
+    git('checkout', '-q', 'feature/test');
+    git('rebase', '-q', `origin/${base}`);
+    git('branch', '-f', base, seed);
+    expect(git('diff', '--name-only', `${base}...HEAD`).split('\n').sort()).toEqual(['README2.md', 'service.py']);
+    return { dir, git };
+  }
+  const scopeAt = (dir: string, base: string) => Object.fromEntries(spawnSync('bash', [SCRIPT, base], { cwd: dir, stdio: 'pipe', timeout: 5000 }).stdout.toString().trim().split('\n').map(l => l.split('=')));
+
+  test('a local main behind origin/main does not widen the scope to upstream commits', () => {
+    const { dir } = behindBase('main');
+    const scope = runScope(dir);
+    expect([scope.SCOPE_BACKEND, scope.SCOPE_DOCS]).toEqual(['false', 'true']);
+  });
+
+  test('a slash-named base reads its remote-tracking twin too, and HEAD or a sha stays as given', () => {
+    const { dir, git } = behindBase('release/x');
+    expect(scopeAt(dir, 'release/x').SCOPE_BACKEND).toBe('false');
+    git('update-ref', 'refs/remotes/origin/HEAD', git('rev-parse', 'release/x'));
+    expect(scopeAt(dir, 'HEAD').SCOPE_DOCS).toBe('false');
+    git('update-ref', `refs/remotes/origin/${git('rev-parse', 'release/x')}`, 'HEAD');
+    expect(scopeAt(dir, git('rev-parse', 'release/x')).SCOPE_BACKEND).toBe('true');
+  });
+
+  test('a colliding tag, a fork branch over an explicit remote base, or an unrelated twin never replaces the base (#3650 review)', () => {
+    const { dir, git } = behindBase('main');
+    const upstreamCommit = git('rev-parse', 'origin/main');
+    git('tag', 'origin/main', 'HEAD');
+    expect([scopeAt(dir, 'main').SCOPE_BACKEND, scopeAt(dir, 'main').SCOPE_DOCS]).toEqual(['false', 'true']);
+    git('remote', 'add', 'upstream', 'file:///nonexistent-upstream');
+    git('update-ref', 'refs/remotes/upstream/main', git('rev-parse', 'main'));
+    git('update-ref', 'refs/remotes/origin/upstream/main', 'HEAD');
+    expect(scopeAt(dir, 'upstream/main').SCOPE_BACKEND).toBe('true');
+    git('tag', '-d', 'origin/main');
+    git('checkout', '-q', '--orphan', 'island');
+    git('commit', '-q', '--allow-empty', '-m', 'unrelated');
+    git('update-ref', 'refs/remotes/origin/main', 'HEAD');
+    git('checkout', '-q', 'feature/test');
+    expect(scopeAt(dir, 'main').SCOPE_BACKEND).toBe('true');
+    expect(upstreamCommit).not.toBe('');
+  });
+
+  test('with origin/main unrelated, a related local main comes before a related other remote, the base resolveBase picks', () => {
+    const { dir, git } = behindBase('main');
+    git('remote', 'add', 'upstream', 'file:///nonexistent-upstream');
+    git('update-ref', 'refs/remotes/upstream/main', git('rev-parse', 'origin/main'));
+    git('checkout', '-q', '--orphan', 'island');
+    git('commit', '-q', '--allow-empty', '-m', 'unrelated');
+    git('update-ref', 'refs/remotes/origin/main', 'HEAD');
+    git('checkout', '-q', 'feature/test');
+    expect(resolveBase('main', dir, 'HEAD')?.sha).toBe(git('rev-parse', 'main'));
+    expect(scopeAt(dir, 'main').SCOPE_BACKEND).toBe('true');
+  });
+});
+
+describe('uncommitted work is visible (#2299)', () => {
+  test('uncommitted change on a branch with no commits sets the scope', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'diff-scope-dirty-'));
+    dirs.push(dir);
+    const run = (cmd: string, args: string[]) => spawnSync(cmd, args, { cwd: dir, stdio: 'pipe', timeout: 5000 });
+    run('git', ['init', '-b', 'main']);
+    run('git', ['config', 'user.email', 't@t.com']);
+    run('git', ['config', 'user.name', 'T']);
+    mkdirSync(join(dir, 'src'), { recursive: true });
+    writeFileSync(join(dir, 'src', 'Button.jsx'), '// x\n');
+    run('git', ['add', '.']);
+    run('git', ['commit', '-m', 'initial']);
+    run('git', ['checkout', '-b', 'feat/x']); // no commits on the branch
+    writeFileSync(join(dir, 'src', 'Button.jsx'), '// modified, uncommitted\n');
+    const { vars, status } = runScopeFull(dir);
+    expect(status).toBe(0);
+    expect(vars.SCOPE_FRONTEND).toBe('true'); // was false pre-fix (all-false early exit)
+  });
+
+  test('an UNTRACKED new migration sets SCOPE_MIGRATIONS (reviewers must see it)', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'diff-scope-untracked-'));
+    dirs.push(dir);
+    const run = (cmd: string, args: string[]) => spawnSync(cmd, args, { cwd: dir, stdio: 'pipe', timeout: 5000 });
+    run('git', ['init', '-b', 'main']);
+    run('git', ['config', 'user.email', 't@t.com']);
+    run('git', ['config', 'user.name', 'T']);
+    writeFileSync(join(dir, 'README.md'), '# t\n');
+    run('git', ['add', '.']);
+    run('git', ['commit', '-m', 'initial']);
+    mkdirSync(join(dir, 'db', 'data'), { recursive: true });
+    writeFileSync(join(dir, 'db', 'data', '20260816_backfill.rb'), '# data migration\n');
+    const { vars, status } = runScopeFull(dir);
+    expect(status).toBe(0);
+    expect(vars.SCOPE_MIGRATIONS).toBe('true');
+    expect(vars.SCOPE_BACKEND).toBe('true');
+  });
+
+  // Value: protects=--head scopes one committed range from any checkout, the input the receipt writer and the merge queue
+  // share; fails_when=--head still reads the working tree or untracked files, or an unknown head reads as all-false; seam=none
+  test('--head <sha> scopes only the committed range: working-tree and untracked files are ignored, an unknown head is an error', () => {
+    const dir = createRepo(['lib/auth.ts']);
+    const head = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: dir, stdio: 'pipe' }).stdout.toString().trim();
+    mkdirSync(join(dir, 'db', 'migrate'), { recursive: true });
+    writeFileSync(join(dir, 'db', 'migrate', '001.rb'), '# untracked\n');
+    writeFileSync(join(dir, 'styles.css'), 'a{}\n');
+    const scope = (args: string[]) => spawnSync('bash', [SCRIPT, 'main', ...args], { cwd: dir, stdio: 'pipe', timeout: 5000 });
+    const ranged = scope(['--head', head]);
+    expect(ranged.status).toBe(0);
+    const out = ranged.stdout.toString();
+    expect(out).toContain('SCOPE_AUTH=true');
+    expect(out).toContain('SCOPE_MIGRATIONS=false');
+    expect(out).toContain('SCOPE_FRONTEND=false');
+    expect(runScopeFull(dir).vars.SCOPE_MIGRATIONS).toBe('true');
+    const unknown = scope(['--head', 'f'.repeat(40)]);
+    expect(unknown.status).toBe(2);
+    expect(unknown.stdout.toString()).toContain('SCOPE_ERROR=no_head');
+  });
+
+  test('non-ASCII path still matches extension globs (NUL-safe file listing, #2526)', () => {
+    const dir = createRepo(['docs/M2 — Notes.md']);
+    const { vars, status } = runScopeFull(dir);
+    expect(status).toBe(0);
+    expect(vars.SCOPE_DOCS).toBe('true'); // pre-fix: git's octal quoting defeated *.md
+  });
+});
+
+describe('gstack-diff-scope template UI (GST-1718)', () => {
+  const LIT_BASE = [
+    "import { html } from 'lit';",
+    'export function rowTpl(name: string) {',
+    '  return html`<div class="permission-row"><span class="label">${name}</span></div>`;',
+    '}',
+    'export async function load(): Promise<void> {',
+    '  await fetch("/api/personas");',
+    '}',
+    '',
+  ].join('\n');
+  function templateRepo(): { dir: string; git: (...a: string[]) => ReturnType<typeof spawnSync> } {
+    const dir = createRepo([]);
+    const git = (...a: string[]) => spawnSync('git', a, { cwd: dir, stdio: 'pipe', timeout: 5000 });
+    git('checkout', '-q', 'main');
+    mkdirSync(join(dir, 'plugins', 'web-ui', 'src'), { recursive: true });
+    mkdirSync(join(dir, 'src', 'personas'), { recursive: true });
+    writeFileSync(join(dir, 'plugins', 'web-ui', 'src', 'personas.ts'), LIT_BASE);
+    writeFileSync(join(dir, 'src', 'personas', 'persona-service.ts'), 'export const svc = 1;\n');
+    git('add', '.'); git('commit', '-qm', 'base screens');
+    git('checkout', '-q', '-b', 'topic');
+    return { dir, git };
+  }
+  const edit = (dir: string, from: string, to: string) => {
+    const p = join(dir, 'plugins', 'web-ui', 'src', 'personas.ts');
+    writeFileSync(p, readFileSync(p, 'utf8').replace(from, to));
+  };
+
+  // Value: protects=a screen written as a Lit template in a .ts file reads as frontend, so /ship's design-lite check and
+  //   the design specialist run (qm#3186 read SCOPE_FRONTEND=false and both skipped silently); fails_when=the content arm
+  //   is missing, or it clears SCOPE_BACKEND for the same file; seam=a synthetic Lit file at qm#3186's path, committed and
+  //   read through --head and through the working tree; no_claim=no qm source is used.
+  test('a markup edit in a Lit template file is frontend and still backend, on --head and in the working tree', () => {
+    const { dir, git } = templateRepo();
+    edit(dir, '<span class="label">${name}</span>', '<span class="label">${name}</span><small class="note">Only owner</small>');
+    expect(runScope(dir).SCOPE_FRONTEND).toBe('true');
+    writeFileSync(join(dir, 'src', 'personas', 'persona-service.ts'), 'export const svc = 2;\n');
+    git('add', '.'); git('commit', '-qm', 'persona access');
+    const head = git('rev-parse', 'HEAD').stdout.toString().trim();
+    const out = spawnSync('bash', [SCRIPT, 'main', '--head', head], { cwd: dir, stdio: 'pipe', timeout: 5000 }).stdout.toString();
+    expect(out).toContain('SCOPE_FRONTEND=true');
+    expect(out).toContain('SCOPE_BACKEND=true');
+  });
+
+  // Value: protects=logic edits in a file that happens to hold templates, and TypeScript generics, stay backend-only, so
+  //   the design reviewers do not fire on every touch of a UI module; fails_when=the arm counts any changed line in a
+  //   template file, or reads Promise<void> as a tag; seam=none
+  test('a logic-only or generic-only edit in a template file is not frontend', () => {
+    const { dir } = templateRepo();
+    edit(dir, 'await fetch("/api/personas");', 'await fetch("/api/personas?v=2");');
+    expect(runScope(dir).SCOPE_FRONTEND).toBe('false');
+    edit(dir, 'Promise<void>', 'Promise<Map<string, number>>');
+    const vars = runScope(dir);
+    expect(vars.SCOPE_FRONTEND).toBe('false');
+    expect(vars.SCOPE_BACKEND).toBe('true');
+  });
+
+  // Value: protects=test fixtures that render templates do not turn on the design reviewers, while a brand-new or a
+  //   deleted screen does; fails_when=test paths are scanned, untracked files are ignored, or a deleted template file
+  //   reads as no change; seam=none
+  test('a template test file is not frontend; an untracked or deleted template file is', () => {
+    const t = templateRepo();
+    mkdirSync(join(t.dir, 'plugins', 'web-ui', 'test'), { recursive: true });
+    writeFileSync(join(t.dir, 'plugins', 'web-ui', 'test', 'personas-page.test.ts'), LIT_BASE);
+    writeFileSync(join(t.dir, 'plugins', 'web-ui', 'src', 'row.test.ts'), LIT_BASE);
+    expect(runScope(t.dir).SCOPE_FRONTEND).toBe('false');
+    writeFileSync(join(t.dir, 'plugins', 'web-ui', 'src', 'picker.ts'), LIT_BASE);
+    expect(runScope(t.dir).SCOPE_FRONTEND).toBe('true');
+    const d = templateRepo();
+    d.git('rm', '-q', 'plugins/web-ui/src/personas.ts');
+    d.git('commit', '-qm', 'drop screen');
+    expect(runScope(d.dir).SCOPE_FRONTEND).toBe('true');
+  });
+
+  // Value: protects=a Lit screen with a non-ASCII file name still reads as frontend (git grep octal-quotes such paths
+  //   unless -z, and the quoted path matched no pathspec), and a <placeholder> in a comment does not; fails_when=the
+  //   template arm reads git grep without -z, or counts comment lines as markup; seam=none
+  test('a non-ASCII template file is frontend on --head and in the working tree; a comment placeholder is not', () => {
+    const { dir, git } = templateRepo();
+    edit(dir, 'export async function load', '// usage: load <base> --head <sha>\nexport async function load');
+    expect(runScope(dir).SCOPE_FRONTEND).toBe('false');
+    git('checkout', '-q', '.');
+    writeFileSync(join(dir, 'plugins', 'web-ui', 'src', 'café.ts'), LIT_BASE);
+    expect(runScope(dir).SCOPE_FRONTEND).toBe('true');
+    git('add', '.'); git('commit', '-qm', 'cafe screen');
+    const head = git('rev-parse', 'HEAD').stdout.toString().trim();
+    const out = spawnSync('bash', [SCRIPT, 'main', '--head', head], { cwd: dir, stdio: 'pipe', timeout: 5000 }).stdout.toString();
+    expect(out).toContain('SCOPE_FRONTEND=true');
+  });
+
+  // Value: protects=a spacing or binding edit inside a multiline Lit template (no tag, element or class= on the changed
+  //   line) still reads as frontend, as does a screen tagged with whitespace before the backtick; fails_when=the arm
+  //   tests changed lines alone instead of their place inside a tagged template, or the tag regex requires the backtick
+  //   right after html/css/svg; seam=none
+  test('a CSS-only or binding-only edit inside a multiline template is frontend; so is html `...` with a space', () => {
+    const { dir, git } = templateRepo();
+    git('checkout', '-q', 'main');
+    const card = join(dir, 'plugins', 'web-ui', 'src', 'card.ts');
+    writeFileSync(card, [
+      "import { LitElement, css, html } from 'lit';",
+      'export class Card extends LitElement {',
+      '  static styles = css`',
+      '    .row { padding: 4px; }',
+      '  `;',
+      '  render() {',
+      '    return html`',
+      '      <div class="row">',
+      '        ${this.label}',
+      '      </div>`;',
+      '  }',
+      '}',
+      '',
+    ].join('\n'));
+    git('add', '.'); git('commit', '-qm', 'card');
+    git('checkout', '-q', '-B', 'topic', 'main');
+    const swap = (from: string, to: string) => writeFileSync(card, readFileSync(card, 'utf8').replace(from, to));
+    swap('padding: 4px;', 'padding: 12px;');
+    expect(runScope(dir).SCOPE_FRONTEND).toBe('true');
+    git('commit', '-qam', 'spacing');
+    const head = git('rev-parse', 'HEAD').stdout.toString().trim();
+    const out = spawnSync('bash', [SCRIPT, 'main', '--head', head], { cwd: dir, stdio: 'pipe', timeout: 5000 }).stdout.toString();
+    expect(out).toContain('SCOPE_FRONTEND=true');
+    git('reset', '-q', '--hard', 'HEAD~1');
+    swap('${this.label}', '${this.title}');
+    expect(runScope(dir).SCOPE_FRONTEND).toBe('true');
+    git('checkout', '-q', '.');
+    writeFileSync(join(dir, 'plugins', 'web-ui', 'src', 'row.ts'), "import { html } from 'lit';\nexport const row = html `<p>Hi</p>`;\n");
+    expect(runScope(dir).SCOPE_FRONTEND).toBe('true');
+  });
+});
