@@ -1,12 +1,13 @@
 // Officer console — vanilla JS, polls /api/officer every 2s.
 // ?mock=1 | ?mock=tamper | ?mock=revision | ?mock=approved | ?mock=v2 renders a sample payload (no server needed).
 import { FORMS, money, rocDate } from '/schema.js';
+import { sourceLabel, verificationLabel, verificationDetail, evidenceKind, evidenceField, evidenceStatus } from '/labels.js';
 
 const $root = document.getElementById('root');
 const $live = document.getElementById('live');
 const MOCK = new URLSearchParams(location.search).get('mock');
 const ORDER = ['company.name', 'company.items', 'company.address', 'company.capital', 'company.articles_date', 'person.name', 'person.nationalId', 'person.phone', 'person.address', 'owner.name', 'app.date'];
-const STATUS = { submitted: 'Submitted', revision: 'Change requested', approved: 'Approved', rejected: 'Rejected', draft: 'Draft' };
+const STATUS = { submitted: '已送出 · Submitted', revision: '待修正 · Change requested', approved: '已核准 · Approved', rejected: '已駁回 · Rejected', draft: '草稿 · Draft' };
 const TOTAL_FORMS = FORMS.length;
 
 const st = { payload: null, key: '', sel: null, note: '', busy: false, prevData: null, prevV: null, lastV: null };
@@ -28,7 +29,11 @@ const ICON = {
   shield: '<svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5l3 3 6-7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 };
 const fieldName = (fields, k) => (fields[k] ? `${fields[k].label} · ${fields[k].en}` : k);
-const checkValue = (value, fallback = '—') => esc(value == null ? fallback : typeof value === 'object' ? JSON.stringify(value) : value);
+const checkValue = (value, fallback = '—') => {
+  if (value?.on_or_before) return esc(`不晚於 / On or before ${value.on_or_before}`);
+  const label = { provided: '已提供 · Provided', approved: '已核准 · Approved', rejected: '已駁回 · Rejected', 'valid issue date': '有效日期 · Valid date' }[value];
+  return esc(value == null ? fallback : label ?? (typeof value === 'object' ? JSON.stringify(value) : value));
+};
 
 // ---------- data ----------
 async function api(path, opts) {
@@ -57,15 +62,15 @@ async function poll() {
 function render() {
   const p = st.payload;
   if (!p?.app) {
-    $root.innerHTML = `<div class="empty"><div class="ring"></div><h1>Waiting for a submission…</h1>
-      <p>When an applicant signs with their text code, the application appears here instantly — with every check computed live.</p></div>`;
+    $root.innerHTML = `<div class="empty"><div class="ring"></div><h1>等待申請送出…<br>Waiting for a submission…</h1>
+      <p>申請人以簡訊代碼確認後，案件與即時核對結果會顯示於此。<br>Applications appear here after text-code confirmation, with live checks.</p></div>`;
     return;
   }
   const { app, verify, fields } = p;
   const failed = verify.checks.filter((c) => !c.ok);
   const externalReview = verify.externalReview;
   const evidenceReady = !externalReview || externalReview.recommendation === 'approve';
-  const company = app.data['company.name'] ? `${app.data['company.name']}${fields['company.name']?.suffix ?? '有限公司'}` : 'Untitled company';
+  const company = app.data['company.name'] ? `${app.data['company.name']}${fields['company.name']?.suffix ?? '有限公司'}` : '未命名公司 · Untitled company';
   const changed = st.prevData ? Object.keys(app.data).filter((k) => st.prevData[k] !== app.data[k]) : [];
   const keys = [...ORDER.filter((k) => k in app.data), ...Object.keys(app.data).filter((k) => !ORDER.includes(k))];
 
@@ -79,29 +84,29 @@ function render() {
       <h1>${esc(company)}</h1>
     </div>
     <div class="snap">
-      Snapshot <b>v${app.v}</b> · <span class="mono" title="${esc(app.hash)}">sha256:${esc(short(app.hash))}</span><br>
-      ${app.prev ? `previous: <span class="mono" title="${esc(app.prev)}">${esc(short(app.prev))}</span> · ` : ''}signed ${esc(when(app.signedAt))}
+      確認版本 / Snapshot <b>v${app.v}</b> · <span class="mono" title="${esc(app.hash)}">sha256:${esc(short(app.hash))}</span><br>
+      ${app.prev ? `前版 / previous: <span class="mono" title="${esc(app.prev)}">${esc(short(app.prev))}</span> · ` : ''}確認時間 / signed ${esc(when(app.signedAt))}
     </div>
   </div>
 
   <div class="grid">
     <div>
-      ${failed.length ? `<div class="banner bad">${ICON.bad}<div><b>${failed.length} of ${verify.checks.length} checks failed</b><span>${esc(failed.map((c) => c.label).join(' and '))} — this package cannot be trusted as signed. Do not approve.</span></div></div>`
-        : changed.length && app.status === 'submitted' ? `<div class="banner good">${ICON.ok}<div><b>Revised and re-signed — v${app.v} replaces v${app.v - 1}</b><span>${changed.length} field${changed.length > 1 ? 's' : ''} changed: ${esc(changed.map((k) => fields[k]?.en ?? k).join(', '))}. Everything else is identical.</span></div></div>` : ''}
+      ${failed.length ? `<div class="banner bad">${ICON.bad}<div><b>${failed.length}/${verify.checks.length} 項未通過 · Checks failed</b><span>${esc(failed.map((c) => c.label).join(' and '))} — 內容與確認版本不符，請勿核准。 Package differs from the signed version; do not approve.</span></div></div>`
+        : changed.length && app.status === 'submitted' ? `<div class="banner good">${ICON.ok}<div><b>已修正並再次確認 / Re-signed — v${app.v} replaces v${app.v - 1}</b><span>已修改 ${changed.length} 欄 / Fields changed: ${esc(changed.map((k) => fields[k]?.en ?? k).join(', '))}. 其餘不變 / Everything else is identical.</span></div></div>` : ''}
 
       <section>
-        <h3 class="section-title">Verification <span class="muted">computed live from the signed package</span></h3>
+        <h3 class="section-title">核對結果 · Verification <span class="muted">依確認版本即時核對 · Live checks</span></h3>
         <div class="checks">
           ${verify.checks.map((c) => `<div class="card check ${c.ok ? '' : 'bad'}" data-check="${esc(c.key)}">
-            <div class="ic">${c.ok ? ICON.ok : ICON.bad}</div><div class="lbl">${esc(c.label)}</div><div class="det">${esc(c.detail)}</div></div>`).join('')}
+            <div class="ic">${c.ok ? ICON.ok : ICON.bad}</div><div class="lbl">${esc(verificationLabel(c))}</div><div class="det">${esc(verificationDetail(c))}</div></div>`).join('')}
         </div>
       </section>
 
       <section>
-        <h3 class="section-title">Facts <span class="muted">${keys.length} facts → ${TOTAL_FORMS} forms · click a row to request a change</span></h3>
+        <h3 class="section-title">資料事實 · Facts <span class="muted">${keys.length} 項 → ${TOTAL_FORMS} 份表單 · Facts → forms<br>點選欄位要求修正 · Select a row to request a change</span></h3>
         <div class="card">
-          <table class="facts">
-            <thead><tr><th style="width:21%">Field</th><th style="width:29%">Value</th><th>Source</th><th style="width:130px">Used in</th></tr></thead>
+          <table class="facts data-facts">
+            <thead><tr><th style="width:21%">欄位 · Field</th><th style="width:29%">內容 · Value</th><th>來源 · Source</th><th style="width:130px">沿用 · Used in</th></tr></thead>
             <tbody>
               ${keys.map((k) => {
                 const f = fields[k] ?? { label: k, en: '' };
@@ -111,9 +116,9 @@ function render() {
                 const isChanged = changed.includes(k);
                 return `<tr data-k="${esc(k)}" class="${st.sel === k ? 'sel' : ''} ${req ? 'req' : ''}">
                   <td><div class="fz">${esc(f.label)}</div><div class="fe">${esc(f.en)}</div></td>
-                  <td class="val">${fmt(k, app.data[k], f)} ${isChanged ? '<span class="badge warn">Changed</span>' : ''}</td>
-                  <td><div class="src">${esc(pv.source ?? '—')} ${pv.verified ? `<span class="badge ok">${ICON.shield} Verified</span>` : '<span class="badge self">Self-declared</span>'}</div></td>
-                  <td class="used"><span class="bar"><i style="width:${Math.round((n / TOTAL_FORMS) * 100)}%"></i></span>In ${n} of ${TOTAL_FORMS} forms</td>
+                  <td class="val">${fmt(k, app.data[k], f)} ${isChanged ? '<span class="badge warn">已修改 · Changed</span>' : ''}</td>
+                  <td><div class="src">${esc(sourceLabel(pv.source))} ${pv.verified ? `<span class="badge ok">${ICON.shield} 已核對 · Verified</span>` : '<span class="badge self">自行填寫 · Self-declared</span>'}</div></td>
+                  <td class="used"><span class="bar"><i style="width:${Math.round((n / TOTAL_FORMS) * 100)}%"></i></span>${n}/${TOTAL_FORMS} 份 · forms</td>
                 </tr>`;
               }).join('')}
             </tbody>
@@ -122,30 +127,30 @@ function render() {
       </section>
 
       <section>
-        <h3 class="section-title">Generated documents <span class="muted">all rendered from snapshot v${app.v} · ${verify.docs.filter((d) => d.ok).length} of ${verify.docs.length} match</span></h3>
+        <h3 class="section-title">產出文件 · Generated documents <span class="muted">版本 / Snapshot v${app.v} · ${verify.docs.filter((d) => d.ok).length}/${verify.docs.length} 相符 · match</span></h3>
         <div class="docs">
           ${verify.docs.map((d) => {
             const en = FORMS.find((f) => f.id === d.id)?.en ?? d.id;
             return `<a class="card doc ${d.ok ? '' : 'bad'}" href="/doc/${app.v}/${encodeURIComponent(d.id)}" target="_blank" rel="noopener">
               <span class="fi">${ICON.doc}</span><span><div class="nm">${esc(d.name)}</div><div class="en">${esc(en)}</div></span>
-              <span class="st">${d.ok ? `<span class="badge ok">${ICON.shield} Match</span>` : '<span class="badge" style="background:var(--danger-soft);color:var(--danger)">Mismatch</span>'}</span></a>`;
+              <span class="st">${d.ok ? `<span class="badge ok">${ICON.shield} 相符 · Match</span>` : '<span class="badge" style="background:var(--danger-soft);color:var(--danger)">不符 · Mismatch</span>'}</span></a>`;
           }).join('')}
         </div>
       </section>
       ${externalReview ? `<section>
-        <h3 class="section-title">Supporting evidence <span class="muted">uploaded demo PDFs compared with the signed facts</span></h3>
-        <div class="card"><table class="facts"><thead><tr><th>Check</th><th>Expected</th><th>In document</th><th>Result / source</th></tr></thead><tbody>
-          ${externalReview.checks.map((check) => `<tr><td><div class="fe">${esc(check.kind.replaceAll('_', ' '))}</div><div>${esc(check.field)}</div></td>
-            <td class="val">${checkValue(check.expected)}</td><td class="val">${checkValue(check.actual, 'Not available')}</td>
-            <td><span class="badge ${check.status === 'passed' ? 'ok' : 'warn'}">${esc(check.status.replaceAll('_', ' '))}</span>${check.source ? `<div style="margin-top:6px"><a href="${esc(check.source.url)}" target="_blank" rel="noopener">Source · page ${esc(check.source.page)}</a></div>` : ''}</td></tr>`).join('')}
+        <h3 class="section-title">佐證附件 · Supporting evidence <span class="muted">與確認資料比對 · Compared with signed facts</span></h3>
+        <div class="card evidence-table" tabindex="0" aria-label="佐證核對表，可橫向捲動 / Evidence checks, scroll horizontally"><table class="facts evidence-facts"><thead><tr><th>項目 · Check</th><th>預期 · Expected</th><th>文件內容 · In document</th><th>結果／來源 · Result / source</th></tr></thead><tbody>
+          ${externalReview.checks.map((check) => `<tr><td><div class="fe">${esc(evidenceKind(check.kind))}</div><div>${esc(evidenceField(check.field))}</div></td>
+            <td class="val">${checkValue(check.expected)}</td><td class="val">${checkValue(check.actual, '未提供 / Not available')}</td>
+            <td><span class="badge ${check.status === 'passed' ? 'ok' : 'warn'}">${esc(evidenceStatus(check.status))}</span>${check.source ? `<div style="margin-top:6px"><a href="${esc(check.source.url)}" target="_blank" rel="noopener">來源 · 第 ${esc(check.source.page)} 頁<br>Source · page ${esc(check.source.page)}</a></div>` : ''}</td></tr>`).join('')}
         </tbody></table></div>
-        <p class="muted" style="font-size:12px">Demo scenario: accountant certification matches the articles date, which must be on or before the application date.</p>
+        <p class="muted" style="font-size:12px">展示規則：查核簽證日＝章程訂立日，且章程日不晚於申請日。<br>Demo rule: certification matches the articles date, which is on or before the application date.</p>
       </section>` : ''}
     </div>
 
     <aside class="side">
       <div class="card decision">${decisionPanel(app, fields, failed, evidenceReady)}</div>
-      <div class="demo"><button id="tamper">Simulate tampering</button><span class="sep">·</span><button id="reset">Reset demo</button></div>
+      <div class="demo"><button id="tamper">模擬竄改 · Simulate tampering</button><span class="sep">·</span><button id="reset">重設展示 · Reset demo</button></div>
     </aside>
   </div>`;
 
@@ -154,33 +159,33 @@ function render() {
 
 function decisionPanel(app, fields, failed, evidenceReady = true) {
   const d = app.decision;
-  const pkg = `<div class="pkg"><span>Signed package</span><a href="/api/package/${app.v}" target="_blank" rel="noopener">View JSON ↗</a></div>`;
+  const pkg = `<div class="pkg"><span>確認資料 · Signed package</span><a href="/api/package/${app.v}" target="_blank" rel="noopener">查看 JSON · View JSON ↗</a></div>`;
   if (app.status === 'revision') {
-    return `<h2>Decision</h2><p class="sub">You asked the applicant to fix one field.</p>
-      <div class="outcome revision"><div class="t">Change requested</div><div class="d">${esc(fieldName(fields, d?.field))}</div>
+    return `<h2>審查決定 · Decision</h2><p class="sub">已請申請人修正一項資料。<br>One field change requested.</p>
+      <div class="outcome revision"><div class="t">待修正 · Change requested</div><div class="d">${esc(fieldName(fields, d?.field))}</div>
       ${d?.note ? `<div class="note">“${esc(d.note)}”</div>` : ''}</div>
-      <div class="waiting"><span class="ring"></span>Waiting for the applicant to re-sign… only this field is reopened.</div>${pkg}`;
+      <div class="waiting"><span class="ring"></span>等待申請人再次確認，僅開放指定欄位。<br>Waiting for re-signing; only this field is reopened.</div>${pkg}`;
   }
   if (app.status === 'approved' || app.status === 'rejected') {
     const ok = app.status === 'approved';
-    return `<h2>Decision</h2><p class="sub">${ok ? 'The applicant has been notified.' : 'The applicant has been notified.'}</p>
-      <div class="outcome ${app.status}"><div class="t">${ok ? 'Approved' : 'Rejected'}</div>
-      <div class="d">Snapshot v${app.v} · ${esc(when(d?.at))}</div>${d?.note ? `<div class="note">“${esc(d.note)}”</div>` : ''}</div>${pkg}`;
+    return `<h2>審查決定 · Decision</h2><p class="sub">${ok ? '已通知申請人。 Applicant notified.' : '已通知申請人。 Applicant notified.'}</p>
+      <div class="outcome ${app.status}"><div class="t">${ok ? '已核准 · Approved' : '已駁回 · Rejected'}</div>
+      <div class="d">確認版本 / Snapshot v${app.v} · ${esc(when(d?.at))}</div>${d?.note ? `<div class="note">“${esc(d.note)}”</div>` : ''}</div>${pkg}`;
   }
   const sel = st.sel && fields[st.sel] ? st.sel : null;
   const selLabel = sel ? fields[sel].en : null;
-  return `<h2>Decision</h2><p class="sub">${failed.length ? 'Verification failed. Request a change or reject.' : !evidenceReady ? 'Supporting evidence is still needed. The applicant can upload the marked demo PDFs.' : 'All checks passed. Review the facts, then decide.'}</p>
+  return `<h2>審查決定 · Decision</h2><p class="sub">${failed.length ? '核對未通過，請要求修正或駁回。<br>Checks failed. Request a change or reject.' : !evidenceReady ? '仍需佐證附件，請申請人上傳展示 PDF。<br>Supporting evidence is needed. Upload the demo PDFs.' : '核對均通過，請檢視資料後決定。<br>All checks passed. Review and decide.'}</p>
     <div class="field-pick ${sel ? 'on' : ''}">
-      ${sel ? `<div class="row"><div><div class="k">Field to change</div><div>${esc(fields[sel].label)} · ${esc(fields[sel].en)}</div></div><button class="x" id="clear" title="Clear">×</button></div>`
-        : 'Select a field in the table to request a change.'}
+      ${sel ? `<div class="row"><div><div class="k">待修正欄位 · Field to change</div><div>${esc(fields[sel].label)} · ${esc(fields[sel].en)}</div></div><button class="x" id="clear" title="清除 · Clear">×</button></div>`
+        : '點選表格欄位以要求修正。<br>Select a field to request a change.'}
     </div>
-    <textarea id="note" placeholder="${sel ? `What should the applicant fix in “${esc(selLabel)}”?` : 'Note to applicant (optional)'}">${esc(st.note)}</textarea>
+    <textarea id="note" placeholder="${sel ? `請說明修正內容 / What should change in “${esc(selLabel)}”?` : '給申請人的說明（選填） / Note to applicant (optional)'}">${esc(st.note)}</textarea>
     <div class="btns">
-      <button class="btn primary" id="approve" ${failed.length || !evidenceReady || st.busy ? 'disabled' : ''}>Approve</button>
-      <button class="btn" id="revise" ${!sel || st.busy ? 'disabled' : ''}>${sel ? `Request change to ${esc(selLabel)}` : 'Request change'}</button>
-      <button class="btn danger" id="reject" ${st.busy ? 'disabled' : ''}>Reject</button>
+      <button class="btn primary" id="approve" ${failed.length || !evidenceReady || st.busy ? 'disabled' : ''}>核准 · Approve</button>
+      <button class="btn" id="revise" ${!sel || st.busy ? 'disabled' : ''}>${sel ? `要求修正 · Change ${esc(selLabel)}` : '要求修正 · Request change'}</button>
+      <button class="btn danger" id="reject" ${st.busy ? 'disabled' : ''}>駁回 · Reject</button>
     </div>
-    ${failed.length ? `<div class="hint bad">Approval blocked — ${failed.length} check${failed.length > 1 ? 's' : ''} failed</div>` : !evidenceReady ? '<div class="hint bad">Approval waits for all supporting evidence checks to pass.</div>' : ''}${pkg}`;
+    ${failed.length ? `<div class="hint bad">暫不能核准：${failed.length} 項未通過。<br>Approval blocked: ${failed.length} failed checks.</div>` : !evidenceReady ? '<div class="hint bad">佐證核對全部通過後才能核准。<br>Approval waits for all evidence checks.</div>' : ''}${pkg}`;
 }
 
 // ---------- interactions ----------
@@ -196,9 +201,9 @@ $root.addEventListener('click', async (e) => {
   if (id === 'clear') { st.sel = null; render(); return; }
   if (id === 'approve') return decide({ decision: 'approve', note: st.note || undefined });
   if (id === 'revise' && st.sel) return decide({ decision: 'revise', field: st.sel, note: st.note || undefined });
-  if (id === 'reject') { if (confirm('Reject this application? The applicant will have to start over.')) decide({ decision: 'reject', note: st.note || undefined }); return; }
+  if (id === 'reject') { if (confirm('確定駁回？申請人須重新申請。 Reject this application and require a new application?')) decide({ decision: 'reject', note: st.note || undefined }); return; }
   if (id === 'tamper') { await api('/api/demo/tamper', { body: {} }); return poll(); }
-  if (id === 'reset') { if (confirm('Reset the demo? This clears the application.')) { await api('/api/demo/reset', { body: {} }); st.sel = null; st.note = ''; return poll(); } }
+  if (id === 'reset') { if (confirm('重設展示並清除案件？ Reset the demo and clear the application?')) { await api('/api/demo/reset', { body: {} }); st.sel = null; st.note = ''; return poll(); } }
 });
 $root.addEventListener('input', (e) => { if (e.target.id === 'note') st.note = e.target.value; });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && st.sel) { st.sel = null; render(); } });
@@ -206,7 +211,7 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && st.sel) 
 async function decide(body) {
   st.busy = true; render();
   try { await api('/api/officer/decide', { body }); st.sel = null; st.note = ''; }
-  catch (err) { alert(`Could not record decision: ${err.message}`); }
+  catch (err) { alert(`無法儲存決定 / Could not record decision: ${err.message}`); }
   finally { st.busy = false; st.key = ''; await poll(); }
 }
 

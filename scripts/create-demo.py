@@ -8,9 +8,10 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.colors import HexColor
+from pdf_fonts import subset_font, SUBSET_FAMILY
 
 ROOT = Path(__file__).resolve().parents[1]
-pdfmetrics.registerFont(TTFont('DemoKai', str(ROOT / 'assets/teammate/LXGWWenKaiTC-Regular.ttf')))
+pdfmetrics.registerFont(TTFont('DemoKai', str(ROOT / 'assets/fonts/tw-kai/TW-Kai.ttf')))
 
 def sha(path):
     return hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
@@ -67,7 +68,8 @@ official = {
     'representative':target(205,227,180,18),
     'email':target(148,532,127,21),
 }
-font={'asset':{'path':'assets/teammate/LXGWWenKaiTC-Regular.ttf','sha256':sha('assets/teammate/LXGWWenKaiTC-Regular.ttf')},'family':'霞鶩文楷 TC'}
+subset_font(ROOT/'assets/fonts/tw-kai/demo-subset.ttf', '')
+font={'asset':{'path':'assets/fonts/tw-kai/demo-subset.ttf','sha256':sha('assets/fonts/tw-kai/demo-subset.ttf')},'family':SUBSET_FAMILY}
 templates={}
 for name, file, targets in [
     ('cover','application-cover',cover),('certificate','certificate-request',certificate),
@@ -148,6 +150,6 @@ dump('bench/demo/expected.json',{'documents':['01-overview','02-official-form','
  'note':'One official blank PDF plus three synthetic templates. This is not an official complete filing package.'})
 dump('assets/sources.json',{'official_pdf':{'url':'https://gcis.nat.gov.tw/mainNew/matterAction.do?fileNo=t70435_p&method=showFile','sha256':sha('assets/templates/taiwan-company-application.pdf'),
  'note':'Unmodified public two-page blank form. Only three supplied fields are demonstrated; not filing-ready.'},
- 'font':{'url':'https://raw.githubusercontent.com/lxgw/LxgwWenkaiTC/main/fonts/TTF/LXGWWenKaiTC-Regular.ttf','sha256':font['asset']['sha256'],'license':'OFL-1.1'},
+ 'font':{'url':'https://data.cns11643.gov.tw/opendata/Fonts_Kai.zip','sha256':sha('assets/fonts/tw-kai/TW-Kai.ttf'),'license':'OFL-1.1','derived_subset':font['asset']},
  'synthetic_templates':['application-cover.pdf','certificate-request.pdf','branch-attachment.pdf']})
 print('Created an English fixture application with five document outputs.')

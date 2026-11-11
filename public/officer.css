@@ -45,6 +45,7 @@ a:hover{text-decoration:underline}
 
 /* layout */
 .grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:start}
+.grid>div{min-width:0}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
 .section-title{font-size:13px;font-weight:600;color:var(--ink-2);margin:0 0 12px;display:flex;justify-content:space-between;align-items:baseline}
 .section-title .muted{font-weight:400}
@@ -140,4 +141,4 @@ textarea:disabled{background:#FAFAF8}
 .demo .sep{color:var(--line);margin:0 4px}
 
 @media (max-width:1100px){.grid{grid-template-columns:1fr}.side{position:static}.checks{grid-template-columns:repeat(2,1fr)}.docs{grid-template-columns:1fr 1fr}}
-@media (max-width:640px){.wrap{padding:20px 16px}.top{padding:0 16px}.crumb{display:none}.head{flex-direction:column;align-items:flex-start}.snap{text-align:left}.checks,.docs{grid-template-columns:1fr}.facts .used,.facts th:nth-child(4){display:none}}
+@media (max-width:640px){.wrap{padding:20px 16px}.top{padding:0 16px}.crumb{display:none}.head{flex-direction:column;align-items:flex-start}.snap{text-align:left}.checks,.docs{grid-template-columns:1fr}.facts .used,.data-facts th:nth-child(4){display:none}.evidence-table{overflow-x:auto}.evidence-facts{min-width:640px}.section-title{gap:12px;flex-wrap:wrap}}

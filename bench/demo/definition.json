@@ -394,14 +394,14 @@
       "version": "1",
       "source": {
         "path": "assets/templates/application-cover.pdf",
-        "sha256": "407d28e6fb08fb700f66c7c44f08817e2b73df886f90388b960f9353622b3c68"
+        "sha256": "8541328a82f264ba065702efbffa5cdbf9531514bc73a80e80b4568ae5e9bc51"
       },
       "font": {
         "asset": {
-          "path": "assets/teammate/LXGWWenKaiTC-Regular.ttf",
-          "sha256": "6662480a3f95b4a90c80b189c679617a48adce3a505118a6af63ce5a482b83fa"
+          "path": "assets/fonts/tw-kai/demo-subset.ttf",
+          "sha256": "60e20a32ce8faa190218266cbfe28922cac9e9ab713884719548979e458a4305"
         },
-        "family": "霞鶩文楷 TC"
+        "family": "Zero Form Kai Demo"
       },
       "targets": {
         "company": {
@@ -493,14 +493,14 @@
       "version": "1",
       "source": {
         "path": "assets/templates/certificate-request.pdf",
-        "sha256": "13a8936cdce8bd8853832272abdc2450aee5a6e86426aa4ffa60a74046e93aa4"
+        "sha256": "ff38da486ab9bf1c8388c323f6fc565ce0c0d29635c4c1d8f13b6db45c48b012"
       },
       "font": {
         "asset": {
-          "path": "assets/teammate/LXGWWenKaiTC-Regular.ttf",
-          "sha256": "6662480a3f95b4a90c80b189c679617a48adce3a505118a6af63ce5a482b83fa"
+          "path": "assets/fonts/tw-kai/demo-subset.ttf",
+          "sha256": "60e20a32ce8faa190218266cbfe28922cac9e9ab713884719548979e458a4305"
         },
-        "family": "霞鶩文楷 TC"
+        "family": "Zero Form Kai Demo"
       },
       "targets": {
         "company": {
@@ -551,14 +551,14 @@
       "version": "1",
       "source": {
         "path": "assets/templates/branch-attachment.pdf",
-        "sha256": "efee7a8336b352130c291576eca6008b01c63b34aaba0d0cc5f0a88870898920"
+        "sha256": "fbf861cb35f52ca49b10285990a5bad8e666c5df32de3ac353c5a79e3d141140"
       },
       "font": {
         "asset": {
-          "path": "assets/teammate/LXGWWenKaiTC-Regular.ttf",
-          "sha256": "6662480a3f95b4a90c80b189c679617a48adce3a505118a6af63ce5a482b83fa"
+          "path": "assets/fonts/tw-kai/demo-subset.ttf",
+          "sha256": "60e20a32ce8faa190218266cbfe28922cac9e9ab713884719548979e458a4305"
         },
-        "family": "霞鶩文楷 TC"
+        "family": "Zero Form Kai Demo"
       },
       "targets": {
         "company": {
@@ -613,10 +613,10 @@
       },
       "font": {
         "asset": {
-          "path": "assets/teammate/LXGWWenKaiTC-Regular.ttf",
-          "sha256": "6662480a3f95b4a90c80b189c679617a48adce3a505118a6af63ce5a482b83fa"
+          "path": "assets/fonts/tw-kai/demo-subset.ttf",
+          "sha256": "60e20a32ce8faa190218266cbfe28922cac9e9ab713884719548979e458a4305"
         },
-        "family": "霞鶩文楷 TC"
+        "family": "Zero Form Kai Demo"
       },
       "targets": {
         "reservation": {

@@ -6,7 +6,7 @@ Compile authorized semantic facts into a frozen application snapshot and a verif
 
 ## Run the integrated hackathon demo
 
-Requirements: Node.js, Python 3 with ReportLab (`python3 -m pip install reportlab`), and the native Rust/Typst/Poppler requirements below.
+Requirements: Node.js, Python 3 with ReportLab, pypdf and fonttools (`python3 -m pip install reportlab pypdf fonttools`), and the native Rust/Typst/Poppler requirements below.
 
 ```sh
 npm ci
@@ -18,7 +18,7 @@ Open `http://localhost:5173/` for the applicant and `http://localhost:5173/offic
 
 The one-person case preserves applicant, representative and director as distinct roles bound to one person. It collects three new answers and reuses the other facts. Each form occurrence has its own role-aware mapping. Six generated PDFs are served by the existing document links. The applicant can download matching demonstration evidence and upload it; the reviewer sees the extracted evidence, comparisons and source PDFs before deciding.
 
-Documents use **LXGW WenKai TC Regular**, an open-source Kai-style font under **SIL Open Font License 1.1**, not proprietary DFKai-SB. Source, digest and license are in `assets/teammate/LXGW-SOURCE.json` and `assets/teammate/LXGW-OFL.txt`.
+New application documents use **TW-Kai (全字庫正楷體)** from the Ministry of Digital Affairs CNS11643 dataset under **SIL Open Font License 1.1**. The pinned font, source, digest and license are in `assets/fonts/tw-kai/`; no system-font installation is required. Native rendering uses a derived `Zero Form Kai Demo` glyph subset to stay within the core asset-size limit; the unchanged original font and OFL license are retained. Legacy assets retain their separately licensed fonts.
 
 The named demo date rule is `audit.certified_on == company.articles_date` and `company.articles_date <= app.date` (same-day application allowed). The articles date is a separate prefilled signed fact. Issue dates on other attachments remain independent. The capital report parser reads its visible Chinese labels from uploaded PDF bytes; the semantic sidecar is documentation, not trusted upload evidence. These are demonstration rules, not a legal eligibility determination.
 

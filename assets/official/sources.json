@@ -1,0 +1,57 @@
+{
+  "index": "https://gcis.nat.gov.tw/mainNew/subclassNAction.do?method=getFile&pk=49",
+  "mode": "demo_only",
+  "application_mapping": {
+    "app": "t70433"
+  },
+  "sources": [
+    {
+      "id": "t70124",
+      "url": "https://gcis.nat.gov.tw/F/t70124_p",
+      "path": "assets/official/t70124.pdf",
+      "sha256": "bb21f6d2138e554c9e2443b9f3507c99b668dec6b214720a51341d440e10aca2",
+      "downloaded_on": "2026-11-11",
+      "usage": "Unmodified downloaded original; runtime adds demo footer and confirmed text in selected blank regions, preserving all original pages. Unmapped semantic facts appear in a separate clearly marked nonofficial appendix. Signatures, seals and unknown fields remain blank."
+    },
+    {
+      "id": "t70126",
+      "url": "https://gcis.nat.gov.tw/F/t70126_p",
+      "path": "assets/official/t70126.pdf",
+      "sha256": "1f26b84724312d5473415bbe7f4b30f05dafe62830012895ff8456c2440a325d",
+      "downloaded_on": "2026-11-11",
+      "usage": "Unmodified downloaded original; runtime adds demo footer and confirmed text in selected blank regions, preserving all original pages. Unmapped semantic facts appear in a separate clearly marked nonofficial appendix. Signatures, seals and unknown fields remain blank."
+    },
+    {
+      "id": "t70130",
+      "url": "https://gcis.nat.gov.tw/F/t70130_p",
+      "path": "assets/official/t70130.pdf",
+      "sha256": "d335582e2f0d042745772e7f9bfde8713d6607f02374b4211aa4e3e3dbb56756",
+      "downloaded_on": "2026-11-11",
+      "usage": "Unmodified downloaded original; runtime adds demo footer and confirmed text in selected blank regions, preserving all original pages. Unmapped semantic facts appear in a separate clearly marked nonofficial appendix. Signatures, seals and unknown fields remain blank."
+    },
+    {
+      "id": "t70132",
+      "url": "https://gcis.nat.gov.tw/F/t70132_p",
+      "path": "assets/official/t70132.pdf",
+      "sha256": "b9e90b1a553588c65611b8b87edaabb92682d2af762fe9b144c8246f41d4a5bb",
+      "downloaded_on": "2026-11-11",
+      "usage": "Unmodified downloaded original; runtime adds demo footer and confirmed text in selected blank regions, preserving all original pages. Unmapped semantic facts appear in a separate clearly marked nonofficial appendix. Signatures, seals and unknown fields remain blank."
+    },
+    {
+      "id": "t70135",
+      "url": "https://gcis.nat.gov.tw/F/t70135_p",
+      "path": "assets/official/t70135.pdf",
+      "sha256": "d094566d46c62548fcecd0dc1fb4b297732e4d7b77252e0f11109301183ca66e",
+      "downloaded_on": "2026-11-11",
+      "usage": "Unmodified downloaded original; runtime adds demo footer and confirmed text in selected blank regions, preserving all original pages. Unmapped semantic facts appear in a separate clearly marked nonofficial appendix. Signatures, seals and unknown fields remain blank."
+    },
+    {
+      "id": "t70433",
+      "url": "https://gcis.nat.gov.tw/F/t70433_p",
+      "path": "assets/official/t70433.pdf",
+      "sha256": "7d8fe0e8bb451ce19f7a02d5bbdb4506c83acb6e05d98c17d7d68b1ba2f2dc6a",
+      "downloaded_on": "2026-11-11",
+      "usage": "Unmodified downloaded original; runtime adds demo footer and confirmed text in selected blank regions, preserving all original pages. Unmapped semantic facts appear in a separate clearly marked nonofficial appendix. Signatures, seals and unknown fields remain blank."
+    }
+  ]
+}

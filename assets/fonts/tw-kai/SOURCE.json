@@ -1,0 +1,24 @@
+{
+  "name": "TW-Kai / 全字庫正楷體",
+  "provider": "數位發展部，CNS11643中文標準交換碼全字庫網站",
+  "source": "https://data.cns11643.gov.tw/opendata/Fonts_Kai.zip",
+  "dataset": "https://data.gov.tw/dataset/5961",
+  "license_source": "https://www.cns11643.gov.tw/pageView.jsp?ID=59&SN=&la=0&lang=tw",
+  "license": "OFL-1.1",
+  "retrieved": "2026-11-11",
+  "archive_last_modified": "2026-11-04T09:38:37Z",
+  "archive_member": "TW-Kai.ttf",
+  "file": "TW-Kai.ttf",
+  "sha256": "9b502e5197d52a946552bef100b9a3d601befcf896fb2b64f28f862314bea337",
+  "family": "TW-Kai",
+  "coverage": "Unicode BMP; extension fonts are not bundled",
+  "font_name_metadata": {
+    "0": [
+      "(c)2026 Ministry of Digital Affairs. You can use any of the following terms as needed. 1. Open Government Data License, version 1.0(https://data.gov.tw/en/license). 2. the SIL Open Font License, version 1.1. (https://scripts.sil.org/OFL)",
+      "(c)2026數位發展部。使用者可依需求擇一使用以下條款：1.「政府資料開放授權條款-第一版」(https://data.gov.tw/license) ；2. 「開源字型授權1.1版(OFL 1.1) 」(https://scripts.sil.org/OFL)"
+    ],
+    "5": [
+      "Version 11510.1"
+    ]
+  }
+}

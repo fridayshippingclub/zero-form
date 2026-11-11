@@ -19,7 +19,7 @@ CERTIFIED='2026-11-11'
 def render_report(path, company, amount, certified):
     day=date.fromisoformat(certified)
     path.parent.mkdir(parents=True,exist_ok=True)
-    pdfmetrics.registerFont(TTFont('DemoKai',str(ROOT/'assets/teammate/LXGWWenKaiTC-Regular.ttf')))
+    pdfmetrics.registerFont(TTFont('DemoKai',str(ROOT/'assets/fonts/tw-kai/TW-Kai.ttf')))
     c=canvas.Canvas(str(path),pagesize=(595.28,841.89),invariant=1)
     c.setTitle('資本查核報告書 - 展示樣張');c.setAuthor('Zero Form demonstration studio')
     c.setFillColor(HexColor('#1e2421'))

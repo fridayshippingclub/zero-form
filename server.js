@@ -181,7 +181,57 @@ app.post('/api/answer', (q, r) => {
   r.json(publicState());
 });
 // Agent API: same schema, drafts only. Signing still requires the human's SMS code.
-app.get('/api/agent/schema', (_q, r) => r.json({ fields: FIELDS, forms: FORMS, missing: db.app ? missing(db.app) : allFieldKeys() }));
+const agentSchema = () => {
+  const forms = FORMS.map(form => ({ ...form, bindings: formBindings(form) }));
+  return { fields: FIELDS, roles: ROLE_BINDINGS, forms,
+    counts: { uniqueInputs: allFieldKeys().length, forms: forms.length,
+      generatedDocuments: forms.filter(f => !f.onFile).length,
+      placements: forms.reduce((n, f) => n + f.bindings.length, 0),
+      generatedPlacements: forms.filter(f => !f.onFile).reduce((n, f) => n + f.bindings.length, 0) },
+    links: { schema: '/api/agent/schema', draft: '/api/agent/draft', review: '/api/agent/review' } };
+};
+app.get('/api/agent/schema', (_q, r) => r.json({ mode: 'demo_only', ...agentSchema(), missing: db.app ? missing(db.app) : allFieldKeys() }));
+app.get('/api/agent/review', async (_q, r) => {
+  const application = db.app, snap = application?.snapshots.at(-1);
+  if (!snap) return r.status(404).json({ error: 'No signed application snapshot.' });
+  const revision = application.evidenceRevision || 0;
+  try {
+    const verification = await verifySnapshot(snap);
+    if (db.app !== application || application.snapshots.at(-1) !== snap || (application.evidenceRevision || 0) !== revision) return r.status(409).json({ error: 'Application changed. Read review again.' });
+    const snapshotRef = field => ({ source: 'signed_snapshot', snapshotHash: snap.hash, field });
+    const documents = FORMS.filter(f => !f.onFile).map(form => ({
+      id: form.id, name: form.name, sha256: snap.docs[form.id],
+      url: `/doc/${snap.v}/${form.id}?snapshotHash=${snap.hash}`,
+      bindings: formBindings(form), source: 'generated',
+      confidence: verification.docs.find(d => d.id === form.id)?.ok ? 'verified_render' : 'verification_failed',
+    }));
+    const attachments = Object.values(application.attachments || {}).map(item => ({
+      id: item.id, kind: item.kind, sha256: item.sha256, url: item.url,
+      source: 'uploaded_pdf', observations: Object.entries(item.fields).map(([field, value]) => ({ field, value, page: 1, url: item.url })),
+    }));
+    const declaredFields = { 'Company-Name': 'company.name', 'Capital-TWD': 'company.capital', Address: 'company.address' };
+    const externalChecks = verification.externalReview.checks.map(check => {
+      let expectedSources = declaredFields[check.field] ? [snapshotRef(declaredFields[check.field])] : [];
+      const observedField = { document_status: 'Status', demo_report_presence: 'Status', 'document.issued_on': 'Issued-On' }[check.field] || check.field;
+      let actualSources = check.source ? [{ ...check.source, field: observedField, source: 'uploaded_pdf' }] : [];
+      if (check.field === 'demo_rule: audit.certified_on = company.articles_date') {
+        expectedSources = [snapshotRef('company.articles_date')];
+        actualSources = check.source ? [{ ...check.source, field: 'Certified-On', source: 'uploaded_pdf' }] : [];
+      } else if (check.field === 'demo_rule: company.articles_date <= application.date') {
+        expectedSources = [snapshotRef('app.date')]; actualSources = [snapshotRef('company.articles_date')];
+      }
+      return { ...check, sources: { expected: expectedSources, actual: actualSources } };
+    });
+    r.json({ mode: 'demo_only', schema: agentSchema(),
+      application: { id: snap.applicationId, version: snap.v, hash: snap.hash, evidenceRevision: application.evidenceRevision || 0,
+        status: application.status, signedAt: snap.signedAt, data: snap.data, provenance: snap.provenance, roles: snap.roles },
+      documents, attachments,
+      checks: [...verification.checks.map(check => ({ ...check, expected: true, actual: check.ok, status: check.ok ? 'passed' : 'mismatch' })), ...externalChecks],
+      recommendation: verification.checks.every(c => c.ok) ? verification.externalReview.recommendation : 'request_documents',
+      decision: application.decision,
+      notice: 'Demo-only evidence review. Generated values are confirmed inputs with render verification, not independently extracted observations. Approval remains a human officer action.' });
+  } catch (error) { r.status(502).json({ error: 'Review verification unavailable.' }); }
+});
 app.post('/api/agent/draft', (q, r) => {
   if (!db.app) return r.status(400).json({ error: 'applicant has not started' });
   const errors = setFacts(q.body.values, 'Agent draft');
@@ -224,6 +274,7 @@ app.get('/doc/:v/:form', (q, r) => {
   const snap = db.app?.snapshots.find((s) => s.v === Number(q.params.v));
   const form = FORMS.find((f) => f.id === q.params.form);
   if (!snap || !form || form.onFile) return r.status(404).send('Not found');
+  if (q.query.snapshotHash && q.query.snapshotHash !== snap.hash) return r.status(409).json({ error: 'Snapshot hash does not match this document version.' });
   const file = snap.pdfs?.[form.id];
   if (!file || !fs.existsSync(file.path)) return r.status(409).json({ error: 'Generate a new signed snapshot to create native PDFs.' });
   r.set('Content-Disposition', `${q.query.download === '1' ? 'attachment' : 'inline'}; filename="${form.id}.pdf"`);

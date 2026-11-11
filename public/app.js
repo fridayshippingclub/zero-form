@@ -1,17 +1,18 @@
 import { FIELDS, FORMS, formBindings, paperFieldCount, validate, money, rocDate, docBody } from '/schema.js';
+import { sourceLabel, errorLabel } from '/labels.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 // The questions we ask, in conversational order. Anything else comes from verified sources.
 const ASK = {
-  'company.address': { q: 'Where will the company be registered?', ph: 'e.g. 臺北市○○區○○路 1 號' },
-  'company.capital': { q: 'How much capital are you starting with?', ph: '1,000,000', pre: 'NT$', num: true },
-  'owner.name': { q: 'Who owns the building at that address?', ph: 'e.g. 王小明', hint: "We'll prepare their consent letter for them." },
+  'company.address': { q: '公司登記在哪裡？<br>Where will the company be registered?', ph: '例如 / e.g. 臺北市○○區○○路 1 號' },
+  'company.capital': { q: '預計投入多少資本？<br>How much capital are you starting with?', ph: '1,000,000', pre: 'NT$', num: true },
+  'owner.name': { q: '登記地址的建物所有人是誰？<br>Who owns the building at that address?', ph: '例如 / e.g. 王小明', hint: "系統會產生所有權人同意書。 We will prepare their consent letter." },
 };
 const ORDER = Object.keys(ASK);
 const DOCS = FORMS.filter((f) => !f.onFile);
-const EVIDENCE = { capital_verification: 'Accountant capital verification', address_approval: 'Address approval', name_approval: 'Company-name approval' };
+const EVIDENCE = { capital_verification: '會計師驗資證明 · Accountant capital verification', address_approval: '地址核准函 · Address approval', name_approval: '公司名稱核准函 · Company-name approval' };
 const fmt = (k, v) => (k === 'company.capital' ? `NT$ ${money(v)}` : k === 'company.name' ? `${v}有限公司` : FIELDS[k]?.type === 'date' ? rocDate(v) : v);
 
 let S = null;                       // server state (source of truth)
@@ -20,7 +21,7 @@ let ui = { step: 'welcome', qs: [], i: 0, err: '', busy: false, returnTo: null }
 const api = async (path, body) => {
   const r = await fetch(path, body === undefined ? {} : { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
   const j = await r.json();
-  if (!r.ok) throw Object.assign(new Error(j.error || 'Request failed'), j);
+  if (!r.ok) throw Object.assign(new Error(j.error || '請求失敗 / Request failed'), j);
   return j;
 };
 
@@ -58,53 +59,53 @@ function renderPacket() {
   const typed = Object.values(S.app.draft).filter((f) => ['Applicant', 'Agent draft'].includes(f.source)).length;
   const wrap = (k, t) => `<mark class="${k === cur ? 'on' : t ? '' : 'empty'}">${t ? esc(t) : '　　　'}</mark>`;
   el.innerHTML = `
-    <div class="ph"><b>Your forms, filling live</b><span><b>${filled}</b> of ${total} fields filled · you typed <b>${typed}</b></span></div>
-    <div class="pgrid">${DOCS.map((f) => `<div class="mini ${cur && f.fields.includes(cur) ? 'hit' : ''}"><div class="mt zh">${f.en}</div><div class="doc zh">${docBody(f, d, wrap)}</div></div>`).join('')}</div>`;
+    <div class="ph"><b>文件即時帶入<br>Forms filling live</b><span>已填 <b>${filled}</b> / ${total} 欄 · 輸入 <b>${typed}</b> 次<br><b>${filled}</b> of ${total} filled · <b>${typed}</b> typed</span></div>
+    <div class="pgrid">${DOCS.map((f) => `<div class="mini ${cur && f.fields.includes(cur) ? 'hit' : ''}"><div class="mt zh">${f.name} · ${f.en}</div><div class="doc zh">${docBody(f, d, wrap)}</div></div>`).join('')}</div>`;
 }
 document.addEventListener('input', (e) => { if (e.target.id === 'qi' && ui.step === 'q') { ui.live = e.target.value; renderPacket(); } });
 
-const source = (f) => !f ? '' : f.source === 'Applicant' ? '<span class="tag you">You</span>'
-  : f.source === 'Agent draft' ? '<span class="tag agent">✦ Agent draft</span>'
-  : `<span class="tag ok">${esc(f.source)}</span>`;
+const source = (f) => !f ? '' : f.source === 'Applicant' ? '<span class="tag you">你填寫 · You</span>'
+  : f.source === 'Agent draft' ? '<span class="tag agent">✦ 代理草稿 · Agent draft</span>'
+  : `<span class="tag ok">${esc(sourceLabel(f.source))}</span>`;
 
 const VIEWS = {
   welcome: () => `
-    <div class="eyebrow zh">臺北市商業處 · 有限公司設立登記</div>
-    <h1>${DOCS.length + 1} forms.<br>One conversation.</h1>
-    <p class="lead">Answer a few questions once. Zero Form fills in every form the city needs, you sign once, and it's sent.</p>
+    <div class="eyebrow zh">臺北市商業處 · 有限公司設立登記<br>Taipei Commerce Office · Company registration</div>
+    <h1>${DOCS.length + 1} 份表單，一次完成。<br>${DOCS.length + 1} forms. One conversation.</h1>
+    <p class="lead">資料只填一次，帶入整套文件，確認後一次送出。<br>Answer once, fill every document, then confirm and submit.</p>
     <div class="steps">
-      <div><b>1</b>Confirm what we already know</div>
-      <div><b>2</b>Answer ${ORDER.length} short questions</div>
-      <div><b>3</b>Sign once with a text code</div>
+      <div><b>1</b>確認既有資料 · Confirm known details</div>
+      <div><b>2</b>回答 ${ORDER.length} 個問題 · Answer ${ORDER.length} questions</div>
+      <div><b>3</b>簡訊代碼確認 · Confirm with a text code</div>
     </div>
     <div class="spacer"></div>
     <div class="err">${esc(ui.err)}</div>
-    <button class="btn primary" data-go="login" ${ui.busy ? 'disabled' : ''}>Get started <span style="opacity:.6">↵</span></button>
-    <div class="note">We'll text a code to the phone number you've already verified (${esc(S.phone)}).</div>`,
+    <button class="btn primary" data-go="login" ${ui.busy ? 'disabled' : ''}>開始 · Get started <span style="opacity:.6">↵</span></button>
+    <div class="note">驗證碼將傳至已驗證手機 ${esc(S.phone)}。<br>A code will be sent to your verified phone.</div>`,
 
   otp: () => `
-    <div class="eyebrow">${ui.otp.purpose === 'sign' ? 'Last step' : 'Verify it’s you'}</div>
-    <h2>${ui.otp.purpose === 'sign' ? 'Enter the code to sign and submit.' : 'Enter the code we texted you.'}</h2>
-    <p class="lead">Sent to ${esc(ui.otp.to)}${ui.otp.purpose === 'sign' ? ` — this code confirms fingerprint <span class="mono" style="font-size:13px">${ui.otp.hash.slice(0, 12)}…</span>` : ''}.</p>
+    <div class="eyebrow">${ui.otp.purpose === 'sign' ? '最後一步 · Last step' : '確認身份 · Verify it’s you'}</div>
+    <h2>${ui.otp.purpose === 'sign' ? '輸入代碼，確認送出。<br>Enter the code to sign and submit.' : '輸入簡訊驗證碼。<br>Enter your text code.'}</h2>
+    <p class="lead">已傳送至 / Sent to ${esc(ui.otp.to)}${ui.otp.purpose === 'sign' ? ` — 確認資料指紋 / confirms fingerprint <span class="mono" style="font-size:13px">${ui.otp.hash.slice(0, 12)}…</span>` : ''}.</p>
     <form class="field" id="qf"><input id="qi" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" style="letter-spacing:10px" value="${esc(ui.draftVal ?? '')}"></form>
     <div class="err">${ui.err ? '⚠ ' + esc(ui.err) : ''}</div>
-    <div class="sms" data-go="fillCode"><b>📱 Messages · now</b><span>Zero Form: your code is <b>${ui.otp.demoCode}</b>. Tap to fill.</span></div>
+    <div class="sms" data-go="fillCode"><b>📱 簡訊 · 剛剛 / Messages · now</b><span>驗證碼 / Your code: <b>${ui.otp.demoCode}</b> · 點選填入 / Tap to fill.</span></div>
     <div class="spacer"></div>
-    <button class="btn primary blue" data-go="verify" ${ui.busy ? 'disabled' : ''}>${ui.busy ? '<i class="spin"></i>' : ''}${ui.otp.purpose === 'sign' ? 'Sign & submit' : 'Continue'} <span style="opacity:.6">↵</span></button>`,
+    <button class="btn primary blue" data-go="verify" ${ui.busy ? 'disabled' : ''}>${ui.busy ? '<i class="spin"></i>' : ''}${ui.otp.purpose === 'sign' ? '確認送出 · Sign & submit' : '繼續 · Continue'} <span style="opacity:.6">↵</span></button>`,
 
   known: () => {
     const d = S.app.draft;
     const keys = ['person.name', 'person.nationalId', 'person.phone', 'person.address', 'company.name', 'company.items', 'company.articles_date', ...ORDER.filter((k) => !ui.qs.includes(k))];
     return `
-    <div class="eyebrow">Welcome back, ${esc(d['person.name'].value)}</div>
-    <h2>We already know this.<br>Still correct?</h2>
-    <p class="lead" style="font-size:14px">For this one-person company, you are the applicant, company representative, and sole director. Each role uses the same identity, so you enter it only once.</p>
+    <div class="eyebrow">歡迎回來 / Welcome back, ${esc(d['person.name'].value)}</div>
+    <h2>確認已知資料。<br>Check your saved details.</h2>
+    <p class="lead" style="font-size:14px">本次為一人公司：申請人、負責人與唯一董事是同一人，各角色沿用同一份身份資料。<br>One person is the applicant, representative, and sole director. Enter their identity once.</p>
     <div class="facts">${keys.filter((k) => d[k]).map((k) => `
       <div class="fact"><div class="check">✓</div><div class="grow"><div class="k zh">${FIELDS[k].label} · ${FIELDS[k].en}</div><div class="v zh">${esc(fmt(k, d[k].value))}</div></div>${source(d[k])}</div>`).join('')}
     </div>
     <div class="spacer"></div>
-    <button class="btn primary" data-go="confirmKnown">Yes, use these <span style="opacity:.6">↵</span></button>
-    <div class="note">Reused across all ${DOCS.length + 1} forms — you won't type any of this.</div>`;
+    <button class="btn primary" data-go="confirmKnown">確認使用 · Use these details <span style="opacity:.6">↵</span></button>
+    <div class="note">沿用至全部 ${DOCS.length + 1} 份表單，不必重填。<br>Reused across all ${DOCS.length + 1} forms.</div>`;
   },
 
   q: () => {
@@ -112,72 +113,72 @@ const VIEWS = {
     const val = ui.draftVal ?? (cur?.value ?? '');
     const used = FORMS.filter((x) => x.fields.includes(k));
     return `
-    <div class="qnum">${ui.qs.length > 1 ? `${ui.i + 1} of ${ui.qs.length} →` : 'One fix →'} ${cur?.source === 'Agent draft' ? '<span class="tag agent">✦ Drafted by your agent — check it</span>' : ''}</div>
+    <div class="qnum">${ui.qs.length > 1 ? `第 ${ui.i + 1} / ${ui.qs.length} 題 · ${ui.i + 1} of ${ui.qs.length} →` : '修正一項 · One fix →'} ${cur?.source === 'Agent draft' ? '<span class="tag agent">✦ 請確認代理草稿 · Check agent draft</span>' : ''}</div>
     <h2>${a.q}</h2>
     <div class="qlabel zh">${f.label} · ${f.en}</div>
     <form class="field" id="qf">${a.pre ? `<span class="pre">${a.pre}</span>` : ''}<input id="qi" autocomplete="off" placeholder="${a.ph}" value="${esc(a.num && val ? money(val) : val)}"></form>
     <div class="err">${ui.err ? '⚠ ' + esc(ui.err) : a.hint ? `<span style="color:var(--ink3)">${a.hint}</span>` : ''}</div>
-    <div class="used"><span class="lbl">Fills ${used.length} of ${FORMS.length} forms:</span>${used.map((x) => `<span class="zh">${x.name.length > 8 ? x.name.slice(0, 7) + '…' : x.name}</span>`).join('')}</div>
+    <div class="used"><span class="lbl">帶入 ${used.length}/${FORMS.length} 份 · Fills ${used.length}/${FORMS.length} forms:</span>${used.map((x) => `<span class="zh">${x.name.length > 8 ? x.name.slice(0, 7) + '…' : x.name}</span>`).join('')}</div>
     <div class="spacer"></div>
-    <div class="row"><button class="btn ghost" data-go="back">← Back</button><div class="spacer"></div>
-    <button class="btn primary blue" style="width:auto;padding:0 28px" data-go="answer" ${ui.busy ? 'disabled' : ''}>OK ✓</button></div>
-    <div class="kbd">press <span>Enter ↵</span></div>`;
+    <div class="row"><button class="btn ghost" data-go="back">← 返回 · Back</button><div class="spacer"></div>
+    <button class="btn primary blue" style="width:auto;padding:0 28px" data-go="answer" ${ui.busy ? 'disabled' : ''}>確認 · OK ✓</button></div>
+    <div class="kbd">按下 / press <span>Enter ↵</span></div>`;
   },
 
   review: () => {
     const d = S.app.draft;
     const group = (title, keys) => `<div class="group"><h3>${title}</h3><div class="facts">${keys.map((k) => `
       <div class="fact"><div class="grow"><div class="k zh">${FIELDS[k].label} · ${FIELDS[k].en}</div><div class="v zh">${esc(fmt(k, d[k]?.value))}</div></div>
-      ${ORDER.includes(k) ? `<button class="edit" data-edit="${k}">Edit</button>` : ''}${source(d[k])}</div>`).join('')}</div></div>`;
+      ${ORDER.includes(k) ? `<button class="edit" data-edit="${k}">修改 · Edit</button>` : ''}${source(d[k])}</div>`).join('')}</div></div>`;
     return `
-    <h2>Check once, sign once.</h2>
-    <p class="lead">Signing locks this exact version. All ${DOCS.length} documents are generated from it — nothing can change without your confirmation.</p>
-    ${group('Company', ['company.name', 'company.address', 'company.capital', 'company.items', 'company.articles_date'])}
-    ${group('People', ['person.name', 'person.nationalId', 'owner.name'])}
+    <h2>確認一次，簽署一次。<br>Check once, sign once.</h2>
+    <p class="lead">確認後鎖定此版本，產生 ${DOCS.length} 份文件；變更須再次確認。<br>Signing locks this version for all ${DOCS.length} documents. Changes require your confirmation.</p>
+    ${group('公司 · Company', ['company.name', 'company.address', 'company.capital', 'company.items', 'company.articles_date'])}
+    ${group('相關人員 · People', ['person.name', 'person.nationalId', 'owner.name'])}
     <div class="err">${esc(ui.err)}</div>
-    <button class="btn primary blue" data-go="sign" ${ui.busy ? 'disabled' : ''}>${ui.busy ? '<i class="spin"></i>' : ''}Sign & submit <span style="opacity:.6">↵</span></button>
-    <div class="note">We'll text a one-time code to ${esc(S.phone)}. It signs a SHA-256 fingerprint of everything above.</div>`;
+    <button class="btn primary blue" data-go="sign" ${ui.busy ? 'disabled' : ''}>${ui.busy ? '<i class="spin"></i>' : ''}確認送出 · Sign & submit <span style="opacity:.6">↵</span></button>
+    <div class="note">一次性代碼將傳至 ${esc(S.phone)}，確認上方資料指紋。<br>A text code confirms the SHA-256 fingerprint of these details.</div>`;
   },
 
   fixintro: () => {
     const dec = S.app.decision, f = FIELDS[dec.field];
     return `
     <div class="badge warn">!</div>
-    <h2>One thing to fix.</h2>
-    <div class="callout warn"><b>Officer's note · <span class="zh">${f.label}</span> ${f.en}</b><span>${esc(dec.note || 'Please check this field.')}</span></div>
-    <p class="lead">Everything else stays exactly as you signed it. Only this field is reopened.</p>
+    <h2>有一項需要修正。<br>One thing to fix.</h2>
+    <div class="callout warn"><b>審查意見 / Officer note · <span class="zh">${f.label}</span> ${f.en}</b><span>${esc(dec.note || '請確認此欄位。 Please check this field.')}</span></div>
+    <p class="lead">只重新開放此欄位，其餘資料維持已確認版本。<br>Only this field is reopened; everything else stays as signed.</p>
     <div class="spacer"></div>
-    <button class="btn primary" data-go="fix">Fix ${f.en.replace(/\s*\(.*\)/, '').toLowerCase()} <span style="opacity:.6">↵</span></button>`;
+    <button class="btn primary" data-go="fix">修正 ${f.label} · Fix ${f.en.replace(/\s*\(.*\)/, '').toLowerCase()} <span style="opacity:.6">↵</span></button>`;
   },
 
   done: () => {
     const a = S.app, sn = a.snapshot;
     const head = {
-      submitted: ['wait', '✓', 'Submitted', `<span class="live"><i></i>Taipei City Commerce Office is reviewing</span>`],
-      approved: ['ok', '✓', 'Approved', '<span class="lead">Your company registration is approved. 🎉</span>'],
-      rejected: ['bad', '×', 'Not approved', `<span class="lead">${esc(a.decision?.note || '')}</span>`],
-      revision: ['wait', '✓', 'Re-submitted', '<span class="live"><i></i>Waiting for the officer</span>'],
+      submitted: ['wait', '✓', '已送出 · Submitted', `<span class="live"><i></i>臺北市商業處審查中 · Under review</span>`],
+      approved: ['ok', '✓', '已核准 · Approved', '<span class="lead">公司設立已核准。<br>Your registration is approved. 🎉</span>'],
+      rejected: ['bad', '×', '未核准 · Not approved', `<span class="lead">${esc(a.decision?.note || '')}</span>`],
+      revision: ['wait', '✓', '已重新送出 · Re-submitted', '<span class="live"><i></i>等待審查 · Waiting for review</span>'],
     }[a.status];
     return `
     <div class="badge ${head[0]}">${head[1]}</div>
     <div><h1>${head[2]}</h1><div style="margin-top:8px">${head[3]}</div></div>
-    <div class="hash"><div class="l">SIGNED SNAPSHOT · v${sn.v} · ${esc(a.id)}</div><div class="h mono">sha256:${sn.hash}</div>
-      <div class="s">${sn.prev ? `Replaces v${sn.v - 1} · ` : ''}Confirmed by SMS code to ${esc(sn.to)} · ${new Date(sn.signedAt).toLocaleString()}</div></div>
-    <div class="group"><h3>${DOCS.length} documents generated</h3><div class="docs">${DOCS.map((f) => `
-      <a href="/doc/${sn.v}/${f.id}" target="_blank"><div class="ic">📄</div><div><div class="n zh">${f.name}</div><div class="e">${f.en}</div></div><span class="open">Open ↗</span></a>`).join('')}</div></div>
-    <div class="group"><h3>Supporting evidence · demo PDFs</h3>
-      <p class="lead" style="font-size:14px;margin-bottom:12px">Download the marked sample documents, then upload them for the officer’s cross-document checks.</p>
+    <div class="hash"><div class="l">已確認版本 / SIGNED SNAPSHOT · v${sn.v} · ${esc(a.id)}</div><div class="h mono">sha256:${sn.hash}</div>
+      <div class="s">${sn.prev ? `取代 / Replaces v${sn.v - 1} · ` : ''}簡訊確認 / Confirmed by SMS to ${esc(sn.to)} · ${new Date(sn.signedAt).toLocaleString()}</div></div>
+    <div class="group"><h3>${DOCS.length} 份文件已產生 · Documents generated</h3><div class="docs">${DOCS.map((f) => `
+      <a href="/doc/${sn.v}/${f.id}" target="_blank"><div class="ic">📄</div><div><div class="n zh">${f.name}</div><div class="e">${f.en}</div></div><span class="open">開啟 Open ↗</span></a>`).join('')}</div></div>
+    <div class="group"><h3>佐證附件 · Supporting evidence</h3>
+      <p class="lead" style="font-size:14px;margin-bottom:12px">下載展示文件，再上傳進行跨文件核對。<br>Download the demo PDFs, then upload them for cross-document checks.</p>
       <div class="facts">${Object.entries(EVIDENCE).map(([kind, title]) => {
         const attachment = (a.attachments || []).find((item) => item.kind === kind);
         return `<div class="fact"><div class="grow"><label class="k" for="evidence-${kind}">${title}</label>
-          <div style="display:flex;gap:12px;flex-wrap:wrap;margin:7px 0"><a class="edit" href="/api/mock-attachments/${kind}" target="_blank" rel="noopener">Download demo PDF ↗</a>${attachment ? `<a class="edit" href="${esc(attachment.url)}" target="_blank" rel="noopener">Uploaded PDF ✓</a>` : ''}</div>
-          <input id="evidence-${kind}" data-upload="${kind}" type="file" accept=".pdf,application/pdf" aria-label="Upload ${title}" style="font:12px Inter,sans-serif;max-width:100%" ${ui.busy || a.status === 'approved' ? 'disabled' : ''}>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin:7px 0"><a class="edit" href="/api/mock-attachments/${kind}" target="_blank" rel="noopener">下載樣張 · Download PDF ↗</a>${attachment ? `<a class="edit" href="${esc(attachment.url)}" target="_blank" rel="noopener">已上傳 · Uploaded PDF ✓</a>` : ''}</div>
+          <input id="evidence-${kind}" data-upload="${kind}" type="file" accept=".pdf,application/pdf" aria-label="上傳 / Upload ${title}" style="font:12px Inter,sans-serif;max-width:100%" ${ui.busy || a.status === 'approved' ? 'disabled' : ''}>
         </div></div>`;
       }).join('')}</div>
-      <div class="note" style="margin-top:10px">Fictional evidence only · up to 10 MB per PDF · ${ui.busy ? 'Uploading and checking…' : 'Select a PDF to upload.'}</div>
+      <div class="note" style="margin-top:10px">展示附件，每份限 10 MB / Demo PDFs, up to 10 MB · ${ui.busy ? '上傳核對中 / Uploading…' : '選取 PDF 上傳 / Select a PDF.'}</div>
       <div class="err" role="alert">${esc(ui.err)}</div>
     </div>
-    <div class="callout blue"><b>Next time: 0 questions</b><span>Your company details are saved to your verified profile for future forms.</span></div>`;
+    <div class="callout blue"><b>下次免重填 · Next time: 0 questions</b><span>公司資料已儲存，下次填表可沿用。<br>Your saved company details can be reused in future forms.</span></div>`;
   },
 };
 
@@ -208,7 +209,7 @@ const ACTIONS = {
     if (ASK[k].num) v = v.replace(/[,\s]/g, '');
     if (ASK[k].upper) v = v.toUpperCase();
     const err = validate(k, v);
-    if (err) { ui.err = err; ui.draftVal = $('qi').value; return render(); }
+    if (err) { ui.err = errorLabel(err); ui.draftVal = $('qi').value; return render(); }
     ui.busy = true;
     try { S = await api('/api/answer', { values: { [k]: v } }); } catch (e) { ui.err = Object.values(e.errors || {})[0] || e.message; ui.busy = false; return render(); }
     ui.busy = false; ui.err = ''; ui.draftVal = null; ui.live = undefined;
@@ -244,12 +245,12 @@ document.addEventListener('change', async (event) => {
   const kind = event.target.dataset.upload;
   if (!kind || ui.busy || !event.target.files?.length) return;
   const file = event.target.files[0];
-  if (file.size > 10 * 1024 * 1024) { ui.err = 'Choose a PDF no larger than 10 MB.'; return render(); }
+  if (file.size > 10 * 1024 * 1024) { ui.err = '請選擇 10 MB 以下的 PDF。 Choose a PDF up to 10 MB.'; return render(); }
   ui.busy = true; ui.err = ''; render();
   try {
     const response = await fetch(`/api/attachments?kind=${encodeURIComponent(kind)}`, { method: 'POST', headers: { 'content-type': 'application/pdf' }, body: file });
     const result = await response.json();
-    if (!response.ok) throw new Error(result.error || 'Upload failed. Please try again.');
+    if (!response.ok) throw new Error(result.error || '上傳失敗，請重試。 Upload failed. Please try again.');
     S = await api('/api/state');
   } catch (error) { ui.err = error.message; }
   finally { ui.busy = false; render(); }

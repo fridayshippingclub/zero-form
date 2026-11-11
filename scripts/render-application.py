@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render confirmed frontend data through the native core; synthetic forms only."""
+"""Render confirmed frontend data through the native core; official-source backgrounds with marked demo overlays."""
 import argparse
 import hashlib
 import json
@@ -11,12 +11,15 @@ import subprocess
 import sys
 import tempfile
 import textwrap
+import io
+from pypdf import PdfReader, PdfWriter
+from pdf_fonts import subset_font, SUBSET_FAMILY
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
 ROOT = Path(__file__).resolve().parents[1]
-FONT = ROOT / 'assets/teammate/LXGWWenKaiTC-Regular.ttf'
+FONT = ROOT / 'assets/fonts/tw-kai/TW-Kai.ttf'
 
 def dump(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2))
@@ -29,6 +32,60 @@ def run(args, env):
     if result.returncode:
         raise RuntimeError(result.stderr.strip() or result.stdout.strip() or 'core_failed')
     return json.loads(result.stdout)
+
+
+OFFICIAL_IDS = {'app': 't70433', **{key:key for key in ('t70126','t70130','t70132','t70124','t70135')}}
+# Coordinates refer to the downloaded GCIS originals (top-left, PDF points).
+# Only existing blank regions are populated. Unsupported facts get an appendix,
+# preserving original statutory notes and leaving signatures/seals unfilled.
+OFFICIAL_SLOTS = {
+    'app': {'company.name': (1,218,201,130,18), 'company.address': (1,241,271,150,25)},
+    't70126': {'company.name': (1,318,184,28,10), 'company.capital': (1,259,345,32,10),
+               'company.items': (1,163,231,300,12)},
+    't70130': {'company.name': (1,244,91,85,12), 'person.name:applicant': (1,89,396,174,12)},
+    't70132': {'company.name': (1,247,150,112,24), 'person.name:director': (1,341,262,150,24)},
+    't70124': {},
+    't70135': {'company.name': (1,196,210,290,19), 'company.address': (1,240,273,300,15),
+               'company.capital': (1,240,294,235,17), 'person.name:representative': (1,346,314,65,17),
+               'person.phone': (1,400,137,138,16)},
+}
+
+def official_background(form, output):
+    source = ROOT / 'assets/official' / (OFFICIAL_IDS[form['id']] + '.pdf')
+    reader = PdfReader(source)
+    writer = PdfWriter()
+    placements = {}
+    extra = []
+    for i, field in enumerate(form['fields']):
+        role_key = field['key'] + ':' + str(field.get('role'))
+        rect = OFFICIAL_SLOTS[form['id']].get(role_key) or OFFICIAL_SLOTS[form['id']].get(field['key'])
+        if rect: placements[i] = rect
+        else: extra.append((i, field))
+    for index, page in enumerate(reader.pages):
+        width, height = float(page.mediabox.width), float(page.mediabox.height)
+        buffer = io.BytesIO()
+        mark = canvas.Canvas(buffer, pagesize=(width, height), invariant=1)
+        mark.setFont('DemoKai', 8)
+        mark.drawCentredString(width/2, 13, '展示樣張・未簽署・不得送件 | GCIS ' + OFFICIAL_IDS[form['id']])
+        mark.save(); buffer.seek(0)
+        page.merge_page(PdfReader(buffer).pages[0])
+        if '/Annots' in page and not page['/Annots']: del page['/Annots']
+        writer.add_page(page)
+    if extra:
+        buffer = io.BytesIO(); c = canvas.Canvas(buffer, pagesize=(595.32,841.92), invariant=1)
+        c.setFont('DemoKai',18);c.drawCentredString(297.66,789,form['name'] + ' — 已確認資料附頁')
+        c.setFont('DemoKai',10)
+        c.drawString(42,757,'原始官方表單與備註完整保留；本頁列出未對應至原表空白位置的資料。')
+        c.drawString(42,738,'本頁不是官方書表。簽名、印章、尚未蒐集的法定欄位均未代填。')
+        for row,(index,field) in enumerate(extra):
+            y=137+row*46
+            c.setFont('DemoKai',10);c.drawString(43,841.92-y+12,field['label'])
+            c.setStrokeColorRGB(.6,.6,.6);c.line(42,841.92-y-26,553,841.92-y-26)
+            placements[index]=(len(reader.pages)+1,43,y,505,23)
+        c.setFont('DemoKai',8);c.drawCentredString(297.66,25,'展示樣張・未簽署・不得送件 | 語意資料附頁')
+        c.save();buffer.seek(0);writer.add_page(PdfReader(buffer).pages[0])
+    with output.open('wb') as stream:writer.write(stream)
+    return placements
 
 def render(source, destination):
     data = source['data']
@@ -53,29 +110,14 @@ def render(source, destination):
     pdfmetrics.registerFont(TTFont('DemoKai',str(FONT)))
     with tempfile.TemporaryDirectory(prefix='zero-form-dynamic-') as temporary:
         work=Path(temporary)
-        shutil.copyfile(FONT,work/'font.ttf')
+        subset_font(work/'font.ttf', ''.join(str(value) for value in data.values()))
         fields={};facts=[];templates={};documents=[];properties={};fact_keys=set()
         roles={'applicant':'person-applicant','representative':'person-applicant','director':'person-applicant','company':'company-applicant','owner':'property-owner'}
         for form in forms:
             if not 1 <= len(form['fields']) <= 12:
                 raise ValueError('invalid_field_count')
             path=work/(form['id']+'.pdf')
-            c=canvas.Canvas(str(path),pagesize=(595.28,841.89),invariant=1)
-            c.setTitle('DEMO ONLY - '+form['name'])
-            c.setFont('DemoKai',12);c.drawString(40,807,'MOCK / DEMO ONLY / NOT VALID FOR FILING')
-            c.setFont('DemoKai',16);c.drawString(40,775,form['name'])
-            c.setFont('DemoKai',8);c.drawString(40,752,'Generated from confirmed application data. No signature or legal attestation.')
-            purposes = {
-                'app': '本示意文件彙整本次公司設立申請資料，供申請人核對並展示文件生成流程。',
-                't70126': '第一條：公司名稱依下列資料。第二條：營業項目依下列資料。第三條：所在地依下列資料。第四條：資本總額依下列資料。本章程僅為展示。',
-                't70130': '本示意文件展示唯一股東就設立公司及本人擔任唯一董事之確認資料。此文件不是已簽署的股東決議。',
-                't70132': '本示意文件展示董事願任資料及對應公司。本文件未經本人簽署，不構成真實任職同意。',
-                't70124': '本示意文件展示建物所有權人及擬登記公司所在地資料。未有真實所有權或使用權之認證。',
-                't70135': '本示意登記表彙整公司基本資料，以及同一人作為負責人與唯一董事之資料，供展示跨文件一致性核對。',
-            }
-            c.setFont('DemoKai',9)
-            for line_index, line in enumerate(textwrap.wrap(purposes.get(form['id'],'本文件僅供概念驗證展示。'),width=52)):
-                c.drawString(42,722-line_index*15,line)
+            placements=official_background(form,path)
             targets={};bindings={}
             for i,field in enumerate(form['fields']):
                 key=field['key']; value=data.get(key)
@@ -95,18 +137,15 @@ def render(source, destination):
                     facts.append({'id':'fact-'+str(len(facts)+1),'subject':roles[role],'predicate':predicate,'value':value,
                         'revision':str(source['v']),'source':'confirmed-snapshot:'+source['hash']+':'+key,
                         'confirmation':'confirmed','verification_event':None,'valid_from':'2026-01-01','valid_to':None})
-                target='field-'+str(i+1);y=180+i*45
-                c.setFont('DemoKai',10);c.drawString(42,841.89-y+10,field['label'])
-                c.setStrokeColorRGB(.75,.8,.82);c.rect(40,841.89-y-25,515,27,stroke=1,fill=0)
-                display=value+'有限公司' if key=='company.name' and not value.endswith('有限公司') else value
-                size=min(11,500/max(pdfmetrics.stringWidth(display,'DemoKai',1),1))
-                if size<6:raise ValueError('field_too_long:'+key)
-                targets[target]={'page':1,'rect':[42.0,float(y),510.0,22.0],'filled_by':'applicant','control':{'kind':'text','size':float(size)}}
+                target='field-'+str(i+1)
+                page,x,y,width,height=placements[i]
+                size=min(11,height/1.5,(width-3)/max(pdfmetrics.stringWidth(value,'DemoKai',1),1))
+                if size<6:raise ValueError('field_too_long_for_official_blank:'+key)
+                targets[target]={'page':page,'rect':[float(x),float(y),float(width),float(height)],'filled_by':'applicant','control':{'kind':'text','size':float(size)}}
                 # Semantic values remain exactly those confirmed by the applicant.
                 bindings[target]={'source':{'kind':'field','field':semantic},'transform':{'kind':'identity'}}
-            c.setFont('DemoKai',8);c.drawString(40,35,'ZERO FORM / SYNTHETIC TEMPLATE / NO GOVERNMENT SUBMISSION / Page 1 of 1');c.save()
             templates[form['id']]={'version':'1','source':{'path':path.name,'sha256':digest(path)},
-                'font':{'asset':{'path':'font.ttf','sha256':digest(work/'font.ttf')},'family':'霞鶩文楷 TC'},'targets':targets}
+                'font':{'asset':{'path':'font.ttf','sha256':digest(work/'font.ttf')},'family':SUBSET_FAMILY},'targets':targets}
             documents.append({'id':form['id'],'template':form['id'],'condition':{'op':'always'},'repeat_field':None,'bindings':bindings})
         definition={'schema_version':1,'application':{'id':'frontend-company-demo','version':'1.0.0','valid_from':'2026-01-01','valid_to':None,
             'schema':{'$schema':'https://json-schema.org/draft/2020-12/schema','type':'object','additionalProperties':False,'properties':properties,'required':list(fields)},

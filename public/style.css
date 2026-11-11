@@ -84,7 +84,7 @@ p.lead{font-size:16px;line-height:1.55;color:var(--ink2);margin:0}
 .back{position:absolute;left:0}
 .spin{width:16px;height:16px;border:2px solid #fff6;border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
-@media (max-width:520px){main{padding:28px 22px 32px}h1{font-size:30px}.field input{font-size:22px}}
+@media (max-width:520px){main{padding:28px 22px 32px}h1{font-size:30px}.field input{font-size:22px}.fact{flex-wrap:wrap;gap:10px}.fact .grow{flex-basis:calc(100% - 34px);min-width:200px}.fact>.tag{white-space:normal;max-width:100%}}
 .sms{background:#F2F2F7;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;cursor:pointer;font-size:14px;color:var(--ink);transition:background .2s}.sms:hover{background:#E9E9EF}.sms b:first-child{font-size:12px;color:var(--ink3);font-weight:500}
 
 /* live packet (wide layouts: drawer ≥ 880px or full page) */

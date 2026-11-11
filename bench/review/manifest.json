@@ -11,32 +11,32 @@
     {
       "file": "capital-approved.pdf",
       "document_type": "capital_verification",
-      "sha256": "4efcd71ea2d21eb746d2e7537f3086be2fb4bd7f8cbfa3af5aa2078de9c59490"
+      "sha256": "4655c3cea79f3706ab62cc3883e79264cc778ca2984b7281250aca982d6569bb"
     },
     {
       "file": "address-approved.pdf",
       "document_type": "address_approval",
-      "sha256": "dd86dbe25d0a0ed400e41484cf2688b0b5654fd8dd3594b4f3e948f712a43d4d"
+      "sha256": "a9468a100015a6e40ec1d6f95a71ee5b61f25822f9e371ef1a4897f3a2c226cf"
     },
     {
       "file": "name-approved.pdf",
       "document_type": "name_approval",
-      "sha256": "99adc81a073430790e7b6d28b828d9cc100dc5ae4a72c38ec48d8ff8ee3e630b"
+      "sha256": "cd1b25783b8943a4c5eb5dd243ff6eac213f4df82f3194062745a3974f0adc65"
     },
     {
       "file": "capital-mismatch.pdf",
       "document_type": "capital_verification",
-      "sha256": "9c7a92d0b09481a68813c545d7f09e3ca59a6f858c07c2f5fc4e84fbbaceedf3"
+      "sha256": "36d7dbd3c9b169c8e297e5e56e8aacc285c3dd62a289b565970c54f03b8e128f"
     },
     {
       "file": "name-rejected.pdf",
       "document_type": "name_approval",
-      "sha256": "038ba1b8504a9f48fb113d32a30375ad049bda721407f96e476d364039bc69ff"
+      "sha256": "ebea42c811d57152fdc4b01d98fa401589620dcbecf0ab0c6702198ca058a2a6"
     },
     {
       "file": "capital-audit-report.pdf",
       "document_type": "capital_verification",
-      "sha256": "4ee1abbdadea29053b7232f8eee019f143d1765ac7bcc768df79237248fdc8c9"
+      "sha256": "a164d52cc808550557d9b8c53e70dfd5db1cebd48cc90f3a51e8def11332ebce"
     }
   ],
   "scenarios": {

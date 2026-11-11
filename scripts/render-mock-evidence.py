@@ -26,7 +26,7 @@ def main():
         report.render_report(args.out,str(d['company.name']),amount,str(d['company.articles_date']))
         print(json.dumps({'path':str(args.out.resolve()),'sha256':hashlib.sha256(args.out.read_bytes()).hexdigest(),'mode':'demo_only'}))
         return
-    pdfmetrics.registerFont(TTFont('DemoKai',str(ROOT/'assets/teammate/LXGWWenKaiTC-Regular.ttf')))
+    pdfmetrics.registerFont(TTFont('DemoKai',str(ROOT/'assets/fonts/tw-kai/TW-Kai.ttf')))
     titles={'capital_verification':'會計師資本額核對證明（模擬）','address_approval':'公司地址審查函（模擬）','name_approval':'公司名稱審查函（模擬）'}
     fields={'Document-Type':args.kind,'Company-Name':str(d['company.name'])}
     if args.kind=='capital_verification':fields['Capital-TWD']=str(int(str(d['company.capital']).replace(',',''))+(20000 if args.scenario=='mismatch' else 0))

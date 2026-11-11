@@ -73,7 +73,7 @@ npm run dev
 | Rust | 1.97.1 (selected by `rust-toolchain.toml`) |
 | [Typst](https://github.com/typst/typst/releases/tag/v0.15.1) | 0.15.1 |
 | Poppler (`pdftoppm`, `pdftotext`) | 26.05.0 tested |
-| Python 3 + ReportLab | `python3 -m pip install reportlab` |
+| Python 3 + ReportLab + pypdf + fonttools | `python3 -m pip install reportlab pypdf fonttools` |
 
 ```sh
 cargo build --workspace --locked
@@ -112,7 +112,7 @@ node demo/integration.mjs   # native happy path: real PDFs, evidence upload, rev
 | `demo/` | `record.mjs` video recorder and an earlier standalone evidence-review demo ([demo/README.md](demo/README.md)) |
 | `extension/` | Chrome extension that injects the panel into the Taipei page |
 | `bench/` | Engine fixtures (`bench/demo/`) and synthetic evidence PDFs (`bench/review/`) |
-| `assets/` | Official templates, fonts (LXGW WenKai TC, SIL OFL 1.1), source hashes and licensing |
+| `assets/` | Official templates, fonts (TW-Kai and legacy fonts, SIL OFL 1.1), source hashes and licensing |
 | `design/zero-form.pen` | UI design file |
 | `GOAL.md` | Demo definition of done and API contract |
 

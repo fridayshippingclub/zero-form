@@ -26,7 +26,7 @@ FIXTURES = [
 
 
 def build():
-    pdfmetrics.registerFont(TTFont('DemoKai', str(ROOT / 'assets/teammate/LXGWWenKaiTC-Regular.ttf')))
+    pdfmetrics.registerFont(TTFont('DemoKai', str(ROOT / 'assets/fonts/tw-kai/TW-Kai.ttf')))
     OUTPUT.mkdir(parents=True, exist_ok=True)
     catalog = []
     for filename, kind, title, status, specifics in FIXTURES:
