@@ -50,7 +50,7 @@ const uploadEvidence = async (f, kinds = evidenceKinds) => {
     const file = path.join(TMP, `MOCK-${kind}.pdf`);
     fs.writeFileSync(file, Buffer.from(await r.arrayBuffer()));
     await f.locator(`#evidence-${kind}`).scrollIntoViewIfNeeded();
-    const uploaded = page.waitForResponse((response) => response.url() === `${APP}/api/attachments?kind=${kind}` && response.request().method() === 'POST', { timeout: 30000 });
+    const uploaded = page.waitForResponse((response) => response.url().endsWith(`/api/attachments?kind=${kind}`) && response.request().method() === 'POST', { timeout: 30000 });
     await f.setInputFiles(`#evidence-${kind}`, file);
     const response = await uploaded;
     if (!response.ok()) throw new Error(`upload evidence ${kind}: ${response.status()}`);
@@ -61,7 +61,10 @@ const uploadEvidence = async (f, kinds = evidenceKinds) => {
 const reviewAndWait = async (f) => {
   await f.locator('[data-go="selfReview"]').scrollIntoViewIfNeeded();
   await f.click('[data-go="selfReview"]');
+  await page.evaluate(() => { const el = document.getElementById('zf-cap'); if (el && !el.textContent.includes('×10')) el.textContent += ' (Sped up ×10.)'; });
+  const from = (Date.now() - T0) / 1000;
   await f.waitForSelector('[data-go="sign"]:not([disabled])', { timeout: 180000 });
+  fast.push([from, (Date.now() - T0) / 1000 - 0.3]);
   await f.locator('.self-review').scrollIntoViewIfNeeded(); await wait(2500);
 };
 // Signing runs the native engine (Rust + Typst + Poppler), which takes ~15 s: wait for the result screen, never a fixed sleep.
