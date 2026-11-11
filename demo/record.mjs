@@ -42,6 +42,28 @@ const openDrawer = async (cap) => {
   return app();
 };
 const answer = async (f, text, pause = 1400) => { await f.fill('#qi', ''); await f.type('#qi', text, { delay: 70 }); await wait(pause); await f.press('#qi', 'Enter'); await wait(1000); };
+const evidenceKinds = ['capital_verification', 'address_approval', 'name_approval'];
+const uploadEvidence = async (f, kinds = evidenceKinds) => {
+  for (const kind of kinds) {
+    const r = await fetch(`${APP}/api/mock-attachments/${kind}`);
+    if (!r.ok) throw new Error(`mock evidence ${kind}: ${r.status}`);
+    const file = path.join(TMP, `MOCK-${kind}.pdf`);
+    fs.writeFileSync(file, Buffer.from(await r.arrayBuffer()));
+    await f.locator(`#evidence-${kind}`).scrollIntoViewIfNeeded();
+    const uploaded = page.waitForResponse((response) => response.url() === `${APP}/api/attachments?kind=${kind}` && response.request().method() === 'POST', { timeout: 30000 });
+    await f.setInputFiles(`#evidence-${kind}`, file);
+    const response = await uploaded;
+    if (!response.ok()) throw new Error(`upload evidence ${kind}: ${response.status()}`);
+    await f.waitForFunction(() => !document.querySelector('input[data-upload]:disabled'), undefined, { timeout: 30000 });
+    await wait(1200);
+  }
+};
+const reviewAndWait = async (f) => {
+  await f.locator('[data-go="selfReview"]').scrollIntoViewIfNeeded();
+  await f.click('[data-go="selfReview"]');
+  await f.waitForSelector('[data-go="sign"]:not([disabled])', { timeout: 180000 });
+  await f.locator('.self-review').scrollIntoViewIfNeeded(); await wait(2500);
+};
 // Signing runs the native engine (Rust + Typst + Poppler), which takes ~15 s: wait for the result screen, never a fixed sleep.
 const signAndWait = async (f, cap) => {
   await f.click('[data-go="sign"]'); await f.waitForSelector('.sms'); await wait(1500); await f.click('.sms');
@@ -49,26 +71,6 @@ const signAndWait = async (f, cap) => {
   const from = (Date.now() - T0) / 1000;
   await f.waitForSelector('.hash', { timeout: 300000 });
   fast.push([from, (Date.now() - T0) / 1000 - 0.3]); await wait(800);
-};
-const KINDS = ['capital_verification', 'address_approval', 'name_approval'];
-const upload = async (f, kinds, cap) => {
-  await f.locator(`#evidence-${kinds[0]}`).scrollIntoViewIfNeeded(); await caption(cap); await wait(1800);
-  for (const kind of kinds) {
-    const r = await fetch(`${APP}/api/mock-attachments/${kind}`);
-    if (!r.ok) throw new Error(`mock evidence ${kind}: ${r.status}`);
-    const file = path.join(TMP, `MOCK-${kind}-${Date.now()}.pdf`); fs.writeFileSync(file, Buffer.from(await r.arrayBuffer()));
-    await f.setInputFiles(`#evidence-${kind}`, file); await wait(600);
-    await f.waitForFunction(() => !document.querySelector('input[data-upload]:disabled'), null, { timeout: 60000 });
-    await f.locator(`#evidence-${kind}`).scrollIntoViewIfNeeded(); await wait(900);
-  }
-};
-// Self-review calls Claude Haiku on each evidence PDF: wait for the report, speed the wait up in post.
-const selfReview = async (f, cap) => {
-  await f.click('[data-go="selfReview"]'); await caption(cap + ' (Sped up ×10.)');
-  const from = (Date.now() - T0) / 1000;
-  await f.waitForFunction(() => document.querySelector('.self-review') && !document.querySelector('[data-go="selfReview"]')?.disabled, null, { timeout: 240000 });
-  fast.push([from, (Date.now() - T0) / 1000 - 0.3]);
-  await f.locator('.self-review').scrollIntoViewIfNeeded(); await caption(cap); await wait(3500);
 };
 const officer = async () => { await page.goto(APP + '/officer.html'); await page.waitForSelector('[data-check]'); await wait(600); };
 const scrollTo = (sel) => page.evaluate((s) => document.querySelector(s)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), sel);
@@ -99,36 +101,38 @@ await caption('Only the 3 missing facts are asked, one per screen. Every form fi
 await answer(f, '臺北市大安區復興南路一段 390 號 5 樓');
 await answer(f, '1000000');
 await answer(f, '林美華');
-await caption('Check once. Then attach the supporting evidence the city asks for.'); await wait(3000);
-await upload(f, KINDS, 'Supporting evidence: marked demo PDFs for the capital audit, address approval and name approval.');
-await selfReview(f, 'Self-review: Claude Haiku reads each evidence PDF and checks it against your answers before you sign.');
-await caption('Every check passes. Signing locks this exact version by its SHA-256 fingerprint.'); await wait(3000);
+await caption('Upload three externally obtained PDFs before submitting: capital audit, address precheck and name reservation. These are marked demo samples.'); await wait(2500);
+await uploadEvidence(f);
+await caption('Self-review compares company, capital, address and dates with the uploaded PDFs. Signing stays blocked until the current review passes.');
+await reviewAndWait(f);
+await caption('All required evidence is present and the review passes. Signing locks this exact version by its SHA-256 fingerprint.'); await wait(3500);
 await signAndWait(f, `The text code confirms that fingerprint. The server seals it with Ed25519, then the native engine renders and verifies ${DOCS.length} PDFs.`);
 await caption(`Submitted: ${DOCS.length} official PDFs generated from one signed snapshot.`); await wait(3000);
 await f.locator('.docs').scrollIntoViewIfNeeded(); await wait(2500);
 
-// 2 · officer: live checks, one-field change request
+// 2 · officer: checks, supporting evidence, one-field change request
 await officer();
 await caption('Officer console: the server computes 5 checks live, including hash, signature and the text in every PDF.'); await wait(4500);
 await scrollTo(evidenceSection); await wait(1500);
-await caption('Each evidence PDF is compared with the signed facts.'); await wait(3500);
+await caption('The three uploaded PDFs are already attached. The officer can compare their values with the signed facts and open each source.'); await wait(3500);
 await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' })); await wait(1000);
 await page.click('tr[data-k="company.capital"]'); await wait(800);
 await caption('The officer asks for a fix to one field, not the whole application.');
 await page.type('#note', 'Bank deposit proof shows NT$ 800,000. Please correct the capital.', { delay: 22 }); await wait(800);
 await page.click('#revise'); await wait(2500);
 
-// 3 · applicant fixes only that field; self-review catches the stale evidence; re-sign v2
+// 3 · applicant fixes one field, replaces capital evidence, reviews and re-signs
 f = await openDrawer('Back on the government page, the applicant sees exactly what to fix.');
 await f.waitForSelector('[data-go="fix"]'); await wait(2500); await f.click('[data-go="fix"]'); await wait(1000);
 await caption('Everything else stays locked. Only the capital field reopens.');
 await answer(f, '800000');
-await wait(1200);
-await selfReview(f, 'Self-review again: the old capital proof still says NT$ 1,000,000, so it is flagged before anything is sent.');
-await upload(f, ['capital_verification'], 'Attach updated capital proof for NT$ 800,000.');
-await selfReview(f, 'Re-check with the new proof.');
+await wait(1500);
+await caption('The correction invalidates the earlier review. Replace the capital report with evidence for NT$ 800,000; the other two PDFs stay attached.'); await wait(2500);
+await uploadEvidence(f, ['capital_verification']);
+await caption('Run self-review again against the corrected draft and current evidence before confirming version 2.');
+await reviewAndWait(f);
 await signAndWait(f, 'Re-signing creates version 2, linked to version 1. New PDFs are generated.');
-await caption('Version 2 signed.'); await wait(2500);
+await caption('Version 2 signed with all three supporting PDFs and a current self-review.'); await wait(2500);
 
 // 4 · officer reviews v2 + evidence, approves
 await officer();

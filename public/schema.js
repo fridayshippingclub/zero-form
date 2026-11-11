@@ -7,6 +7,7 @@ export const FIELDS = {
   'person.phone':       { label: '聯絡電話', en: 'Phone', type: 'phone' },
   'person.address':     { label: '住址', en: 'Home address', type: 'address' },
   'company.name':       { label: '公司名稱', en: 'Company name', type: 'text', suffix: '有限公司' },
+  'company.reservation_no': { label: '預查編號', en: 'Name reservation number', type: 'text', readOnly: true },
   'company.address':    { label: '公司所在地', en: 'Registered address', type: 'address' },
   'company.capital':    { label: '資本總額', en: 'Capital (NT$)', type: 'money' },
   'company.items':      { label: '所營事業', en: 'Business items', type: 'text' },
@@ -21,7 +22,7 @@ export const FORMS = [
     fields: ['company.name', 'company.items', 'person.name', 'person.nationalId', 'person.address'] },
   { id: 'app', name: '公司設立登記申請書', en: 'Application letter',
     fieldRoles: { 'person.name': 'applicant' },
-    fields: ['company.name', 'company.address', 'company.capital', 'person.name', 'person.phone', 'app.date'] },
+    fields: ['company.name', 'company.reservation_no', 'company.address', 'company.capital', 'person.name', 'person.phone', 'app.date'] },
   { id: 't70126', name: '章程', en: 'Articles of incorporation',
     fieldRoles: { 'person.name': ['representative', 'director'] },
     fields: ['company.name', 'company.address', 'company.capital', 'company.items', 'person.name', 'company.articles_date'] },
@@ -35,7 +36,7 @@ export const FORMS = [
     fields: ['company.name', 'company.address', 'owner.name', 'app.date'] },
   { id: 't70135', name: '設立登記表', en: 'Registration form',
     fieldRoles: { 'person.name': ['representative', 'director'], 'person.nationalId': ['representative', 'director'] },
-    fields: ['company.name', 'company.address', 'company.capital', 'company.items', 'person.name', 'person.nationalId', 'person.address', 'person.phone', 'app.date'] },
+    fields: ['company.name', 'company.reservation_no', 'company.address', 'company.capital', 'company.items', 'person.name', 'person.nationalId', 'person.address', 'person.phone', 'app.date'] },
 ];
 
 export const formFieldRole = (form, key) => {

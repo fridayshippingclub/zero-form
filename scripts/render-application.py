@@ -41,7 +41,7 @@ OFFICIAL_IDS = {'app': 't70433', **{key:key for key in ('c00001','t70126','t7013
 OFFICIAL_SLOTS = {
     'c00001': {'person.name:applicant': (1,148,190,144,18), 'person.nationalId:applicant': (1,148,262,144,18),
                'person.address': (1,147,362,146,18), 'company.name': (1,96,598,300,16), 'company.items': (1,205,731,354,16)},
-    'app': {'company.name': (1,218,201,130,18), 'company.address': (1,241,271,150,25),
+    'app': {'company.reservation_no': (1,220,119,320,14), 'company.name': (1,218,201,130,18), 'company.address': (1,241,271,150,25),
             'person.name:applicant': (1,222,231.5,165,11.5), 'person.phone': (1,172,509.5,108,14)},
     't70126': {'company.name': (1,318,184,28,10), 'company.capital': (1,259,345,32,10),
                'company.items': (1,163,231,300,12)},
@@ -50,7 +50,7 @@ OFFICIAL_SLOTS = {
     # 使用同意書（範例）: the bracketed sample wording inside the underlined blanks is the placeholder an applicant
     # types over (see WHITEOUT); the printed sentence, signature block and date line stay untouched.
     't70124': {'owner.name': (1,220,154,122,13), 'company.address': (1,434,154,126,13), 'company.name': (1,290,190,190,13)},
-    't70135': {'company.name': (1,196,210,290,19), 'company.address': (1,240,273,300,15),
+    't70135': {'company.reservation_no': (1,356,99,180,14), 'company.name': (1,196,210,290,19), 'company.address': (1,240,273,300,15),
                'company.capital': (1,240,294,235,17), 'person.name:representative': (1,346,314,65,17),
                'person.phone': (1,400,137,138,16)},
 }

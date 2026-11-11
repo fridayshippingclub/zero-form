@@ -17,10 +17,18 @@ original PDF SHA256. All other comparison checks pass. `/api/sign/send` returns
 `409` after each mismatch; restoring the matching PDF and rerunning self-review
 returns `ready_to_submit` and allows that request again.
 
+A complete draft with no attachments, or only two of the three required PDFs,
+cannot request a signing code even without calling self-review first. Three
+matching uploads still require a passing review. Replacing an attachment after
+a code is issued blocks confirmation.
+
 A blank PDF separately returns `unknown` and blocks signing; restoring matching
 evidence clears it. Editing draft facts invalidates the previous review and
-requires a new review. No native document generation or government submission is
-performed by this test.
+requires a new review. This mismatch test does not generate native documents or submit to government.
+The separate `node demo/agent-review-smoke.mjs` uploads all required evidence
+before review and signing, verifies all six generated PDFs, and checks that an
+applicant-confirmed correction can become eligible for resubmission while an
+agent draft alone cannot.
 
 Reproduce with the documented Python dependencies installed:
 

@@ -9,7 +9,7 @@ import { FORMS } from '../public/schema.js';
 
 const PORT = 5193, BASE = `http://localhost:${PORT}`;
 const DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'zf-check-'));
-const srv = spawn('node', ['server.js'], { env: { ...process.env, PORT, DATA_DIR }, stdio: ['ignore', 'ignore', 'inherit'] });
+const srv = spawn('node', ['server.js'], { env: { ...process.env, ANTHROPIC_API_KEY: '', OPENAI_API_KEY: '', ZERO_FORM_ENABLE_LLM: '0', PORT, DATA_DIR }, stdio: ['ignore', 'ignore', 'inherit'] });
 for (let i = 0; i < 50; i++) { try { await fetch(BASE + '/api/state'); break; } catch { await new Promise((r) => setTimeout(r, 200)); } }
 
 const call = async (p, body) => {
@@ -25,9 +25,10 @@ const pdfText = (buf) => { const f = path.join(DATA_DIR, 'probe.pdf'); fs.writeF
 
 let fails = 0;
 const check = (name, ok, info = '') => { console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${info ? '  — ' + info : ''}`); if (!ok) fails++; };
-const sign = async () => { const s = await call('/api/sign/send', {}); const t = Date.now(); const st = await call('/api/sign/verify', { code: s.demoCode }); return { hash: s.hash, st, secs: ((Date.now() - t) / 1000).toFixed(1) }; };
+const sign = async () => { const s = await call('/api/sign/send', {}); if (s.status !== 200) throw new Error(`Signing blocked: ${JSON.stringify(s)}`); const t = Date.now(); const st = await call('/api/sign/verify', { code: s.demoCode }); return { hash: s.hash, st, secs: ((Date.now() - t) / 1000).toFixed(1) }; };
 const attach = async (kind) => {
   const pdf = await bytes(`/api/mock-attachments/${kind}`);
+  if (pdf.status !== 200 || !pdf.type?.includes('pdf')) throw new Error(`Mock ${kind} unavailable: HTTP ${pdf.status}`);
   const r = await fetch(`${BASE}/api/attachments?kind=${kind}`, { method: 'POST', headers: { 'content-type': 'application/pdf' }, body: pdf.buf });
   return { status: r.status, ...(await r.json()) };
 };
@@ -53,6 +54,14 @@ try {
   check('10 agent API drafts, cannot sign', !Object.keys(agent.errors || {}).length && !agent.missing.includes('company.capital') && schema.forms?.length === 7 && early.status === 400);
   st = await call('/api/answer', { values: ANSWERS });
 
+  const incompleteReview = await call('/api/self-review', {});
+  const blockedSign = await call('/api/sign/send', {});
+  check('7  signing blocked until required evidence passes', incompleteReview.recommendation === 'needs_attention' && blockedSign.status === 409);
+  const uploads = [];
+  for (const k of KINDS) uploads.push(await attach(k));
+  const review1 = await call('/api/self-review', {});
+  check('7  evidence PDFs uploaded and current self-review passes', uploads.every(u => u.status === 201) && review1.recommendation === 'ready_to_submit');
+
   const v1 = await sign();
   const pkg1 = await call('/api/package/1');
   const sigOk = pkg1.serverSig && crypto.verify(null, Buffer.from(canonical({ hash: pkg1.hash, confirmation: pkg1.confirmation })), pkg1.serverPublicKey, Buffer.from(pkg1.serverSig, 'base64'));
@@ -68,26 +77,22 @@ try {
   check('7  officer: 5 checks all green', off.verify?.checks.length === 5 && off.verify.checks.every((c) => c.ok), off.verify?.checks.map((c) => c.key + ':' + c.ok).join(' '));
   check('7  officer: docs consistent', off.verify.docs.length === 7 && off.verify.docs.every((d) => d.ok), `${off.verify.docs.filter((d) => d.ok).length} of ${off.verify.docs.length} docs`);
   check('7  officer page served', (await bytes('/officer.html')).status === 200);
-  const blocked = await call('/api/officer/decide', { decision: 'approve' });
-  check('7  approval blocked until evidence passes', off.verify.externalReview.recommendation === 'request_documents' && blocked.status === 409, off.verify.externalReview.recommendation);
-  const uploads = [];
-  for (const k of KINDS) uploads.push(await attach(k));
-  off = await call('/api/officer');
-  check('7  evidence PDFs uploaded and cross-checked', uploads.every((u) => u.status === 201) && off.verify.externalReview.recommendation === 'approve',
-    `${off.verify.externalReview.checks.filter((c) => c.status === 'passed').length}/${off.verify.externalReview.checks.length} evidence checks passed`);
+  check('7  signed evidence remains cross-checked', off.verify.externalReview.recommendation === 'approve');
 
   await call('/api/officer/decide', { decision: 'revise', field: 'company.capital', note: 'Bank proof shows 800,000' });
   st = await call('/api/state');
   check('9  revision reopens only that field', st.app.status === 'revision' && st.app.reopen === 'company.capital' && JSON.stringify(st.app.missing) === '["company.capital"]');
   await call('/api/answer', { values: { 'company.capital': '800000' } });
+  const staleReview = await call('/api/self-review', {});
+  const stale = staleReview.checks.find(c => c.kind === 'capital_verification' && c.field === 'Capital-TWD');
+  check('9  old capital evidence blocks revised draft signing', staleReview.recommendation === 'needs_attention' && stale?.status === 'mismatch' && (await call('/api/sign/send', {})).status === 409, `${stale?.expected} vs ${stale?.actual}`);
+  const reup = await attach('capital_verification');
+  const review2 = await call('/api/self-review', {});
+  check('9  new capital evidence passes current self-review', reup.status === 201 && review2.recommendation === 'ready_to_submit');
   const v2 = await sign();
   off = await call('/api/officer');
   check('9  re-sign creates v2 linked to v1', off.app.v === 2 && off.app.prev === v1.hash && off.app.hash === v2.hash && off.verify.checks.every((c) => c.ok), v2.st.error || `re-signed in ${v2.secs}s`);
-  const stale = off.verify.externalReview.checks.find((c) => c.kind === 'capital_verification' && c.field === 'Capital-TWD');
-  check('9  old capital evidence flagged against v2', off.verify.externalReview.recommendation !== 'approve' && stale?.status === 'mismatch', `${stale?.expected} vs ${stale?.actual}`);
-  const reup = await attach('capital_verification');
-  off = await call('/api/officer');
-  check('9  new capital evidence passes', reup.status === 201 && off.verify.externalReview.recommendation === 'approve');
+  check('9  revised signed evidence passes', off.verify.externalReview.recommendation === 'approve');
   const ok = await call('/api/officer/decide', { decision: 'approve' });
   check('9  approve reaches applicant', ok.status === 200 && (await call('/api/state')).app.status === 'approved');
 

@@ -29,14 +29,24 @@ try {
   assert.equal((await request('/api/self-review/readiness')).available, false);
   const login = await request('/api/login/send', {}); await request('/api/login/verify', {code:login.demoCode});
   await request('/api/answer', {values:{'company.address':'臺北市大安區仁愛路四段 1 號','company.capital':'10000000','owner.name':'陳大文'}});
-  const absent = await request('/api/self-review', {}); assert.equal(absent.recommendation,'needs_attention');
+  assert.equal((await request('/api/state')).app.selfReview,null);
   await request('/api/sign/send', {}, 409);
   const matching = {};
   for (const kind of ['capital_verification','address_approval','name_approval']) {
     const mock = await fetch(base+'/api/mock-attachments/'+kind); assert.ok(mock.ok);
     matching[kind] = Buffer.from(await mock.arrayBuffer()); await upload(kind,matching[kind]);
+    if (Object.keys(matching).length === 2) {
+      const partial = await request('/api/state'); assert.equal(partial.app.selfReview,null); assert.equal(partial.app.attachments.length,2);
+      await request('/api/sign/send',{},409);
+      const absent = await request('/api/self-review',{}); assert.equal(absent.recommendation,'needs_attention');
+    }
   }
+  await request('/api/sign/send',{},409);
   const ready = await readyReview();
+  const staleCode = await request('/api/sign/send',{});
+  await upload('name_approval',matching.name_approval);
+  await request('/api/sign/verify',{code:staleCode.demoCode},409);
+  await readyReview();
   assert.ok(ready.extraction.every(e=>e.source_sha256 && e.observations.some(o=>o.page===1)));
   const state = await request('/api/state'); assert.equal(state.app.snapshot,undefined);
   const baseline = Object.fromEntries(Object.entries(state.app.draft).map(([key,fact])=>[key,fact.value]));
@@ -76,5 +86,5 @@ try {
   await upload('capital_verification',fs.readFileSync(blank));
   const unknown = await request('/api/self-review',{});assert.equal(unknown.recommendation,'unknown');await request('/api/sign/send',{},409);
   await upload('capital_verification',matching.capital_verification);await readyReview();
-  console.log(JSON.stringify({result:'PASS',live_model_calls:0,scenarios:results,unknown_pdf:'unknown; signing blocked; matching restored',draft_edit:'review invalidated; signing blocked until re-review'},null,2));
+  console.log(JSON.stringify({result:'PASS',live_model_calls:0,mandatory_gate:'zero attachments and two of three blocked before any review; all three require a passing review',post_otp_change:'verify blocked after replacement',scenarios:results,unknown_pdf:'unknown; signing blocked; matching restored',draft_edit:'review invalidated; signing blocked until re-review'},null,2));
 } finally { if (server.exitCode === null) {server.kill();await new Promise(resolve=>server.once('exit',resolve));} fs.rmSync(dir,{recursive:true,force:true}); }

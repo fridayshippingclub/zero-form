@@ -56,11 +56,13 @@ not a claim of legal filing eligibility. Receipt of a capital report is separate
 from any claim that the report explicitly says approved. The optional LLM
 explanation cannot override a check or recommendation.
 
-Starting self-review (or uploading evidence to a draft) requires a current passing
-review before signing. Changing facts or replacing evidence invalidates it; the
+Every signing request requires complete application fields, all three required
+external PDFs, and a current passing self-review, even if self-review has not
+previously been opened. Changing facts or replacing evidence invalidates it; the
 signing operation checks the bound evidence revision again. A draft review is not
-a signed snapshot and does not submit to government. Existing integrations that
-have not started this workflow retain the prior sign-then-upload demonstration.
+a signed snapshot and does not submit to government. There is no sign-then-upload bypass. The evidence revision is checked when
+confirming the code and again after rendering; only successful generation of all
+six PDFs marks the application submitted. Existing signed records remain readable.
 
 Offline HTTP smoke: `node demo/self-review-smoke.mjs` (explicitly disables live
 model calls). Extraction adapter tests use injected mock transport; a configured
@@ -81,3 +83,25 @@ The credential is not a CLI argument or repository file. Offline transport tests
 `python3 -m unittest discover -s demo -p test_evidence_extract.py`.
 
 Original-file SHA256 equality establishes that uploaded bytes were not changed by extraction. It does not establish visual correctness, authenticity, or OCR accuracy. The native PDF generator separately checks protected pixels at configured resolutions; those rendering checks are not performed by the semantic extraction adapter.
+
+For an officer-requested correction, the reopened field remains visible as UI metadata. A valid applicant answer acknowledges it; an agent draft does not. Corrected facts and evidence must pass a new self-review before a new confirmation code can be requested.
+
+## Evidence trust boundary
+
+PDF text is untrusted data in a JSON message, separate from the model's system
+instructions. The adapter locally validates the kind-specific output schema,
+rejects extra or duplicate JSON keys, and accepts values only from existing
+source spans. Ambiguous labels remain unknown; capital grounding rejects partial
+numeric tokens and omitted magnitude units. Known provider thinking blocks are
+ignored, while tool/action blocks are rejected. No model-callable tools or
+approval writes are exposed. Explanations receive only allowed rule/status values
+and typed amounts/dates, excluding source quotations, names, addresses and URLs.
+Deterministic application checks remain authoritative.
+
+Fourteen offline tests cover these controls. They do not establish general
+semantic correctness or live prompt-injection resilience; the earlier recorded
+live extraction results are a separate test. Design references:
+[Anthropic guardrail guidance](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks)
+and [OWASP prompt-injection guidance](https://genai.owasp.org/llmrisk/llm01-prompt-injection/).
+
+The synthetic name reservation record supplies read-only `company.reservation_no` (`113045678`) to both the application letter and registration form. Applicant and agent draft writes cannot replace it. Startup fills only missing draft values with matching seeded name/items provenance; existing signed snapshots remain unchanged. This is a demo record, not verification of a government reservation.
