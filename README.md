@@ -15,6 +15,19 @@ A local company-incorporation demo: reuse profile facts, answer three missing qu
 
 ---
 
+## Demo
+
+[![Zero Form demo](demo/zero-form-final-preview.gif)](demo/zero-form-final.mp4)
+
+One continuous run, end to end, ending on the seven official PDFs filled from one signed snapshot ([MP4](demo/zero-form-final.mp4) · [WebM](demo/zero-form-final.webm); regenerate with `node demo/record-final.mjs`).
+
+- **Agency setup:** Claude reads the 7 official PDFs live, highlights every field, merges them (36+ fields → 11 facts → 3 to type) and the mapping is published.
+- **Real Taipei page:** the extension adds a bilingual service notice under the title; 線上填寫 · Start online opens the drawer.
+- **Applicant:** SMS code (tap to fill) → verified facts reused → 3 questions with the live form preview → demo evidence PDFs → self-review (Claude Haiku) → sign → 7 PDFs generated.
+- **Officer:** 5 live checks and evidence; a fix is requested on capital only → the applicant fixes that field, re-uploads matching evidence, re-reviews and signs v2 → approved.
+- **The final PDFs:** all 7 generated forms, then 設立登記表, 預查申請表, 申請書 and 章程 up close with the filled values and the snapshot-hash footer.
+- **Tamper:** altering stored data after signing turns integrity and consistency red.
+
 ## Why
 
 - **Forms repeat the same facts.** The selected demo has seven form definitions and asks three new questions, reusing the remaining seeded facts.

@@ -9,6 +9,7 @@
     "start": "node server.js",
     "check": "node scripts/check.mjs",
     "record": "node demo/record.mjs",
+    "record:final": "node demo/record-final.mjs",
     "build:engine": "cargo build --release --locked -p zero-form-cli"
   },
   "keywords": [],
