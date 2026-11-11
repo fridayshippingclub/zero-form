@@ -1,6 +1,6 @@
 import { FIELDS, FORMS, formBindings, validate, money, rocDate, docBody } from '/schema.js';
 import { sourceLabel, errorLabel, evidenceKind, evidenceField, evidenceStatus } from '/labels.js';
-import { t, mountLanguageSwitch } from '/language.js';
+import { t, language, mountLanguageSwitch } from '/language.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -139,13 +139,12 @@ function evidenceTiles() {
   const a = S.app, n = uploadedCount(), locked = ui.busy || a.status === 'approved';
   return `<div class="group evidence">
     <div class="ghead"><h3>${t('佐證文件', 'Evidence')} <span class="cnt ${n === KINDS.length ? 'ok' : ''}">${n}/${KINDS.length}</span></h3>
-      ${DEMO_SAMPLES && ['draft', 'revision'].includes(a.status) && n < KINDS.length ? `<button class="btn outline sm" data-go="loadDemoEvidence" ${locked ? 'disabled' : ''}>${t('使用示範文件', 'Use demo samples')}</button>` : ''}</div>
+      ${DEMO_SAMPLES && ['draft', 'revision'].includes(a.status) && n < KINDS.length ? `<button class="btn outline sm" data-go="loadDemoEvidence" ${locked ? 'disabled' : ''}>${t('一鍵載入展示 PDF', 'Load demo PDFs')}</button>` : ''}</div>
     <div class="tiles">${KINDS.map((kind) => {
       const title = t(...EVIDENCE[kind]), att = attachmentFor(kind), busy = ui.uploading === kind;
       return `<label class="tile ${att ? 'ok' : ''} ${busy ? 'busy' : ''}" for="evidence-${kind}" data-drop="${kind}">
         <span class="ti">${busy ? '<i class="spin dark"></i>' : att ? I.check : I.upload}</span>
-        <span class="tt"><b>${title}</b><small>${busy ? t('上傳中…', 'Uploading…') : att ? t('已上傳', 'Uploaded') : t('拖曳 PDF 或點選上傳', 'Drop a PDF or click to upload')}</small></span>
-        ${att ? `<a class="edit" href="${esc(att.url)}" target="_blank" rel="noopener">${t('檢視', 'View')} ↗</a><span class="edit">${t('更換', 'Replace')}</span>` : ''}
+        <span class="tt"><b>${title}</b><small>${busy ? t('上傳中…', 'Uploading…') : att ? `${t('已上傳', 'Uploaded')} · <a class="edit" href="${esc(att.url)}" target="_blank" rel="noopener">${t('預覽 PDF', 'Preview PDF')} ↗</a> · <span class="edit">${t('更換', 'Replace')}</span>` : t('拖曳 PDF 或點選上傳', 'Drop a PDF or click to upload')}</small></span>
         <input class="vh" id="evidence-${kind}" data-upload="${kind}" type="file" accept=".pdf,application/pdf" ${locked ? 'disabled' : ''}>
       </label>`;
     }).join('')}</div>
@@ -155,7 +154,8 @@ function evidenceTiles() {
 const reviewValue = (value) => value?.on_or_before ? `${t('不晚於', 'On or before')} ${value.on_or_before}`
   : value == null ? t('未擷取', 'Not extracted') : ({ provided: t('已提供', 'Provided'), approved: t('已核准', 'Approved'), rejected: t('已駁回', 'Rejected'), 'valid issue date': t('有效日期', 'Valid date') }[value] ?? (typeof value === 'object' ? JSON.stringify(value) : String(value)));
 // LLM text sometimes echoes internal tokens (ready_to_submit, document.issued_on): never show them raw.
-const TOKENS = () => ({ ready_to_submit: t('可送出', 'ready to submit'), needs_attention: t('需處理', 'needs attention'), request_documents: t('需補件', 'documents needed'), needs_confirmation: t('待確認', 'needs confirmation') });
+const one = (zh, en) => (language() === 'en' ? en : zh); // the explanation is prose in one language: keep replacements monolingual
+const TOKENS = () => ({ ready_to_submit: one('可送出', 'ready to submit'), needs_attention: one('需處理', 'needs attention'), request_documents: one('需補件', 'documents needed'), needs_confirmation: one('待確認', 'needs confirmation'), demo_only: one('展示', 'demo') });
 const plain = (text) => String(text || '').replace(/\b[a-z]{2,}(?:[_.][a-z][a-z0-9]+)+\b/g, (m) => TOKENS()[m] ?? m.split(/[_.]/).slice(-2).join(' ')).replace(/\s+/g, ' ').trim();
 
 function checkDetails(report) {
@@ -173,14 +173,13 @@ function checkDetails(report) {
 
 function selfReviewCard() {
   const report = S.app.selfReview, ready3 = uploadedCount() === KINDS.length, running = ui.activity === 'self-review';
-  const runBtn = (label) => `<button class="btn primary" data-go="selfReview" ${ui.busy || !ready3 ? 'disabled' : ''}>${running ? `<i class="spin"></i>${t(`核對 ${KINDS.length} 份文件中…`, `Checking ${KINDS.length} documents…`)}` : label}</button>`;
   const unavailable = ui.readiness?.available === false ? `<div class="note left">${t('一般文件語意擷取尚未啟用；已知格式的展示文件仍可規則核對。', 'General semantic extraction is unavailable; known demo formats can still be checked by rules.')}</div>` : '';
   if (!report || !report.current || running) {
     const stale = report && !report.current;
     return `<div class="rcard ${stale ? 'warn' : 'idle'}">
       <div class="rhead"><span class="ri">${stale ? I.alert : I.doc}</span><div><b>${stale ? t('資料已更新，請重新核對', 'Details changed — check again') : t('送出前自我核對', 'Self-review before you submit')}</b>
         <small>${ready3 ? t('比對公司名稱、資本額、地址與日期。', 'Compares company, capital, address and dates with your documents.') : t(`先上傳 ${KINDS.length} 份文件。`, `Upload the ${KINDS.length} documents first.`)}</small></div></div>
-      ${runBtn(t('執行自我核對', 'Run self-review'))}${unavailable}</div>`;
+      ${unavailable}</div>`;
   }
   const checks = report.checks || [], passed = checks.filter((c) => c.status === 'passed').length, ok = report.recommendation === 'ready_to_submit';
   const docs = new Set(checks.map((c) => c.kind)).size || KINDS.length;
@@ -270,6 +269,8 @@ const VIEWS = {
 
   review: () => {
     const d = S.app.draft, ready = !ui.busy && S.app.selfReview?.current && S.app.selfReview?.recommendation === 'ready_to_submit';
+    // Next step lives in the sticky bar: run the check once all documents are in, then sign.
+    const needsReview = uploadedCount() === KINDS.length && (!S.app.selfReview?.current || ui.activity === 'self-review');
     const group = (title, keys) => `<div class="group"><h3>${title}</h3><div class="facts">${keys.map((k) => `
       <div class="fact"><div class="grow"><div class="k zh">${t(FIELDS[k].label, FIELDS[k].en)}</div><div class="v zh">${esc(fmt(k, d[k]?.value))}</div></div>
       ${ORDER.includes(k) ? `<button class="edit" data-edit="${k}">${t('修改', 'Edit')}</button>` : ''}${source(d[k])}</div>`).join('')}</div></div>`;
@@ -285,8 +286,9 @@ const VIEWS = {
     <div class="spacer"></div>
     <div class="cta-bar sticky">
       <div class="err">${ui.err ? I.alert + esc(ui.err) : ''}</div>
-      <button class="btn primary" data-go="sign" ${ready ? '' : 'disabled'}>${t('確認送出', 'Sign & submit')} <span class="k">↵</span></button>
-      <div class="note">${ready ? t(`以代碼確認，產生 ${N_GEN} 份 PDF。不會送交政府。`, `Confirm with a code to generate ${N_GEN} PDFs. Nothing is filed with the government.`) : t('上傳文件並通過自我核對後即可送出。', 'Upload the documents and pass self-review to continue.')}</div>
+      ${needsReview ? `<button class="btn primary" data-go="selfReview" ${ui.busy ? 'disabled' : ''}>${ui.activity === 'self-review' ? `<i class="spin"></i>${t(`核對 ${KINDS.length} 份文件中…`, `Checking ${KINDS.length} documents…`)}` : t('執行自我核對', 'Run self-review')}</button>`
+        : `<button class="btn primary" data-go="sign" ${ready ? '' : 'disabled'}>${t('確認送出', 'Sign & submit')} <span class="k">↵</span></button>`}
+      <div class="note">${ready ? t(`以代碼確認，產生 ${N_GEN} 份 PDF。不會送交政府。`, `Confirm with a code to generate ${N_GEN} PDFs. Nothing is filed with the government.`) : needsReview ? t('比對文件與你的答案，約需數秒。', 'Compares the documents with your answers — takes a few seconds.') : t('上傳文件並通過自我核對後即可送出。', 'Upload the documents and pass self-review to continue.')}</div>
     </div>`;
   },
 

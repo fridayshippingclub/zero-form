@@ -158,3 +158,7 @@ textarea:disabled{background:#FAFAF8}
 .check .ic{background:none!important;width:auto;height:auto;justify-content:start}
 .check.bad{background:var(--surface)}
 @media (max-width:640px){.facts .act{display:none}.evsum .res{margin-left:0}}
+.crumb::before{content:"/ ";color:var(--line)}
+.data-facts .src{display:block;line-height:1.45}
+.data-facts .src .badge{margin-top:4px;white-space:nowrap}
+.data-facts .used .bar{display:none}

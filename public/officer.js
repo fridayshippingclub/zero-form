@@ -109,7 +109,7 @@ function render() {
         <h3 class="section-title">${t('資料事實', 'Facts')} <span class="muted">${t(`${keys.length} 項 → ${TOTAL_FORMS} 份表單`, `${keys.length} facts → ${TOTAL_FORMS} forms`)}<br>${t('點選欄位要求修正', 'Select a row to request a change')}</span></h3>
         <div class="card">
           <table class="facts data-facts">
-            <thead><tr><th style="width:21%">${t('欄位', 'Field')}</th><th style="width:29%">${t('內容', 'Value')}</th><th>${t('來源', 'Source')}</th><th style="width:120px">${t('沿用', 'Used in')}</th><th class="act"></th></tr></thead>
+            <thead><tr><th style="width:20%">${t('欄位', 'Field')}</th><th style="width:25%">${t('內容', 'Value')}</th><th>${t('來源', 'Source')}</th><th style="width:96px">${t('沿用', 'Used in')}</th><th class="act"></th></tr></thead>
             <tbody>
               ${keys.map((k) => {
                 const f = fields[k] ?? { label: k, en: '' };

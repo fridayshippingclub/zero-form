@@ -4,7 +4,8 @@
 :root{--bg:#F5F5F2;--surface:#fff;--ink:#0E1116;--ink2:#4A5160;--ink3:#8A909C;--line:#E6E6E1;
   --accent:#2B50FF;--accent-hover:#1F42E6;--accent-soft:#EEF1FF;--ok:#0F7B47;--ok-soft:#E7F5ED;--warn:#B45309;--warn-soft:#FDF1E2;--danger:#B42318;--danger-soft:#FDECEA;--hl:#FFE58A}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%}
+html,body{margin:0;min-height:100%}
+body{display:flex;flex-direction:column;min-height:100vh}
 body{font-family:Inter,"Noto Sans TC",system-ui,sans-serif;color:var(--ink);background:var(--surface);-webkit-font-smoothing:antialiased}
 .zh{font-family:"Noto Sans TC",Inter,sans-serif}
 .mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.92em}
@@ -13,7 +14,7 @@ body{font-family:Inter,"Noto Sans TC",system-ui,sans-serif;color:var(--ink);back
 /* chrome */
 .bar{position:fixed;top:0;left:0;right:0;height:2px;background:transparent;z-index:5}
 .bar .fill{height:100%;width:0;background:var(--ink);transition:width .5s cubic-bezier(.2,.8,.2,1)}
-.top{display:flex;justify-content:space-between;align-items:center;padding:18px 28px 0;max-width:1180px;margin:auto;gap:12px}
+.top{display:flex;justify-content:space-between;align-items:center;padding:18px 28px 0;max-width:1180px;width:100%;margin:0 auto;gap:12px}
 .brand{display:flex;gap:9px;align-items:center;font-weight:700;letter-spacing:-.3px;font-size:15px}
 .brand img{display:block}
 .demo-label{font-size:12px;color:var(--ink3);border:1px solid #D9DCE1;padding:2px 8px;border-radius:6px;margin-left:auto;white-space:nowrap}
@@ -21,8 +22,9 @@ body{font-family:Inter,"Noto Sans TC",system-ui,sans-serif;color:var(--ink);back
 .embed .top{position:absolute;top:10px;right:16px;padding:0;margin:0;max-width:none;z-index:6}
 .embed .top .brand,.embed .top .demo-label{display:none}
 .embed main{padding-top:44px}
+.embed .bar .fill{background:#C9CCD2}
 
-main{max-width:600px;margin:auto;padding:36px 28px 32px;min-height:calc(100% - 60px);display:flex;flex-direction:column}
+main{width:100%;max-width:600px;margin:0 auto;padding:36px 28px 32px;flex:1 0 auto;display:flex;flex-direction:column}
 .screen{display:flex;flex-direction:column;gap:22px;flex:1;animation:in .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.screen,.notif,.cell.pop{animation:none!important}}
@@ -133,6 +135,7 @@ p.lead.sm{font-size:14px}
 .tile .tt small{font-size:12px;color:var(--ink3)}
 .tile.ok .tt small{color:var(--ok)}
 .tile .edit{font-size:12px;position:relative;z-index:1}
+.tile .tt small .edit{font-size:12px}
 .factsum{border:1px solid var(--line);border-radius:12px;background:var(--bg)}
 .factsum summary{list-style:none;display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;font-size:13px;color:var(--ink2)}
 .factsum summary::-webkit-details-marker{display:none}
@@ -223,7 +226,8 @@ p.lead.sm{font-size:14px}
 
 /* live data preview (wide layouts: drawer ≥ 880px or full page) */
 #app.with-packet{max-width:1180px;display:grid;grid-template-columns:minmax(0,500px) minmax(0,1fr);gap:44px;align-items:stretch}
-#app.with-packet .screen{min-height:calc(100vh - 120px)}
+#app.with-packet{width:100%}
+#app.with-packet .screen{min-height:calc(100vh - 130px)}
 .packet{position:sticky;top:24px;align-self:start;background:#F7F7F5;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:14px;max-height:calc(100vh - 100px);overflow:auto}
 .packet .ph{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .packet .ph b{font-size:14px;display:block}
