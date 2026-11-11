@@ -57,7 +57,7 @@ p.lead.sm{font-size:14px}
 .edit[disabled]{opacity:.5}
 
 /* welcome */
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0}
+.stats{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:16px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0}
 .stat{display:flex;flex-direction:column;gap:2px}
 .stat b{font-size:28px;line-height:1.1;letter-spacing:-.6px;font-weight:600}
 .stat span{font-size:12px;color:var(--ink3);line-height:1.4}

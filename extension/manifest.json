@@ -2,11 +2,15 @@
   "manifest_version": 3,
   "name": "Zero Form",
   "version": "0.1.0",
-  "description": "Adds an online option to the Taipei incorporation page: answer 3 questions once, and all 7 required forms are prepared (6 generated, 1 already on file). Demo only.",
+  "description": "Adds an online option to the Taipei incorporation page: answer 3 questions once and all 7 required forms are generated. Demo only — not a government submission.",
   "content_scripts": [
     {
-      "matches": ["https://tcooc-co.gov.taipei/*"],
-      "js": ["content.js"],
+      "matches": [
+        "https://tcooc-co.gov.taipei/*"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_idle"
     }
   ]

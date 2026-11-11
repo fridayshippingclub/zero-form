@@ -83,7 +83,7 @@ function render() {
     <div>
       <div class="ref"><span class="mono">${esc(app.id)}</span><span class="pill ${esc(app.status)}">${esc(STATUS[app.status] ? t(...STATUS[app.status]) : app.status)}</span></div>
       <h1>${esc(company)}</h1>
-      <div class="story">${t(`${TOTAL_FORMS} 份必備表單：${verify.docs.length} 份由確認資料產生，${TOTAL_FORMS - verify.docs.length} 份已存檔（名稱預查）`, `${TOTAL_FORMS} required forms: ${verify.docs.length} generated from the signed facts, ${TOTAL_FORMS - verify.docs.length} already on file (name reservation)`)}</div>
+      <div class="story">${TOTAL_FORMS > verify.docs.length ? t(`${TOTAL_FORMS} 份必備表單：${verify.docs.length} 份由確認資料產生，${TOTAL_FORMS - verify.docs.length} 份已存檔`, `${TOTAL_FORMS} required forms: ${verify.docs.length} generated from the signed facts, ${TOTAL_FORMS - verify.docs.length} already on file`) : t(`${TOTAL_FORMS} 份必備表單，全部由同一份確認資料產生`, `All ${TOTAL_FORMS} required forms generated from one signed snapshot`)}</div>
     </div>
     <div class="snap">
       ${t('確認版本', 'Snapshot')} <b>v${app.v}</b> · <span class="mono" title="${esc(app.hash)}">sha256:${esc(short(app.hash))}</span><br>

@@ -34,21 +34,29 @@ def run(args, env):
     return json.loads(result.stdout)
 
 
-OFFICIAL_IDS = {'app': 't70433', **{key:key for key in ('t70126','t70130','t70132','t70124','t70135')}}
+OFFICIAL_IDS = {'app': 't70433', **{key:key for key in ('c00001','t70126','t70130','t70132','t70124','t70135')}}
 # Coordinates refer to the downloaded GCIS originals (top-left, PDF points).
 # Only existing blank regions are populated. Unsupported facts get an appendix,
 # preserving original statutory notes and leaving signatures/seals unfilled.
 OFFICIAL_SLOTS = {
-    'app': {'company.reservation_no': (1,220,119,320,14), 'company.name': (1,218,201,130,18), 'company.address': (1,241,271,150,25)},
+    'c00001': {'person.name:applicant': (1,148,190,144,18), 'person.nationalId:applicant': (1,148,262,144,18),
+               'person.address': (1,147,362,146,18), 'company.name': (1,96,598,300,16), 'company.items': (1,205,731,354,16)},
+    'app': {'company.reservation_no': (1,220,119,320,14), 'company.name': (1,218,201,130,18), 'company.address': (1,241,271,150,25),
+            'person.name:applicant': (1,222,231.5,165,11.5), 'person.phone': (1,172,509.5,108,14)},
     't70126': {'company.name': (1,318,184,28,10), 'company.capital': (1,259,345,32,10),
                'company.items': (1,163,231,300,12)},
     't70130': {'company.name': (1,244,91,85,12), 'person.name:applicant': (1,89,396,174,12)},
     't70132': {'company.name': (1,247,150,112,24), 'person.name:director': (1,341,262,150,24)},
-    't70124': {},
+    # 使用同意書（範例）: the bracketed sample wording inside the underlined blanks is the placeholder an applicant
+    # types over (see WHITEOUT); the printed sentence, signature block and date line stay untouched.
+    't70124': {'owner.name': (1,220,154,122,13), 'company.address': (1,434,154,126,13), 'company.name': (1,290,190,190,13)},
     't70135': {'company.reservation_no': (1,356,99,180,14), 'company.name': (1,196,210,290,19), 'company.address': (1,240,273,300,15),
                'company.capital': (1,240,294,235,17), 'person.name:representative': (1,346,314,65,17),
                'person.phone': (1,400,137,138,16)},
 }
+
+# Sample placeholders (範例 hints) covered where the filled value replaces them; top-left PDF points, kept above the underline.
+WHITEOUT = {'t70124': [(1,216,152,130,16.5), (1,471,152,36,16.5), (1,89,188,35,16.5), (1,311,188,148,16.5)]}
 
 def official_background(form, output, snapshot_hash):
     source = ROOT / 'assets/official' / (OFFICIAL_IDS[form['id']] + '.pdf')
@@ -65,6 +73,10 @@ def official_background(form, output, snapshot_hash):
         width, height = float(page.mediabox.width), float(page.mediabox.height)
         buffer = io.BytesIO()
         mark = canvas.Canvas(buffer, pagesize=(width, height), invariant=1)
+        mark.setFillColorRGB(1, 1, 1)
+        for p, x, y, w, h in WHITEOUT.get(form['id'], []):
+            if p == index + 1: mark.rect(x, height - y - h, w, h, stroke=0, fill=1)
+        mark.setFillColorRGB(0, 0, 0)
         mark.setFont('DemoKai', 8)
         mark.drawCentredString(width/2, 13, '展示樣張・未簽署・不得送件 | GCIS ' + OFFICIAL_IDS[form['id']])
         mark.setFont('Courier', 6); mark.drawCentredString(width/2, 5, 'snapshot sha256:' + snapshot_hash)

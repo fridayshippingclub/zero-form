@@ -13,7 +13,7 @@ const ASK = {
 };
 const ORDER = Object.keys(ASK);
 const DOCS = FORMS.filter((f) => !f.onFile);
-// One story everywhere: N required forms = generated + already on file; you answer N_Q questions.
+// One story everywhere, computed from the schema: N required forms (generated + any already on file); you answer N_Q questions.
 const N_FORMS = FORMS.length, N_GEN = DOCS.length, N_FILE = N_FORMS - N_GEN, N_Q = ORDER.length;
 const EVIDENCE = { capital_verification: ['會計師驗資證明', 'Capital audit report'], address_approval: ['地址預查核准函', 'Address precheck'], name_approval: ['名稱預查核准函', 'Name reservation'] };
 const KINDS = Object.keys(EVIDENCE);
@@ -199,8 +199,8 @@ const VIEWS = {
     <div class="eyebrow zh">${t('臺北市商業處 · 有限公司設立登記', 'Taipei Commerce Office · Company registration')}</div>
     <h1>${t(`${N_FORMS} 份表單，只答 ${N_Q} 題。`, `${N_FORMS} forms. You answer ${N_Q} questions.`, '<br>')}</h1>
     <div class="stats">
-      <div class="stat blue"><b>${N_GEN}</b><span>${t('份自動產生', 'generated for you')}</span></div>
-      <div class="stat green"><b>${N_FILE}</b><span>${t('份已存檔（名稱預查）', 'already on file (name reservation)')}</span></div>
+      <div class="stat blue"><b>${N_GEN}</b><span>${N_FILE ? t('份自動產生', 'generated for you') : t('份表單全部自動產生', 'forms, all generated for you')}</span></div>
+      ${N_FILE ? `<div class="stat green"><b>${N_FILE}</b><span>${t('份已存檔（名稱預查）', 'already on file (name reservation)')}</span></div>` : ''}
       <div class="stat amber"><b>${N_Q}</b><span>${t('題由你回答', 'questions for you')}</span></div>
     </div>
     <div class="steps">
@@ -327,7 +327,7 @@ const VIEWS = {
     return `
     <div class="badge ${head[0]}">${head[1]}</div>
     <div><h1>${head[2]}</h1><div style="margin-top:12px">${head[3]}</div></div>
-    <div class="group"><h3>${t(`已產生 ${N_GEN} 份 PDF`, `${N_GEN} PDFs generated`)} · ${t(`另 ${N_FILE} 份已存檔`, `${N_FILE} already on file`)}</h3><div class="docs">${DOCS.map((f) => `
+    <div class="group"><h3>${t(`已產生 ${N_GEN} 份 PDF`, `${N_GEN} PDFs generated`)}${N_FILE ? ` · ${t(`另 ${N_FILE} 份已存檔`, `${N_FILE} already on file`)}` : ''}</h3><div class="docs">${DOCS.map((f) => `
       <a href="/doc/${sn.v}/${f.id}" target="_blank" rel="noopener"><span class="ic">${I.doc}</span><span class="nm"><span class="n zh">${t(f.name, f.en)}</span></span><span class="open">PDF ↗</span></a>`).join('')}</div></div>
     <div class="hash"><div class="l">${t('已確認版本', 'Signed snapshot')} · v${sn.v} · ${esc(a.id)}</div><div class="h mono">sha256:${sn.hash}</div>
       <div class="s">${sn.prev ? `${t('取代', 'Replaces')} v${sn.v - 1} · ` : ''}${t('代碼確認', 'Code confirmed')} ${esc(sn.to)} · ${new Date(sn.signedAt).toLocaleString()}</div></div>

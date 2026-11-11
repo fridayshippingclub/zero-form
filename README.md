@@ -7,7 +7,7 @@
 
 ### Answer once. Review the evidence. Generate a document package.
 
-A local company-incorporation demo: reuse profile facts, answer three missing questions, review uploaded evidence, and generate six PDFs from one confirmed snapshot. Identity and registry sources are simulated; official forms are partially populated.
+A local company-incorporation demo: reuse profile facts, answer three missing questions, review uploaded evidence, and generate all seven official forms as PDFs from one confirmed snapshot. Identity and registry sources are simulated; official forms are partially populated.
 
 [English judge guide](docs/JUDGE-GUIDE.md) · [Demo video](demo/zero-form-demo.webm) · [Quick start](#quick-start) · [Chrome extension](#chrome-extension) · [Engine reference](docs/ENGINE.md) · [Pixel verification](docs/VERIFICATION.md) · [Semantic test results](bench/review/haiku-live-results/README.md) · [Mismatch checks](docs/SEMANTIC-VERIFICATION.md)
 
@@ -27,7 +27,7 @@ A local company-incorporation demo: reuse profile facts, answer three missing qu
 2. **Ask once.** Only missing fields are asked, one question per screen. Each shows "used in N of 7 forms". National IDs are checksum-validated.
 3. **Self-review before signing.** Upload the three evidence PDFs. Source-grounded extraction feeds deterministic company, capital and date checks; an optional LLM explanation describes the result. All three external PDFs and a passing current review are mandatory before signing; missing or uncertain evidence blocks it.
 4. **Confirm once.** The applicant reviews, then enters the demonstration code displayed on screen. The code is bound to the snapshot hash; the server seals `{hash, confirmation}` with Ed25519.
-5. **Generate every document.** The native Rust core generates six PDFs using official-source backgrounds. The current mapping has 37 occurrences: 16 populate original blanks, including the shared name reservation number on the application and registration form; 21 appear in labeled appendices. The package records the snapshot and PDF hashes.
+5. **Generate every document.** The native Rust core generates seven PDFs, one per fillable official form on the Taipei registration page (Step 1 name reservation c00001 and the Step 4 forms), using the unmodified GCIS originals as backgrounds. The current mapping has 42 occurrences: 26 populate original blanks, including the shared name reservation number on the application and registration form; 16 (mostly ROC dates split across 年/月/日 and repeated role names) appear in labeled appendices. The package records the snapshot and PDF hashes.
 6. **Officer review.** The console at `/officer.html` displays snapshot and evidence checks, then the local reviewer approves, rejects, or requests a change to one field. The re-signed snapshot v2 links to v1 through `prev`.
 
 ```mermaid
@@ -36,7 +36,7 @@ flowchart LR
   A --> R[Upload evidence<br/>Self-review]
   R --> C[Confirm once<br/>Demo code + SHA-256]
   C --> S[(Signed snapshot<br/>Ed25519)]
-  S --> D[Rust core<br/>generates six PDFs]
+  S --> D[Rust core<br/>generates seven PDFs]
   D --> O[Officer console<br/>snapshot and evidence checks]
   O -- approve / reject --> Done[Decision]
   O -- change 1 field --> A
@@ -45,6 +45,8 @@ flowchart LR
 AI agents can draft answers through `GET /api/agent/schema` and `POST /api/agent/draft`. Only the human can confirm and sign. See [Agent API and self-review setup](docs/AGENT_API.md) for endpoints and opt-in Haiku configuration; missing credentials never produce a simulated LLM success.
 
 ## Demo
+
+[`demo/zero-form-all-forms.webm`](demo/zero-form-all-forms.webm) is the current all-forms run: agency setup over all 7 official forms (Claude reads them in parallel; 36 fields → 11 facts → 3 to type), the applicant flow, and a contact sheet of every generated official PDF (`ZF_APP=http://localhost:<port> npm run record` if 5173 is taken).
 
 [`demo/zero-form-demo.webm`](demo/zero-form-demo.webm) is an earlier narrated demonstration. The current flow requires all three uploads and self-review before signing; the recorder script has been updated, but this video has not been regenerated for that change:
 
@@ -66,7 +68,7 @@ npm run dev
 - Applicant panel: http://localhost:5173
 - Officer console: http://localhost:5173/officer.html
 
-Normal mode requires the applicant to upload the capital report, address precheck and name reservation PDFs. These external documents are separate from the six forms generated from the confirmed facts. Open `http://localhost:5173/?demo=1` and select **Load demo PDFs** to attach marked samples for the missing document types. Select **Preview PDF** next to any attachment to open it.
+Normal mode requires the applicant to upload the capital report, address precheck and name reservation PDFs. These external documents are separate from the seven forms generated from the confirmed facts. Open `http://localhost:5173/?demo=1` and select **Load demo PDFs** to attach marked samples for the missing document types. Select **Preview PDF** next to any attachment to open it.
 
 `PORT` and `DATA_DIR` override the port and the state directory.
 

@@ -1,9 +1,10 @@
 # Official form sources used by the demonstration
 
-Downloaded unchanged from the Ministry of Economic Affairs GCIS [limited-company forms index](https://gcis.nat.gov.tw/mainNew/subclassNAction.do?method=getFile&pk=49) on 2026-11-11. Exact download URLs and SHA-256 values are recorded in `sources.json`.
+Downloaded unchanged from the Ministry of Economic Affairs GCIS [limited-company forms index](https://gcis.nat.gov.tw/mainNew/subclassNAction.do?method=getFile&pk=49) on 2026-11-11. Together they are every fillable form on Steps 1 and 4 of the [Taipei registration page](https://tcooc-co.gov.taipei/cp.aspx?n=1ddc8c221b97a1bd&s=5BA095ECA5D6FAB3); the other Step 4 items (accountant's capital audit report, ID copies, proof of building ownership) are evidence uploads, not generated. Exact download URLs and SHA-256 values are recorded in `sources.json`.
 
 | Frontend document | Original source | Pages |
 | --- | --- | --- |
+| c00001 | 公司名稱及所營事業登記預查申請表 (official PDF edition of the Step 1 Word form) | 2 |
 | app | t70433: 有限公司設立（變更）登記申請書 | 2 |
 | t70126 | 公司章程 | 3 |
 | t70130 | 股東同意書, including official examples page | 2 |
@@ -11,6 +12,6 @@ Downloaded unchanged from the Ministry of Economic Affairs GCIS [limited-company
 | t70124 | 使用同意書（範例） | 1 |
 | t70135 | 有限公司設立登記表 | 3 |
 
-The runtime uses these original PDF pages as backgrounds. It adds a small demonstration footer and fills selected existing blank regions using the native Rust/Typst pipeline and the confirmed semantic facts. Facts that do not fit an original blank or have no matching original field are placed on a separate, explicitly nonofficial confirmed-data appendix. All original pages, wording, notes and optional clauses remain present. This is a partial demonstration, not a legally complete filing package. Signatures, seals, unknown data and optional choices remain blank; no official endorsement is implied.
+The runtime uses these original PDF pages as backgrounds. It adds a small demonstration footer and fills selected existing blank regions using the native Rust/Typst pipeline and the confirmed semantic facts. Facts that do not fit an original blank or have no matching original field are placed on a separate, explicitly nonofficial confirmed-data appendix. All original pages, wording, notes and optional clauses remain present; the one exception is the t70124 sample (範例), where the bracketed placeholder hints inside its three underlined blanks are covered by the values that replace them. This is a partial demonstration, not a legally complete filing package. Signatures, seals, unknown data and optional choices remain blank; no official endorsement is implied.
 
 The preserved originals retain their embedded fonts. New data and demonstration text use the official open-licensed TW-Kai source; the native core receives a per-application subset named `Zero Form Kai Demo` to stay within its unchanged asset-size limit. Original source font and PDF files remain unchanged. Fictional external accountant/address/name evidence remains separate and is not represented as government-issued paperwork.

@@ -65,17 +65,17 @@ try {
   const v1 = await sign();
   const pkg1 = await call('/api/package/1');
   const sigOk = pkg1.serverSig && crypto.verify(null, Buffer.from(canonical({ hash: pkg1.hash, confirmation: pkg1.confirmation })), pkg1.serverPublicKey, Buffer.from(pkg1.serverSig, 'base64'));
-  check('5  sign once: snapshot v1 sealed (SMS code bound to SHA-256, Ed25519)', v1.st.app?.status === 'submitted' && v1.st.app.snapshot.hash === v1.hash && pkg1.confirmation?.hash === v1.hash && sigOk, v1.st.error ? `${v1.st.status} ${v1.st.error} ${v1.st.detail || ''}` : `${v1.hash?.slice(0, 16)} · signed + 6 PDFs in ${v1.secs}s`);
+  check('5  sign once: snapshot v1 sealed (SMS code bound to SHA-256, Ed25519)', v1.st.app?.status === 'submitted' && v1.st.app.snapshot.hash === v1.hash && pkg1.confirmation?.hash === v1.hash && sigOk, v1.st.error ? `${v1.st.status} ${v1.st.error} ${v1.st.detail || ''}` : `${v1.hash?.slice(0, 16)} · signed + ${DOCS.length} PDFs in ${v1.secs}s`);
 
   const pdfs = await Promise.all(DOCS.map(async (f) => ({ f, r: await bytes(`/doc/1/${f.id}`) })));
   const pdfOk = pdfs.filter(({ f, r }) => r.status === 200 && r.type?.includes('pdf') && r.buf.subarray(0, 5).toString() === '%PDF-' && sha(r.buf) === pkg1.docs?.[f.id]);
-  check('6  every form generated as native PDF, digest sealed', pdfOk.length === DOCS.length && DOCS.length === 6, `${pdfOk.length} of ${DOCS.length} PDFs`);
+  check('6  every form generated as native PDF, digest sealed', pdfOk.length === DOCS.length && DOCS.length === 7, `${pdfOk.length} of ${DOCS.length} PDFs`);
   const art = pdfText(pdfs.find(({ f }) => f.id === 't70126').r.buf).replace(/\s+/g, '');
   check('6  PDF shows the snapshot values + snapshot hash', art.includes(v1.hash) && art.includes(ANSWERS['company.address'].replace(/\s+/g, '')));
 
   let off = await call('/api/officer');
   check('7  officer: 5 checks all green', off.verify?.checks.length === 5 && off.verify.checks.every((c) => c.ok), off.verify?.checks.map((c) => c.key + ':' + c.ok).join(' '));
-  check('7  officer: docs consistent', off.verify.docs.length === 6 && off.verify.docs.every((d) => d.ok), `${off.verify.docs.filter((d) => d.ok).length} of ${off.verify.docs.length} docs`);
+  check('7  officer: docs consistent', off.verify.docs.length === 7 && off.verify.docs.every((d) => d.ok), `${off.verify.docs.filter((d) => d.ok).length} of ${off.verify.docs.length} docs`);
   check('7  officer page served', (await bytes('/officer.html')).status === 200);
   check('7  signed evidence remains cross-checked', off.verify.externalReview.recommendation === 'approve');
 
