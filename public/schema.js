@@ -93,7 +93,7 @@ const SENTENCES = {
 };
 // wrap(key, text) lets the browser highlight values; the server passes identity so hashes stay stable.
 export function docBody(form, data, wrap = (_k, t) => t) {
-  const d = new Proxy({}, { get: (_, k) => k === 'company.capital$' ? wrap('company.capital', money(data['company.capital'])) : wrap(k, data[k] ?? '') });
+  const d = new Proxy({}, { get: (_, k) => k === 'company.capital$' ? wrap('company.capital', data['company.capital'] ? money(data['company.capital']) : '') : wrap(k, data[k] ?? '') });
   const rows = formBindings(form).map(({ key, label }) => `<tr><th>${label}</th><td>${wrap(key, data[key] ? fmt(key, data[key]) : '')}</td></tr>`).join('');
   return `<h1>${form.name}</h1>${SENTENCES[form.id] ? `<p class="s">${SENTENCES[form.id](d)}</p>` : ''}<table>${rows}</table>`;
 }
