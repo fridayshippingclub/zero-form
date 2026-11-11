@@ -88,7 +88,7 @@ const reviewValue = (value) => value?.on_or_before ? `不晚於 / On or before $
 
 function selfReviewReport() {
   const report = S.app.selfReview;
-  if (!report) return `<div class="callout blue"><b>送出前自我核對 · Review before submitting</b><span>比對公司名稱、資本額與日期，並顯示來源。<br>Compare company, capital, and dates against the uploaded evidence.</span></div>`;
+  if (!report) return `<div class="callout blue"><b>送出前自我核對 · Review before submitting</b><span>比對公司名稱、資本額、地址與日期，並顯示來源。<br>Compare company, capital, address, and dates against the uploaded evidence.</span></div>`;
   const ready = report.current && report.recommendation === 'ready_to_submit';
   const title = !report.current ? '資料已更新，請重新核對 · Details changed; review again'
     : ready ? '資料核對完成，可進入最後確認 · Ready for final confirmation'
@@ -96,7 +96,7 @@ function selfReviewReport() {
   return `<section class="self-review" aria-live="polite">
     <div class="callout ${ready ? 'blue' : 'warn'}"><b>${title}</b><span>這是送件準備檢查，不是政府核准。<br>This is a submission-readiness check, not government approval.</span></div>
     <div class="group"><h3>規則比對與來源 · Rule checks and evidence</h3>
-      <div class="review-checks">${(report.checks || []).map((check) => `<article class="review-check">
+      <div class="review-checks">${(report.checks || []).slice().sort((a, b) => Number(a.status === 'passed') - Number(b.status === 'passed')).map((check) => `<article class="review-check">
         <div class="review-check-head"><div><div class="note">${esc(evidenceKind(check.kind))}</div><strong>${esc(evidenceField(check.field))}</strong></div><span class="tag ${check.status === 'passed' ? 'ok' : 'warn'}">${esc(evidenceStatus(check.status))}</span></div>
         <dl class="review-values"><div><dt>預期資料 · Expected</dt><dd>${esc(reviewValue(check.expected))}</dd></div><div><dt>文件內容 · Observed</dt><dd>${esc(reviewValue(check.actual))}</dd></div></dl>
         ${check.source?.url ? `<a class="edit" href="${esc(check.source.url)}" target="_blank" rel="noopener">查看來源 · View source${check.source.page ? ` · p.${esc(check.source.page)}` : ''} ↗</a>` : '<div class="note">未取得文件來源 · No document evidence</div>'}
