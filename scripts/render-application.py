@@ -54,7 +54,8 @@ def render(source, destination):
     with tempfile.TemporaryDirectory(prefix='zero-form-dynamic-') as temporary:
         work=Path(temporary)
         shutil.copyfile(FONT,work/'font.ttf')
-        fields={};facts=[];templates={};documents=[];properties={}
+        fields={};facts=[];templates={};documents=[];properties={};fact_keys=set()
+        roles={'applicant':'person-applicant','representative':'person-applicant','director':'person-applicant','company':'company-applicant','owner':'property-owner'}
         for form in forms:
             if not 1 <= len(form['fields']) <= 12:
                 raise ValueError('invalid_field_count')
@@ -81,10 +82,17 @@ def render(source, destination):
                 if value is None or isinstance(value,(dict,list,bool)) or not str(value).strip():
                     raise ValueError('missing_or_invalid_field:'+key)
                 value=str(value)
-                if key not in fields:
-                    fields[key]={'role':'applicant','predicate':key,'require_verification_event':False}
-                    properties[key]={'type':'string','minLength':1,'maxLength':500}
-                    facts.append({'id':'fact-'+str(len(facts)+1),'subject':'confirmed-application','predicate':key,'value':value,
+                role=field.get('role') or ('company' if key.startswith('company.') else 'owner' if key.startswith('owner.') else 'applicant')
+                if role not in roles:raise ValueError('unknown_role:'+role)
+                predicate=key.split('.',1)[-1] if key.startswith(('person.','company.','owner.')) else key
+                semantic=role+'.'+predicate
+                if semantic not in fields:
+                    fields[semantic]={'role':role,'predicate':predicate,'require_verification_event':False}
+                    properties[semantic]={'type':'string','minLength':1,'maxLength':500}
+                fact_key=(roles[role],predicate)
+                if fact_key not in fact_keys:
+                    fact_keys.add(fact_key)
+                    facts.append({'id':'fact-'+str(len(facts)+1),'subject':roles[role],'predicate':predicate,'value':value,
                         'revision':str(source['v']),'source':'confirmed-snapshot:'+source['hash']+':'+key,
                         'confirmation':'confirmed','verification_event':None,'valid_from':'2026-01-01','valid_to':None})
                 target='field-'+str(i+1);y=180+i*45
@@ -95,7 +103,7 @@ def render(source, destination):
                 if size<6:raise ValueError('field_too_long:'+key)
                 targets[target]={'page':1,'rect':[42.0,float(y),510.0,22.0],'filled_by':'applicant','control':{'kind':'text','size':float(size)}}
                 # Semantic values remain exactly those confirmed by the applicant.
-                bindings[target]={'source':{'kind':'field','field':key},'transform':{'kind':'identity'}}
+                bindings[target]={'source':{'kind':'field','field':semantic},'transform':{'kind':'identity'}}
             c.setFont('Helvetica',8);c.drawString(40,35,'ZERO FORM / SYNTHETIC TEMPLATE / NO GOVERNMENT SUBMISSION / Page 1 of 1');c.save()
             templates[form['id']]={'version':'1','source':{'path':path.name,'sha256':digest(path)},
                 'font':{'asset':{'path':'font.ttf','sha256':digest(work/'font.ttf')},'family':'Noto Sans TC'},'targets':targets}
@@ -106,7 +114,7 @@ def render(source, destination):
         dump(work/'definition.json',definition)
         definition_hash=run([str(executable),'check-definition',str(work/'definition.json')],env)['definition_hash']
         request={'id':'application-v'+str(source['v']),'application_type':'frontend-company-demo','scope':'demo-frontend',
-            'as_of':'2026-11-11','roles':{'applicant':'confirmed-application'}}
+            'as_of':'2026-11-11','roles':roles}
         bundle={'scope':'demo-frontend','read_revision':source['hash'],'grant_id':'demo-confirmed-snapshot','expires_on':'2099-12-31',
             'allowed_fact_ids':[f['id'] for f in facts],'allowed_relationship_ids':[],'approved_definition_hashes':[definition_hash],'facts':facts,'relationships':[]}
         dump(work/'request.json',request);dump(work/'facts.json',bundle)

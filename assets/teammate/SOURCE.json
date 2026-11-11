@@ -1,0 +1,7 @@
+{
+  "font": "Noto Sans TC Regular",
+  "source": "https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/Variable/TTF/Subset/NotoSansTC-VF.ttf",
+  "license": "OFL-1.1",
+  "license_file": "OFL.txt",
+  "derivation": "Static weight 400 instantiated with fontTools.varLib.instancer; no glyph modifications."
+}

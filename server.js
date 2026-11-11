@@ -8,7 +8,7 @@ const execute = promisify(execFile);
 const ROOT = process.cwd();
 const ATTACHMENT_KINDS = ['capital_verification', 'address_approval', 'name_approval'];
 let generating = false;
-import { FIELDS, FORMS, allFieldKeys, validate, rocDate, money } from './public/schema.js';
+import { FIELDS, FORMS, ROLE_BINDINGS, formFieldRole, formFieldLabel, allFieldKeys, validate, rocDate, money } from './public/schema.js';
 
 const PORT = Number(process.env.PORT) || 5173;
 const ORIGIN = `http://localhost:${PORT}`;
@@ -49,14 +49,14 @@ async function renderCore(body, hash) {
   const job = path.resolve(DATA, 'packages', crypto.randomUUID());
   fs.mkdirSync(job, { recursive: true });
   const input = path.join(job, 'input.json');
-  fs.writeFileSync(input, JSON.stringify({ ...body, hash, forms: FORMS.filter(f => !f.onFile).map(f => ({ id: f.id, name: f.name, fields: f.fields.map(key => ({ key, label: FIELDS[key].label })) })) }));
+  fs.writeFileSync(input, JSON.stringify({ ...body, hash, forms: FORMS.filter(f => !f.onFile).map(f => ({ id: f.id, name: f.name, fields: f.fields.map(key => ({ key, label: formFieldLabel(f, key), role: formFieldRole(f, key) })) })) }));
   const { stdout } = await execute('python3', ['scripts/render-application.py', '--input', input, '--out', path.join(job, 'output')], { cwd: ROOT, timeout: 180000, maxBuffer: 4 * 1024 * 1024 });
   const result = JSON.parse(stdout);
   for (const f of FORMS.filter(f => !f.onFile)) {
     const item = result.documents[f.id];
     if (!item) throw new Error('Core output missing ' + f.id);
     item.path = path.resolve(item.path);
-    if (!item.path.startsWith(job + path.sep) || !fs.existsSync(item.path)) throw new Error('Invalid core output path');
+    if (!fs.existsSync(item.path) || !fs.realpathSync(item.path).startsWith(fs.realpathSync(job) + path.sep)) throw new Error('Invalid core output path');
     if (sha256(fs.readFileSync(item.path)).toString('hex') !== item.sha256) throw new Error('Core PDF digest mismatch');
   }
   return result;
@@ -83,7 +83,7 @@ function snapshotBody(app) {
   const data = {}, provenance = {};
   for (const k of allFieldKeys()) { data[k] = app.draft[k].value; provenance[k] = { source: app.draft[k].source, verified: !!app.draft[k].verified }; }
   const prev = app.snapshots.at(-1)?.hash ?? null;
-  return { v: app.snapshots.length + 1, prev, schema: 'tw.company.ltd.incorporation@1', applicationId: app.id, data, provenance };
+  return { v: app.snapshots.length + 1, prev, schema: 'tw.company.ltd.incorporation@1', applicationId: app.id, data, provenance, roles: ROLE_BINDINGS };
 }
 
 // ---------- documents: one renderer, every form ----------
@@ -108,7 +108,7 @@ h1{text-align:center;font-size:26px;letter-spacing:4px;margin:0 0 32px}.s{line-h
 
 // ---------- verification (officer side) ----------
 async function verifySnapshot(snap) {
-  const body = { v: snap.v, prev: snap.prev, schema: snap.schema, applicationId: snap.applicationId, data: snap.data, provenance: snap.provenance };
+  const body = { v: snap.v, prev: snap.prev, schema: snap.schema, applicationId: snap.applicationId, data: snap.data, provenance: snap.provenance, ...(snap.roles ? { roles: snap.roles } : {}) };
   const hash = sha256(canonical(body)).toString('hex');
   const sealed = canonical({ hash: snap.hash, confirmation: snap.confirmation });
   const sigOk = crypto.verify(null, Buffer.from(sealed), serverPub, Buffer.from(snap.serverSig, 'base64'));

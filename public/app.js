@@ -75,6 +75,7 @@ const VIEWS = {
     return `
     <div class="eyebrow">Welcome back, ${esc(d['person.name'].value)}</div>
     <h2>We already know this.<br>Still correct?</h2>
+    <p class="lead" style="font-size:14px">For this one-person company, you are the applicant, company representative, and sole director. Each role uses the same identity, so you enter it only once.</p>
     <div class="facts">${keys.filter((k) => d[k]).map((k) => `
       <div class="fact"><div class="check">✓</div><div class="grow"><div class="k zh">${FIELDS[k].label} · ${FIELDS[k].en}</div><div class="v zh">${esc(fmt(k, d[k].value))}</div></div>${source(d[k])}</div>`).join('')}
     </div>

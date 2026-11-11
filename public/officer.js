@@ -62,6 +62,8 @@ function render() {
   }
   const { app, verify, fields } = p;
   const failed = verify.checks.filter((c) => !c.ok);
+  const externalReview = verify.externalReview;
+  const evidenceReady = !externalReview || externalReview.recommendation === 'approve';
   const company = app.data['company.name'] ? `${app.data['company.name']}${fields['company.name']?.suffix ?? '有限公司'}` : 'Untitled company';
   const changed = st.prevData ? Object.keys(app.data).filter((k) => st.prevData[k] !== app.data[k]) : [];
   const keys = [...ORDER.filter((k) => k in app.data), ...Object.keys(app.data).filter((k) => !ORDER.includes(k))];
@@ -129,10 +131,19 @@ function render() {
           }).join('')}
         </div>
       </section>
+      ${externalReview ? `<section>
+        <h3 class="section-title">Supporting evidence <span class="muted">uploaded demo PDFs compared with the signed facts</span></h3>
+        <div class="card"><table class="facts"><thead><tr><th>Check</th><th>Expected</th><th>In document</th><th>Result / source</th></tr></thead><tbody>
+          ${externalReview.checks.map((check) => `<tr><td><div class="fe">${esc(check.kind.replaceAll('_', ' '))}</div><div>${esc(check.field)}</div></td>
+            <td class="val">${esc(check.expected ?? '—')}</td><td class="val">${esc(check.actual ?? 'Not available')}</td>
+            <td><span class="badge ${check.status === 'passed' ? 'ok' : 'warn'}">${esc(check.status.replaceAll('_', ' '))}</span>${check.source ? `<div style="margin-top:6px"><a href="${esc(check.source.url)}" target="_blank" rel="noopener">Source · page ${esc(check.source.page)}</a></div>` : ''}</td></tr>`).join('')}
+        </tbody></table></div>
+        <p class="muted" style="font-size:12px">Fictional evidence only. The common issue date is a demo scenario rule, not a legal requirement.</p>
+      </section>` : ''}
     </div>
 
     <aside class="side">
-      <div class="card decision">${decisionPanel(app, fields, failed)}</div>
+      <div class="card decision">${decisionPanel(app, fields, failed, evidenceReady)}</div>
       <div class="demo"><button id="tamper">Simulate tampering</button><span class="sep">·</span><button id="reset">Reset demo</button></div>
     </aside>
   </div>`;
@@ -140,7 +151,7 @@ function render() {
   if (focused) { const t = document.getElementById('note'); if (t) { t.focus(); t.setSelectionRange(caret, caret); } }
 }
 
-function decisionPanel(app, fields, failed) {
+function decisionPanel(app, fields, failed, evidenceReady = true) {
   const d = app.decision;
   const pkg = `<div class="pkg"><span>Signed package</span><a href="/api/package/${app.v}" target="_blank" rel="noopener">View JSON ↗</a></div>`;
   if (app.status === 'revision') {
@@ -157,18 +168,18 @@ function decisionPanel(app, fields, failed) {
   }
   const sel = st.sel && fields[st.sel] ? st.sel : null;
   const selLabel = sel ? fields[sel].en : null;
-  return `<h2>Decision</h2><p class="sub">${failed.length ? 'Verification failed. Request a change or reject.' : 'All checks passed. Review the facts, then decide.'}</p>
+  return `<h2>Decision</h2><p class="sub">${failed.length ? 'Verification failed. Request a change or reject.' : !evidenceReady ? 'Supporting evidence is still needed. The applicant can upload the marked demo PDFs.' : 'All checks passed. Review the facts, then decide.'}</p>
     <div class="field-pick ${sel ? 'on' : ''}">
       ${sel ? `<div class="row"><div><div class="k">Field to change</div><div>${esc(fields[sel].label)} · ${esc(fields[sel].en)}</div></div><button class="x" id="clear" title="Clear">×</button></div>`
         : 'Select a field in the table to request a change.'}
     </div>
     <textarea id="note" placeholder="${sel ? `What should the applicant fix in “${esc(selLabel)}”?` : 'Note to applicant (optional)'}">${esc(st.note)}</textarea>
     <div class="btns">
-      <button class="btn primary" id="approve" ${failed.length || st.busy ? 'disabled' : ''}>Approve</button>
+      <button class="btn primary" id="approve" ${failed.length || !evidenceReady || st.busy ? 'disabled' : ''}>Approve</button>
       <button class="btn" id="revise" ${!sel || st.busy ? 'disabled' : ''}>${sel ? `Request change to ${esc(selLabel)}` : 'Request change'}</button>
       <button class="btn danger" id="reject" ${st.busy ? 'disabled' : ''}>Reject</button>
     </div>
-    ${failed.length ? `<div class="hint bad">Approval blocked — ${failed.length} check${failed.length > 1 ? 's' : ''} failed</div>` : ''}${pkg}`;
+    ${failed.length ? `<div class="hint bad">Approval blocked — ${failed.length} check${failed.length > 1 ? 's' : ''} failed</div>` : !evidenceReady ? '<div class="hint bad">Approval waits for all supporting evidence checks to pass.</div>' : ''}${pkg}`;
 }
 
 // ---------- interactions ----------
@@ -211,7 +222,7 @@ function mockInit() {
   const provenance = {
     'company.name': src('Name reservation 預查 #113045678'), 'company.items': src('Name reservation 預查 #113045678'), 'company.address': src('Applicant', false),
     'company.capital': src('Applicant', false), 'person.name': src('MOI identity'), 'person.nationalId': src('MOI identity'),
-    'person.phone': src('Verified by SMS'), 'person.address': src('Household registration'), 'director2.name': src('Applicant', false),
+    'person.phone': src('Verified by SMS'), 'person.address': src('Household registration'),
     'owner.name': src('Applicant', false), 'app.date': src('System'),
   };
   const FIELDS_MOCK = {}; // filled lazily from schema module
