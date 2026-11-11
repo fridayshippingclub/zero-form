@@ -1,0 +1,4673 @@
+{
+  "version": "2.22",
+  "children": [
+    {
+      "type": "frame",
+      "id": "uNxbu",
+      "x": 0,
+      "y": 0,
+      "name": "Components",
+      "fill": "$bg",
+      "cornerRadius": 24,
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 40,
+      "children": [
+        {
+          "type": "text",
+          "id": "sSR22",
+          "name": "Board title",
+          "fill": "$ink",
+          "content": "Zero Form · components",
+          "fontFamily": "$font",
+          "fontSize": 20,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "pdhty",
+          "name": "Component row",
+          "gap": 32,
+          "children": [
+            {
+              "type": "frame",
+              "id": "CakBT",
+              "name": "Fact",
+              "reusable": true,
+              "width": 400,
+              "fill": "$surface",
+              "cornerRadius": 12,
+              "stroke": "$line",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                12,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "woHX7",
+                  "name": "Check",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "badge-check",
+                  "library": "lucide",
+                  "fill": "$ok"
+                },
+                {
+                  "type": "frame",
+                  "id": "RdYFu",
+                  "name": "Text",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ls28z",
+                      "name": "Label",
+                      "fill": "$ink-3",
+                      "content": "負責人姓名 · Representative",
+                      "fontFamily": "$zh",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "QRxze",
+                      "name": "Value",
+                      "fill": "$ink",
+                      "content": "陳大文",
+                      "fontFamily": "$zh",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "vRqu1",
+                  "name": "Source",
+                  "fill": "$ok",
+                  "content": "MOI · verified",
+                  "fontFamily": "$font",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "J2LVvU",
+              "name": "Field",
+              "reusable": true,
+              "width": 400,
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "y3pyh",
+                  "name": "Label row",
+                  "width": "fill_container",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "EofPj",
+                      "name": "Label",
+                      "fill": "$ink",
+                      "content": "公司名稱 · Company name",
+                      "fontFamily": "$zh",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ePpWt",
+                      "name": "Used in",
+                      "fill": "$accent-soft",
+                      "cornerRadius": 999,
+                      "padding": [
+                        2,
+                        8
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "NsfMZ",
+                          "name": "Used in text",
+                          "fill": "$accent",
+                          "content": "used in 7 forms",
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ZivYJ",
+                  "name": "Input",
+                  "width": "fill_container",
+                  "height": 44,
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "stroke": "$line",
+                  "strokeWidth": 1,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Cs2So",
+                      "name": "Value",
+                      "fill": "$ink",
+                      "content": "大大科技",
+                      "fontFamily": "$zh",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "czr7U",
+                  "name": "Hint",
+                  "fill": "$ink-3",
+                  "content": "Matches your name reservation 預查 #113045678",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "OrDpi",
+              "name": "Doc row",
+              "reusable": true,
+              "width": 400,
+              "gap": 12,
+              "padding": [
+                10,
+                0
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "lEMlY",
+                  "name": "Icon box",
+                  "width": 36,
+                  "height": 36,
+                  "fill": "$bg",
+                  "cornerRadius": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "U6M619",
+                      "name": "Doc icon",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "file-text",
+                      "library": "lucide",
+                      "fill": "$ink-2"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "UwIRe",
+                  "name": "Text",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "py0Pz",
+                      "name": "Name",
+                      "fill": "$ink",
+                      "content": "設立登記表",
+                      "fontFamily": "$zh",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "x8a7H2",
+                      "name": "Sub",
+                      "fill": "$ink-3",
+                      "content": "Registration form · 3 pages",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "EI0qG",
+                  "name": "Pill",
+                  "fill": "$ok-soft",
+                  "cornerRadius": 999,
+                  "gap": 4,
+                  "padding": [
+                    3,
+                    10
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "YkfVC",
+                      "name": "Pill text",
+                      "fill": "$ok",
+                      "content": "Ready",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "tl5qq",
+              "name": "Primary button",
+              "reusable": true,
+              "width": 400,
+              "height": 52,
+              "fill": "$ink",
+              "cornerRadius": 12,
+              "gap": 10,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "llMAE",
+                  "name": "Icon",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "key-round",
+                  "library": "lucide",
+                  "fill": "#FFFFFF"
+                },
+                {
+                  "type": "text",
+                  "id": "iOz0V",
+                  "name": "Label",
+                  "fill": "#FFFFFF",
+                  "content": "Continue with passkey",
+                  "fontFamily": "$font",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "RhZHL",
+      "x": 0,
+      "y": 340,
+      "name": "Panel 1 · Start",
+      "clip": true,
+      "width": 460,
+      "height": 900,
+      "fill": "$surface",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 28,
+      "children": [
+        {
+          "type": "frame",
+          "id": "f3tJF",
+          "name": "Header",
+          "width": "fill_container",
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "jOl2x",
+              "name": "Brand",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qW54t",
+                  "name": "Mark",
+                  "width": 26,
+                  "height": 26,
+                  "fill": "$accent",
+                  "cornerRadius": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "w8hvph",
+                      "name": "0",
+                      "fill": "#FFFFFF",
+                      "content": "0",
+                      "fontFamily": "$font",
+                      "fontSize": 15,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "cblA7",
+                  "name": "Wordmark",
+                  "fill": "$ink",
+                  "content": "zero form",
+                  "fontFamily": "$font",
+                  "fontSize": 16,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.3
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "g5D1W",
+              "name": "Steps",
+              "gap": 4,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "b7Yc49",
+                  "name": "Step 1",
+                  "fill": "$accent",
+                  "width": 20,
+                  "height": 6
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "LZ3wH",
+                  "name": "Step 2",
+                  "fill": "$line",
+                  "width": 6,
+                  "height": 6
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "LVkpx",
+                  "name": "Step 3",
+                  "fill": "$line",
+                  "width": 6,
+                  "height": 6
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "AuTNj",
+                  "name": "Step 4",
+                  "fill": "$line",
+                  "width": 6,
+                  "height": 6
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "iu7oB",
+          "name": "Intro",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 10,
+          "children": [
+            {
+              "type": "text",
+              "id": "uhBap",
+              "name": "Context",
+              "fill": "$ink-3",
+              "content": "有限公司設立登記 · Taipei City Commerce Office",
+              "fontFamily": "$zh",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "MPu3U",
+              "name": "Title",
+              "fill": "$ink",
+              "content": "7 forms. Fill once.",
+              "fontFamily": "$font",
+              "fontSize": 32,
+              "fontWeight": "700",
+              "letterSpacing": -0.8
+            },
+            {
+              "type": "text",
+              "id": "inrIC",
+              "name": "Body",
+              "fill": "$ink-2",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "We found every form this application needs and merged them into one short set of questions. Anything you've already verified is reused.",
+              "lineHeight": 1.5,
+              "fontFamily": "$font",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "dgWyl",
+          "name": "Stat",
+          "width": "fill_container",
+          "fill": "$bg",
+          "cornerRadius": 14,
+          "padding": 18,
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Kn1pc",
+              "name": "From",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ZS4pz",
+                  "name": "N",
+                  "fill": "$ink-3",
+                  "content": "58",
+                  "fontFamily": "$font",
+                  "fontSize": 28,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "cUr7t",
+                  "name": "L",
+                  "fill": "$ink-3",
+                  "content": "fields on paper",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "icon",
+              "id": "blQDI",
+              "name": "Arrow",
+              "width": 20,
+              "height": 20,
+              "icon": "arrow-right",
+              "library": "lucide",
+              "fill": "$ink-3"
+            },
+            {
+              "type": "frame",
+              "id": "fR47o",
+              "name": "To",
+              "layout": "vertical",
+              "gap": 2,
+              "alignItems": "end",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "vOwfm",
+                  "name": "N",
+                  "fill": "$accent",
+                  "content": "6",
+                  "fontFamily": "$font",
+                  "fontSize": 28,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "r6vtE",
+                  "name": "L",
+                  "fill": "$ink-2",
+                  "content": "questions for you",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "NqEXW",
+          "name": "Docs",
+          "width": "fill_container",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "text",
+              "id": "F0spu3",
+              "name": "Docs label",
+              "fill": "$ink-3",
+              "content": "WILL BE GENERATED",
+              "fontFamily": "$font",
+              "fontSize": 11,
+              "fontWeight": "600",
+              "letterSpacing": 0.8
+            },
+            {
+              "id": "f35E8S",
+              "type": "ref",
+              "ref": "OrDpi",
+              "name": "公司設立登記申請書",
+              "width": "fill_container",
+              "descendants": {
+                "py0Pz": {
+                  "content": "公司設立登記申請書"
+                },
+                "x8a7H2": {
+                  "content": "Application letter"
+                },
+                "EI0qG": {
+                  "fill": "$bg"
+                },
+                "YkfVC": {
+                  "content": "Auto",
+                  "fill": "$ink-2"
+                }
+              }
+            },
+            {
+              "id": "d3do2K",
+              "type": "ref",
+              "ref": "OrDpi",
+              "name": "設立登記表",
+              "width": "fill_container",
+              "descendants": {
+                "py0Pz": {
+                  "content": "設立登記表"
+                },
+                "x8a7H2": {
+                  "content": "Registration form · ×2"
+                },
+                "EI0qG": {
+                  "fill": "$bg"
+                },
+                "YkfVC": {
+                  "content": "Auto",
+                  "fill": "$ink-2"
+                }
+              }
+            },
+            {
+              "id": "ke1BB",
+              "type": "ref",
+              "ref": "OrDpi",
+              "name": "章程",
+              "width": "fill_container",
+              "descendants": {
+                "py0Pz": {
+                  "content": "章程"
+                },
+                "x8a7H2": {
+                  "content": "Articles of incorporation"
+                },
+                "EI0qG": {
+                  "fill": "$bg"
+                },
+                "YkfVC": {
+                  "content": "Auto",
+                  "fill": "$ink-2"
+                }
+              }
+            },
+            {
+              "id": "m6fMCk",
+              "type": "ref",
+              "ref": "OrDpi",
+              "name": "股東同意書",
+              "width": "fill_container",
+              "descendants": {
+                "py0Pz": {
+                  "content": "股東同意書"
+                },
+                "x8a7H2": {
+                  "content": "Shareholder consent"
+                },
+                "EI0qG": {
+                  "fill": "$bg"
+                },
+                "YkfVC": {
+                  "content": "Auto",
+                  "fill": "$ink-2"
+                }
+              }
+            },
+            {
+              "id": "CzW2c",
+              "type": "ref",
+              "ref": "OrDpi",
+              "name": "董事願任同意書",
+              "width": "fill_container",
+              "descendants": {
+                "py0Pz": {
+                  "content": "董事願任同意書"
+                },
+                "x8a7H2": {
+                  "content": "Director consent · ×2"
+                },
+                "EI0qG": {
+                  "fill": "$bg"
+                },
+                "YkfVC": {
+                  "content": "Auto",
+                  "fill": "$ink-2"
+                }
+              }
+            },
+            {
+              "id": "Cn7TK",
+              "type": "ref",
+              "ref": "OrDpi",
+              "name": "建物所有權人同意書",
+              "width": "fill_container",
+              "descendants": {
+                "py0Pz": {
+                  "content": "建物所有權人同意書"
+                },
+                "x8a7H2": {
+                  "content": "Building owner consent"
+                },
+                "EI0qG": {
+                  "fill": "$bg"
+                },
+                "YkfVC": {
+                  "content": "Auto",
+                  "fill": "$ink-2"
+                }
+              }
+            },
+            {
+              "id": "SA26I",
+              "type": "ref",
+              "ref": "OrDpi",
+              "name": "公司名稱預查",
+              "width": "fill_container",
+              "descendants": {
+                "py0Pz": {
+                  "content": "公司名稱預查"
+                },
+                "x8a7H2": {
+                  "content": "Name reservation · on file"
+                },
+                "EI0qG": {
+                  "fill": "$ok-soft"
+                },
+                "YkfVC": {
+                  "content": "Verified",
+                  "fill": "$ok"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "i2oXH",
+          "name": "Spacer",
+          "width": "fill_container",
+          "height": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "jbbv8",
+          "name": "Footer",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 10,
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "LVVLe",
+              "type": "ref",
+              "ref": "tl5qq",
+              "name": "CTA",
+              "width": "fill_container"
+            },
+            {
+              "type": "text",
+              "id": "fq549",
+              "name": "Welcome",
+              "fill": "$ink-3",
+              "content": "Welcome back, 陳大文 — your verified profile is ready",
+              "fontFamily": "$zh",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "k837Y",
+      "x": 520,
+      "y": 340,
+      "name": "Panel 2 · Fill once",
+      "clip": true,
+      "width": 460,
+      "height": 900,
+      "fill": "$surface",
+      "layout": "vertical",
+      "gap": 20,
+      "padding": 28,
+      "children": [
+        {
+          "type": "frame",
+          "id": "TylWP",
+          "name": "Header",
+          "width": "fill_container",
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "i926y",
+              "name": "Brand",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "K8AJOX",
+                  "name": "Mark",
+                  "width": 26,
+                  "height": 26,
+                  "fill": "$accent",
+                  "cornerRadius": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "rbNs2",
+                      "name": "0",
+                      "fill": "#FFFFFF",
+                      "content": "0",
+                      "fontFamily": "$font",
+                      "fontSize": 15,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "N2Bc0k",
+                  "name": "Wordmark",
+                  "fill": "$ink",
+                  "content": "zero form",
+                  "fontFamily": "$font",
+                  "fontSize": 16,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.3
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "BYiWK",
+              "name": "Steps",
+              "gap": 4,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "VJo09",
+                  "name": "Step 1",
+                  "fill": "$accent",
+                  "width": 6,
+                  "height": 6
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "VYh8b",
+                  "name": "Step 2",
+                  "fill": "$accent",
+                  "width": 20,
+                  "height": 6
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "LRZuW",
+                  "name": "Step 3",
+                  "fill": "$line",
+                  "width": 6,
+                  "height": 6
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "Bpext",
+                  "name": "Step 4",
+                  "fill": "$line",
+                  "width": 6,
+                  "height": 6
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "lO0Lo",
+          "name": "Intro",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 6,
+          "children": [
+            {
+              "type": "text",
+              "id": "LOKMm",
+              "name": "Title",
+              "fill": "$ink",
+              "content": "6 things left",
+              "fontFamily": "$font",
+              "fontSize": 28,
+              "fontWeight": "700",
+              "letterSpacing": -0.6
+            },
+            {
+              "type": "text",
+              "id": "EL5Rv",
+              "name": "Body",
+              "fill": "$ink-2",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Everything else is already filled from your verified profile.",
+              "fontFamily": "$font",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "H8ctS7",
+          "name": "Agent banner",
+          "width": "fill_container",
+          "fill": "$accent-soft",
+          "cornerRadius": 10,
+          "gap": 10,
+          "padding": [
+            10,
+            14
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "ACYJb",
+              "name": "Sparkle",
+              "width": 16,
+              "height": 16,
+              "icon": "sparkles",
+              "library": "lucide",
+              "fill": "$accent"
+            },
+            {
+              "type": "text",
+              "id": "YWFZ1",
+              "name": "Agent text",
+              "fill": "$accent",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Your agent drafted 2 answers via the Zero Form API. Check them before you sign.",
+              "lineHeight": 1.4,
+              "fontFamily": "$font",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "QAfY6",
+          "name": "Reused",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "frame",
+              "id": "u1dHbI",
+              "name": "Reused head",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "f17rJN",
+                  "name": "Label",
+                  "fill": "$ink-3",
+                  "content": "REUSED FROM YOUR PROFILE · 12 FIELDS",
+                  "fontFamily": "$font",
+                  "fontSize": 11,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.8
+                },
+                {
+                  "type": "text",
+                  "id": "P7DE7",
+                  "name": "Toggle",
+                  "fill": "$accent",
+                  "content": "Show all",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "id": "wA8H3",
+              "type": "ref",
+              "ref": "CakBT",
+              "name": "負責人 · Representative",
+              "width": "fill_container",
+              "descendants": {
+                "ls28z": {
+                  "content": "負責人 · Representative"
+                },
+                "QRxze": {
+                  "content": "陳大文"
+                },
+                "vRqu1": {
+                  "content": "MOI ID"
+                }
+              }
+            },
+            {
+              "id": "GRZFK",
+              "type": "ref",
+              "ref": "CakBT",
+              "name": "身分證字號 · National ID",
+              "width": "fill_container",
+              "descendants": {
+                "ls28z": {
+                  "content": "身分證字號 · National ID"
+                },
+                "QRxze": {
+                  "content": "A123•••789"
+                },
+                "vRqu1": {
+                  "content": "MOI ID"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "R9K4Hq",
+          "name": "New",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 14,
+          "children": [
+            {
+              "type": "text",
+              "id": "lKiu7",
+              "name": "Label",
+              "fill": "$ink-3",
+              "content": "COMPANY DETAILS",
+              "fontFamily": "$font",
+              "fontSize": 11,
+              "fontWeight": "600",
+              "letterSpacing": 0.8
+            },
+            {
+              "id": "g9sNt",
+              "type": "ref",
+              "ref": "J2LVvU",
+              "name": "公司名稱 · Company name",
+              "width": "fill_container",
+              "descendants": {
+                "EofPj": {
+                  "content": "公司名稱 · Company name"
+                },
+                "NsfMZ": {
+                  "content": "used in 7 forms"
+                },
+                "Cs2So": {
+                  "content": "大大科技有限公司"
+                },
+                "czr7U": {
+                  "content": "✓ Matches name reservation 預查 #113045678",
+                  "fill": "$ok"
+                }
+              }
+            },
+            {
+              "id": "Hu19n",
+              "type": "ref",
+              "ref": "J2LVvU",
+              "name": "公司所在地 · Registered address",
+              "width": "fill_container",
+              "descendants": {
+                "EofPj": {
+                  "content": "公司所在地 · Registered address"
+                },
+                "NsfMZ": {
+                  "content": "used in 4 forms"
+                },
+                "ZivYJ": {
+                  "stroke": "$accent",
+                  "strokeWidth": 2
+                },
+                "Cs2So": {
+                  "content": "(106) 臺北市大安區復興南路一段 390 號 5 樓"
+                },
+                "czr7U": {
+                  "content": "Building-owner consent will be generated for you",
+                  "fill": "$ink-3"
+                }
+              }
+            },
+            {
+              "id": "hnczS",
+              "type": "ref",
+              "ref": "J2LVvU",
+              "name": "資本總額 · Capital (NT$)",
+              "width": "fill_container",
+              "descendants": {
+                "EofPj": {
+                  "content": "資本總額 · Capital (NT$)"
+                },
+                "ePpWt": {
+                  "fill": "$accent"
+                },
+                "NsfMZ": {
+                  "content": "✦ agent draft",
+                  "fill": "#FFFFFF"
+                },
+                "Cs2So": {
+                  "content": "1,000,000"
+                },
+                "czr7U": {
+                  "content": "Used in 申請書, 章程, 設立登記表",
+                  "enabled": false
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "jWLj9",
+              "name": "Directors",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "mRIHR",
+                  "name": "Label",
+                  "fill": "$ink",
+                  "content": "董事 · Directors",
+                  "fontFamily": "$zh",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "frame",
+                  "id": "vIa9C",
+                  "name": "Chips",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "mJZBw",
+                      "name": "Chip 陳大文",
+                      "cornerRadius": 999,
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "gap": 8,
+                      "padding": [
+                        6,
+                        12,
+                        6,
+                        6
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "irZKx",
+                          "name": "Avatar",
+                          "width": 24,
+                          "height": 24,
+                          "fill": "$bg",
+                          "cornerRadius": 12,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "I5SdS1",
+                              "name": "Initial",
+                              "fill": "$ink",
+                              "content": "陳",
+                              "fontFamily": "$zh",
+                              "fontSize": 11,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "IYLRx",
+                          "name": "Name",
+                          "fill": "$ink",
+                          "content": "陳大文",
+                          "fontFamily": "$zh",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "pE33d",
+                          "name": "Role",
+                          "fill": "$ink-3",
+                          "content": "董事長 · you",
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "X1muxX",
+                      "name": "Chip 吳小明",
+                      "cornerRadius": 999,
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "gap": 8,
+                      "padding": [
+                        6,
+                        12,
+                        6,
+                        6
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "q8DrSO",
+                          "name": "Avatar",
+                          "width": 24,
+                          "height": 24,
+                          "fill": "$bg",
+                          "cornerRadius": 12,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "l0j4vM",
+                              "name": "Initial",
+                              "fill": "$ink",
+                              "content": "吳",
+                              "fontFamily": "$zh",
+                              "fontSize": 11,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "Y3tRB",
+                          "name": "Name",
+                          "fill": "$ink",
+                          "content": "吳小明",
+                          "fontFamily": "$zh",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "b3H0kB",
+                          "name": "Role",
+                          "fill": "$ink-3",
+                          "content": "董事 · invited",
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "wqqUR",
+                      "name": "Add",
+                      "width": 36,
+                      "height": 36,
+                      "cornerRadius": 18,
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "oPTUt",
+                          "name": "Plus",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "plus",
+                          "library": "lucide",
+                          "fill": "$ink-2"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "W0zAAJ",
+          "name": "Spacer",
+          "width": "fill_container",
+          "height": "fill_container"
+        },
+        {
+          "id": "lfyyp",
+          "type": "ref",
+          "ref": "tl5qq",
+          "name": "CTA",
+          "width": "fill_container",
+          "descendants": {
+            "llMAE": {
+              "icon": "arrow-right"
+            },
+            "iOz0V": {
+              "content": "Review 7 documents"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "xRKkp",
+      "x": 1040,
+      "y": 340,
+      "name": "Panel 3 · Review & sign",
+      "clip": true,
+      "width": 460,
+      "height": 900,
+      "fill": "$surface",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 28,
+      "children": [
+        {
+          "type": "frame",
+          "id": "cXkvY",
+          "name": "Header",
+          "width": "fill_container",
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "EaZpC",
+              "name": "Brand",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "fPKj9",
+                  "name": "Mark",
+                  "width": 26,
+                  "height": 26,
+                  "fill": "$accent",
+                  "cornerRadius": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Z9FfO",
+                      "name": "0",
+                      "fill": "#FFFFFF",
+                      "content": "0",
+                      "fontFamily": "$font",
+                      "fontSize": 15,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "j7aol",
+                  "name": "Wordmark",
+                  "fill": "$ink",
+                  "content": "zero form",
+                  "fontFamily": "$font",
+                  "fontSize": 16,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.3
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "kOpse",
+              "name": "Steps",
+              "gap": 4,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "W7bXBF",
+                  "name": "Step 1",
+                  "fill": "$accent",
+                  "width": 6,
+                  "height": 6
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "ypbNb",
+                  "name": "Step 2",
+                  "fill": "$accent",
+                  "width": 6,
+                  "height": 6
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "RGOQz",
+                  "name": "Step 3",
+                  "fill": "$accent",
+                  "width": 20,
+                  "height": 6
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "vqQOb",
+                  "name": "Step 4",
+                  "fill": "$line",
+                  "width": 6,
+                  "height": 6
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "OkOsm",
+          "name": "Intro",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 6,
+          "children": [
+            {
+              "type": "text",
+              "id": "DLyjQ",
+              "name": "Title",
+              "fill": "$ink",
+              "content": "Review & sign",
+              "fontFamily": "$font",
+              "fontSize": 28,
+              "fontWeight": "700",
+              "letterSpacing": -0.6
+            },
+            {
+              "type": "text",
+              "id": "d5Mce9",
+              "name": "Body",
+              "fill": "$ink-2",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "This exact version gets locked, hashed and sent. Every document is generated from it.",
+              "lineHeight": 1.5,
+              "fontFamily": "$font",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "tiM2I",
+          "name": "Summary",
+          "width": "fill_container",
+          "fill": "$bg",
+          "cornerRadius": 14,
+          "layout": "vertical",
+          "padding": [
+            6,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "bIVMH",
+              "name": "Row 公司名稱",
+              "width": "fill_container",
+              "stroke": "$line",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "gap": 12,
+              "padding": [
+                10,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "A111NN",
+                  "name": "K",
+                  "fill": "$ink-3",
+                  "textGrowth": "fixed-width",
+                  "width": 72,
+                  "content": "公司名稱",
+                  "fontFamily": "$zh",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "hi8YP",
+                  "name": "V",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "大大科技有限公司",
+                  "fontFamily": "$zh",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ZOs1P",
+              "name": "Row 所在地",
+              "width": "fill_container",
+              "stroke": "$line",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "gap": 12,
+              "padding": [
+                10,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "I0biu",
+                  "name": "K",
+                  "fill": "$ink-3",
+                  "textGrowth": "fixed-width",
+                  "width": 72,
+                  "content": "所在地",
+                  "fontFamily": "$zh",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "q5vJVQ",
+                  "name": "V",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "臺北市大安區復興南路一段 390 號 5 樓",
+                  "fontFamily": "$zh",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "A8gY33",
+              "name": "Row 資本總額",
+              "width": "fill_container",
+              "stroke": "$line",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "gap": 12,
+              "padding": [
+                10,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "FqRhU",
+                  "name": "K",
+                  "fill": "$ink-3",
+                  "textGrowth": "fixed-width",
+                  "width": 72,
+                  "content": "資本總額",
+                  "fontFamily": "$zh",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "PqizK",
+                  "name": "V",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "NT$ 1,000,000",
+                  "fontFamily": "$zh",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ejI23",
+              "name": "Row 負責人",
+              "width": "fill_container",
+              "stroke": "$line",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "gap": 12,
+              "padding": [
+                10,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "WD7Up",
+                  "name": "K",
+                  "fill": "$ink-3",
+                  "textGrowth": "fixed-width",
+                  "width": 72,
+                  "content": "負責人",
+                  "fontFamily": "$zh",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "DUMT8",
+                  "name": "V",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "陳大文",
+                  "fontFamily": "$zh",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "GJraW",
+              "name": "Row 董事",
+              "width": "fill_container",
+              "stroke": "$line",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "gap": 12,
+              "padding": [
+                10,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "L4oSZ",
+                  "name": "K",
+                  "fill": "$ink-3",
+                  "textGrowth": "fixed-width",
+                  "width": 72,
+                  "content": "董事",
+                  "fontFamily": "$zh",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "BotPE",
+                  "name": "V",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "陳大文、吳小明",
+                  "fontFamily": "$zh",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "tfIHi",
+              "name": "Row 所營事業",
+              "width": "fill_container",
+              "stroke": "$line",
+              "gap": 12,
+              "padding": [
+                10,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "DqGG5",
+                  "name": "K",
+                  "fill": "$ink-3",
+                  "textGrowth": "fixed-width",
+                  "width": 72,
+                  "content": "所營事業",
+                  "fontFamily": "$zh",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "BJi9y",
+                  "name": "V",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "F119010 · F113050 · ZZ99999",
+                  "fontFamily": "$zh",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "V8H3SF",
+          "name": "Attestations",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "DKT8a",
+              "name": "Label",
+              "fill": "$ink-3",
+              "content": "SIGNATURES · 2 REQUIRED",
+              "fontFamily": "$font",
+              "fontSize": 11,
+              "fontWeight": "600",
+              "letterSpacing": 0.8
+            },
+            {
+              "type": "frame",
+              "id": "DR23X",
+              "name": "Signer 吳小明",
+              "width": "fill_container",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "JIkMl",
+                  "name": "State",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "circle-check",
+                  "library": "lucide",
+                  "fill": "$ok"
+                },
+                {
+                  "type": "frame",
+                  "id": "o0ub5",
+                  "name": "Text",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 1,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "M8Nokt",
+                      "name": "Name",
+                      "fill": "$ink",
+                      "content": "吳小明",
+                      "fontFamily": "$zh",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "YxYV0",
+                      "name": "Role",
+                      "fill": "$ok",
+                      "content": "Director · signed on phone, 2 min ago",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "JbsN9",
+              "name": "Signer 陳大文 (you)",
+              "width": "fill_container",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "mzAjh",
+                  "name": "State",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "circle-dashed",
+                  "library": "lucide",
+                  "fill": "$ink-3"
+                },
+                {
+                  "type": "frame",
+                  "id": "yRHlB",
+                  "name": "Text",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 1,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "h2HVE",
+                      "name": "Name",
+                      "fill": "$ink",
+                      "content": "陳大文 (you)",
+                      "fontFamily": "$zh",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jJIm2",
+                      "name": "Role",
+                      "fill": "$ink-3",
+                      "content": "Representative · waiting for you",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "eSAMg",
+          "name": "Preview",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 10,
+          "children": [
+            {
+              "type": "text",
+              "id": "kyzYS",
+              "name": "Label",
+              "fill": "$ink-3",
+              "content": "7 DOCUMENTS · 11 PAGES",
+              "fontFamily": "$font",
+              "fontSize": 11,
+              "fontWeight": "600",
+              "letterSpacing": 0.8
+            },
+            {
+              "type": "frame",
+              "id": "fRDXu",
+              "name": "Thumbs",
+              "width": "fill_container",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "zjGUJ",
+                  "name": "Thumb 申請書",
+                  "width": "fill_container",
+                  "height": 96,
+                  "fill": "$surface",
+                  "cornerRadius": 6,
+                  "stroke": "$line",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 5,
+                  "padding": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "blLzD",
+                      "name": "T",
+                      "fill": "$ink",
+                      "content": "申請書",
+                      "fontFamily": "$zh",
+                      "fontSize": 9,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "SdWvR",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 44,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "nMZVz",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 58,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "Dswvg",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 36,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "qJpQM",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 52,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "B060Hu",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 40,
+                      "height": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "CHqpC",
+                  "name": "Thumb 登記表",
+                  "width": "fill_container",
+                  "height": 96,
+                  "fill": "$surface",
+                  "cornerRadius": 6,
+                  "stroke": "$line",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 5,
+                  "padding": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "n9DiKw",
+                      "name": "T",
+                      "fill": "$ink",
+                      "content": "登記表",
+                      "fontFamily": "$zh",
+                      "fontSize": 9,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "I2qQi",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 44,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "rdSah",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 58,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "dmHfB",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 36,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "E0cbp",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 52,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "QwGgO",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 40,
+                      "height": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "XjDyo",
+                  "name": "Thumb 章程",
+                  "width": "fill_container",
+                  "height": 96,
+                  "fill": "$surface",
+                  "cornerRadius": 6,
+                  "stroke": "$line",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 5,
+                  "padding": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Iix7I",
+                      "name": "T",
+                      "fill": "$ink",
+                      "content": "章程",
+                      "fontFamily": "$zh",
+                      "fontSize": 9,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "SySZQ",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 44,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "s9qOhW",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 58,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "efVnA",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 36,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "QCsaS",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 52,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "vd6NX",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 40,
+                      "height": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "uxS4m",
+                  "name": "Thumb 同意書",
+                  "width": "fill_container",
+                  "height": 96,
+                  "fill": "$surface",
+                  "cornerRadius": 6,
+                  "stroke": "$line",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 5,
+                  "padding": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "r38un",
+                      "name": "T",
+                      "fill": "$ink",
+                      "content": "同意書",
+                      "fontFamily": "$zh",
+                      "fontSize": 9,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "E92Hn",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 44,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "cWKvW",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 58,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "lT78u",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 36,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "d5xWr",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 52,
+                      "height": 3
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 2,
+                      "id": "HhW8E",
+                      "name": "Line",
+                      "fill": "$line",
+                      "width": 40,
+                      "height": 3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "fFKlI",
+                  "name": "More",
+                  "width": 48,
+                  "height": 96,
+                  "fill": "$bg",
+                  "cornerRadius": 6,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ywjT6",
+                      "name": "+3",
+                      "fill": "$ink-2",
+                      "content": "+3",
+                      "fontFamily": "$font",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "za0Sv",
+          "name": "Spacer",
+          "width": "fill_container",
+          "height": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "fw7VO",
+          "name": "Footer",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 10,
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "CtYOx",
+              "type": "ref",
+              "ref": "tl5qq",
+              "name": "CTA",
+              "width": "fill_container",
+              "fill": "$accent",
+              "descendants": {
+                "iOz0V": {
+                  "content": "Sign with passkey"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "mpbVn",
+              "name": "Hash",
+              "fill": "$ink-3",
+              "content": "Snapshot sha256:9f2c41…a71e · v1",
+              "fontFamily": "$mono",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "a4AEg",
+      "x": 1560,
+      "y": 340,
+      "name": "Panel 4 · Submitted",
+      "clip": true,
+      "width": 460,
+      "height": 900,
+      "fill": "$surface",
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 28,
+      "children": [
+        {
+          "type": "frame",
+          "id": "p3DgaD",
+          "name": "Header",
+          "width": "fill_container",
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "q0aP1",
+              "name": "Brand",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "s3x1q",
+                  "name": "Mark",
+                  "width": 26,
+                  "height": 26,
+                  "fill": "$accent",
+                  "cornerRadius": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "b3PdZA",
+                      "name": "0",
+                      "fill": "#FFFFFF",
+                      "content": "0",
+                      "fontFamily": "$font",
+                      "fontSize": 15,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "DSPlz",
+                  "name": "Wordmark",
+                  "fill": "$ink",
+                  "content": "zero form",
+                  "fontFamily": "$font",
+                  "fontSize": 16,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.3
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "N7Tgz",
+              "name": "Steps",
+              "gap": 4,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "IO8IP",
+                  "name": "Step 1",
+                  "fill": "$accent",
+                  "width": 6,
+                  "height": 6
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "fZPP9",
+                  "name": "Step 2",
+                  "fill": "$accent",
+                  "width": 6,
+                  "height": 6
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "t1HsU",
+                  "name": "Step 3",
+                  "fill": "$accent",
+                  "width": 6,
+                  "height": 6
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 3,
+                  "id": "V3RUxr",
+                  "name": "Step 4",
+                  "fill": "$accent",
+                  "width": 20,
+                  "height": 6
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "DP3Pv",
+          "name": "Hero",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "iJYcN",
+              "name": "Badge",
+              "width": 48,
+              "height": 48,
+              "fill": "$ok-soft",
+              "cornerRadius": 24,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "C579ap",
+                  "name": "Check",
+                  "width": 24,
+                  "height": 24,
+                  "icon": "check",
+                  "library": "lucide",
+                  "fill": "$ok"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "v9E6DG",
+              "name": "Title",
+              "fill": "$ink",
+              "content": "Submitted",
+              "fontFamily": "$font",
+              "fontSize": 28,
+              "fontWeight": "700",
+              "letterSpacing": -0.6
+            },
+            {
+              "type": "text",
+              "id": "TvmoV",
+              "name": "Body",
+              "fill": "$ink-2",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "臺北市商業處 received your application. Reference TPE-2026-118204.",
+              "lineHeight": 1.5,
+              "fontFamily": "$zh",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "KwA8r",
+          "name": "Snapshot card",
+          "width": "fill_container",
+          "fill": "$ink",
+          "cornerRadius": 12,
+          "layout": "vertical",
+          "gap": 6,
+          "padding": 16,
+          "children": [
+            {
+              "type": "text",
+              "id": "lmvvE",
+              "name": "Label",
+              "fill": "#8A909C",
+              "content": "LOCKED SNAPSHOT · v1",
+              "fontFamily": "$font",
+              "fontSize": 10,
+              "fontWeight": "600",
+              "letterSpacing": 0.8
+            },
+            {
+              "type": "text",
+              "id": "YTdOy",
+              "name": "Hash",
+              "fill": "#FFFFFF",
+              "content": "sha256:9f2c41d07be3…5e08a71e",
+              "fontFamily": "$mono",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "mweoW",
+              "name": "Signers",
+              "fill": "#B8BDC7",
+              "content": "Signed by 陳大文 + 吳小明 · 11 Nov 2026, 14:02",
+              "fontFamily": "$zh",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qJ08W",
+          "name": "Timeline",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "Hvykr",
+              "name": "Step Submitted",
+              "width": "fill_container",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "yoXi1",
+                  "name": "Dot",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "circle-check",
+                  "library": "lucide",
+                  "fill": "$ok"
+                },
+                {
+                  "type": "text",
+                  "id": "Noe5T",
+                  "name": "T",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Submitted",
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "J9rXP",
+                  "name": "S",
+                  "fill": "$ink-3",
+                  "content": "14:02",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "w5Kcfh",
+              "name": "Step Automatic checks",
+              "width": "fill_container",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "MyXyj",
+                  "name": "Dot",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "circle-check",
+                  "library": "lucide",
+                  "fill": "$ok"
+                },
+                {
+                  "type": "text",
+                  "id": "TLBun",
+                  "name": "T",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Automatic checks",
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "n1JuE",
+                  "name": "S",
+                  "fill": "$ink-3",
+                  "content": "5 of 5 passed",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "YYRvn",
+              "name": "Step Officer review",
+              "width": "fill_container",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "JbsQ7",
+                  "name": "Dot",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "loader-circle",
+                  "library": "lucide",
+                  "fill": "$accent"
+                },
+                {
+                  "type": "text",
+                  "id": "t1efo2",
+                  "name": "T",
+                  "fill": "$ink",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Officer review",
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "Q2Veh",
+                  "name": "S",
+                  "fill": "$ink-3",
+                  "content": "Usually 1–2 days",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "t1RFV",
+              "name": "Step Decision",
+              "width": "fill_container",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "C4GUd",
+                  "name": "Dot",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "circle",
+                  "library": "lucide",
+                  "fill": "$line"
+                },
+                {
+                  "type": "text",
+                  "id": "GAZlX",
+                  "name": "T",
+                  "fill": "$ink-3",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Decision",
+                  "fontFamily": "$font",
+                  "fontSize": 14
+                },
+                {
+                  "type": "text",
+                  "id": "eOX5d",
+                  "name": "S",
+                  "fill": "$ink-3",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "wNvzi",
+          "name": "Docs",
+          "width": "fill_container",
+          "layout": "vertical",
+          "children": [
+            {
+              "id": "Qn5H8",
+              "type": "ref",
+              "ref": "OrDpi",
+              "name": "設立登記表",
+              "width": "fill_container",
+              "descendants": {
+                "U6M619": {
+                  "icon": "file-text"
+                },
+                "py0Pz": {
+                  "content": "設立登記表"
+                },
+                "x8a7H2": {
+                  "content": "Registration form · PDF"
+                },
+                "EI0qG": {
+                  "fill": "$bg"
+                },
+                "YkfVC": {
+                  "content": "Download",
+                  "fill": "$ink-2"
+                }
+              }
+            },
+            {
+              "id": "bkjrQ",
+              "type": "ref",
+              "ref": "OrDpi",
+              "name": "董事願任同意書",
+              "width": "fill_container",
+              "descendants": {
+                "U6M619": {
+                  "icon": "file-text"
+                },
+                "py0Pz": {
+                  "content": "董事願任同意書"
+                },
+                "x8a7H2": {
+                  "content": "Director consent ×2 · PDF"
+                },
+                "EI0qG": {
+                  "fill": "$bg"
+                },
+                "YkfVC": {
+                  "content": "Download",
+                  "fill": "$ink-2"
+                }
+              }
+            },
+            {
+              "id": "TVm7l",
+              "type": "ref",
+              "ref": "OrDpi",
+              "name": "application.json",
+              "width": "fill_container",
+              "descendants": {
+                "U6M619": {
+                  "icon": "braces"
+                },
+                "py0Pz": {
+                  "content": "application.json"
+                },
+                "x8a7H2": {
+                  "content": "Structured data + evidence"
+                },
+                "EI0qG": {
+                  "fill": "$bg"
+                },
+                "YkfVC": {
+                  "content": "Download",
+                  "fill": "$ink-2"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "Bulke",
+              "name": "All",
+              "fill": "$accent",
+              "content": "+ 4 more · Download full package (.zip)",
+              "fontFamily": "$font",
+              "fontSize": 12,
+              "fontWeight": "500"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "WscMC",
+          "name": "Spacer",
+          "width": "fill_container",
+          "height": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "NWPQt",
+          "name": "Next time",
+          "width": "fill_container",
+          "fill": "$accent-soft",
+          "cornerRadius": 12,
+          "gap": 12,
+          "padding": 16,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "Sv5JM",
+              "name": "Icon",
+              "width": 18,
+              "height": 18,
+              "icon": "repeat",
+              "library": "lucide",
+              "fill": "$accent"
+            },
+            {
+              "type": "frame",
+              "id": "VdSuA",
+              "name": "Text",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "v0QVb",
+                  "name": "T",
+                  "fill": "$accent",
+                  "content": "Next form: 0 questions",
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "EQ5b0",
+                  "name": "S",
+                  "fill": "$accent",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Company facts saved. Tax registration (營業登記) is already filled.",
+                  "fontFamily": "$zh",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "xApSI",
+      "x": 1500,
+      "y": 2300,
+      "name": "Officer console",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$bg",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "vL6jw",
+          "name": "Top bar",
+          "width": "fill_container",
+          "height": 60,
+          "fill": "$surface",
+          "stroke": "$line",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "padding": [
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "aeHA2",
+              "name": "Brand",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "tfPmu",
+                  "name": "Mark",
+                  "width": 26,
+                  "height": 26,
+                  "fill": "$accent",
+                  "cornerRadius": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Pi3WY",
+                      "name": "0",
+                      "fill": "#FFFFFF",
+                      "content": "0",
+                      "fontFamily": "$font",
+                      "fontSize": 15,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "itWFb",
+                  "name": "Wordmark",
+                  "fill": "$ink",
+                  "content": "zero form",
+                  "fontFamily": "$font",
+                  "fontSize": 16,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.3
+                },
+                {
+                  "type": "text",
+                  "id": "eE3sA",
+                  "name": "Sep",
+                  "fill": "$ink-3",
+                  "content": "/  Officer console · 臺北市商業處",
+                  "fontFamily": "$zh",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "bWqef",
+              "name": "User",
+              "fill": "$ink-2",
+              "content": "Officer 林雅婷",
+              "fontFamily": "$zh",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ZIS1v",
+          "name": "Body",
+          "width": "fill_container",
+          "height": "fill_container",
+          "children": [
+            {
+              "type": "frame",
+              "id": "JtijG",
+              "name": "Queue",
+              "width": 300,
+              "height": "fill_container",
+              "fill": "$surface",
+              "stroke": "$line",
+              "strokeWidth": {
+                "right": 1
+              },
+              "layout": "vertical",
+              "gap": 4,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "cCT7B",
+                  "name": "Label",
+                  "fill": "$ink-3",
+                  "content": "QUEUE · 4",
+                  "fontFamily": "$font",
+                  "fontSize": 11,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.8
+                },
+                {
+                  "type": "frame",
+                  "id": "SjApB",
+                  "name": "Item 大大科技有限公司",
+                  "width": "fill_container",
+                  "fill": "$accent-soft",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "gap": 3,
+                  "padding": [
+                    10,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "xYwdA",
+                      "name": "N",
+                      "fill": "$ink",
+                      "content": "大大科技有限公司",
+                      "fontFamily": "$zh",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "n0H2B1",
+                      "name": "S",
+                      "fill": "$accent",
+                      "content": "設立登記 · 2 min ago",
+                      "fontFamily": "$zh",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Wtt3l",
+                  "name": "Item 小島咖啡有限公司",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "gap": 3,
+                  "padding": [
+                    10,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "QADze",
+                      "name": "N",
+                      "fill": "$ink",
+                      "content": "小島咖啡有限公司",
+                      "fontFamily": "$zh",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "kwL2J",
+                      "name": "S",
+                      "fill": "$ink-3",
+                      "content": "變更登記 · 1 h ago",
+                      "fontFamily": "$zh",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "D7cKEk",
+                  "name": "Item 北辰物流有限公司",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "gap": 3,
+                  "padding": [
+                    10,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "oYFfW",
+                      "name": "N",
+                      "fill": "$ink",
+                      "content": "北辰物流有限公司",
+                      "fontFamily": "$zh",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "mNEog",
+                      "name": "S",
+                      "fill": "$warn",
+                      "content": "設立登記 · Revision sent",
+                      "fontFamily": "$zh",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "O9b9ef",
+                  "name": "Item 青田設計有限公司",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "gap": 3,
+                  "padding": [
+                    10,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "vFgnR",
+                      "name": "N",
+                      "fill": "$ink",
+                      "content": "青田設計有限公司",
+                      "fontFamily": "$zh",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "edX2y",
+                      "name": "S",
+                      "fill": "$ok",
+                      "content": "設立登記 · Approved",
+                      "fontFamily": "$zh",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hsNgs",
+              "name": "Main",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 24,
+              "padding": 32,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "nwDDd",
+                  "name": "Heading",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Yz2Uv",
+                      "name": "Ref",
+                      "fill": "$ink-3",
+                      "content": "TPE-2026-118204 · 有限公司設立登記 · snapshot v1",
+                      "fontFamily": "$zh",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ZRpZC",
+                      "name": "Title",
+                      "fill": "$ink",
+                      "content": "大大科技有限公司",
+                      "fontFamily": "$zh",
+                      "fontSize": 28,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "WGems",
+                  "name": "Checks",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "LYn7S",
+                      "name": "Check Identity",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 12,
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "padding": 14,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "BkWF3",
+                          "name": "Head",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "raCXZ",
+                              "name": "Ok",
+                              "width": 16,
+                              "height": 16,
+                              "icon": "circle-check",
+                              "library": "lucide",
+                              "fill": "$ok"
+                            },
+                            {
+                              "type": "text",
+                              "id": "Ly0XN",
+                              "name": "T",
+                              "fill": "$ink",
+                              "content": "Identity",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "ZXI8V",
+                          "name": "S",
+                          "fill": "$ink-2",
+                          "content": "2 passkey signatures",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "XV8zE",
+                      "name": "Check Integrity",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 12,
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "padding": 14,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "B8ZhT",
+                          "name": "Head",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "s0SNT",
+                              "name": "Ok",
+                              "width": 16,
+                              "height": 16,
+                              "icon": "circle-check",
+                              "library": "lucide",
+                              "fill": "$ok"
+                            },
+                            {
+                              "type": "text",
+                              "id": "KraMv",
+                              "name": "T",
+                              "fill": "$ink",
+                              "content": "Integrity",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "knsDr",
+                          "name": "S",
+                          "fill": "$ink-2",
+                          "content": "Hash matches snapshot",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "FQ2br",
+                      "name": "Check Consistency",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 12,
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "padding": 14,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "vOyNH",
+                          "name": "Head",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "I5K5BP",
+                              "name": "Ok",
+                              "width": 16,
+                              "height": 16,
+                              "icon": "circle-check",
+                              "library": "lucide",
+                              "fill": "$ok"
+                            },
+                            {
+                              "type": "text",
+                              "id": "wZgpa",
+                              "name": "T",
+                              "fill": "$ink",
+                              "content": "Consistency",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "n0JIp",
+                          "name": "S",
+                          "fill": "$ink-2",
+                          "content": "7 of 7 documents match",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "EU17v",
+                      "name": "Check Evidence",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 12,
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "padding": 14,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Z2BJCK",
+                          "name": "Head",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "NUCJJ",
+                              "name": "Ok",
+                              "width": 16,
+                              "height": 16,
+                              "icon": "circle-check",
+                              "library": "lucide",
+                              "fill": "$ok"
+                            },
+                            {
+                              "type": "text",
+                              "id": "YSifC",
+                              "name": "T",
+                              "fill": "$ink",
+                              "content": "Evidence",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "SBtyn",
+                          "name": "S",
+                          "fill": "$ink-2",
+                          "content": "Name reservation valid",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "JjNDr",
+                      "name": "Check Gov records",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 12,
+                      "stroke": "$line",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "padding": 14,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ufaRs",
+                          "name": "Head",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "ob4Ne",
+                              "name": "Ok",
+                              "width": 16,
+                              "height": 16,
+                              "icon": "circle-check",
+                              "library": "lucide",
+                              "fill": "$ok"
+                            },
+                            {
+                              "type": "text",
+                              "id": "xXAwq",
+                              "name": "T",
+                              "fill": "$ink",
+                              "content": "Gov records",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "r3OtR1",
+                          "name": "S",
+                          "fill": "$ink-2",
+                          "content": "Household reg. match",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "jeA4t",
+                  "name": "Facts table",
+                  "clip": true,
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 12,
+                  "stroke": "$line",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "rFrKd",
+                      "name": "Header",
+                      "width": "fill_container",
+                      "fill": "$bg",
+                      "stroke": "$line",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "gap": 16,
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "BN8mr",
+                          "name": "C0",
+                          "fill": "$ink-3",
+                          "textGrowth": "fixed-width",
+                          "width": 150,
+                          "content": "FIELD",
+                          "fontFamily": "$zh",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "L4Y1pp",
+                          "name": "C1",
+                          "fill": "$ink-3",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "VALUE",
+                          "fontFamily": "$zh",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "C5jGRg",
+                          "name": "C2",
+                          "fill": "$ink-3",
+                          "textGrowth": "fixed-width",
+                          "width": 130,
+                          "content": "SOURCE",
+                          "fontFamily": "$zh",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "o6ZofQ",
+                          "name": "C3",
+                          "fill": "$ink-3",
+                          "textGrowth": "fixed-width",
+                          "width": 120,
+                          "content": "IN DOCUMENTS",
+                          "fontFamily": "$zh",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "wBkfM",
+                      "name": "Row",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "stroke": "$line",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "gap": 16,
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "uRTZw",
+                          "name": "C0",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": 150,
+                          "content": "公司名稱",
+                          "fontFamily": "$zh",
+                          "fontSize": 13
+                        },
+                        {
+                          "type": "text",
+                          "id": "opOfN",
+                          "name": "C1",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "大大科技有限公司",
+                          "fontFamily": "$zh",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "fx6xw",
+                          "name": "C2",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": 130,
+                          "content": "預查 #113045678",
+                          "fontFamily": "$zh",
+                          "fontSize": 13
+                        },
+                        {
+                          "type": "frame",
+                          "id": "TMTWu",
+                          "name": "C3",
+                          "width": 120,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "S7Sv7",
+                              "name": "Pill",
+                              "fill": "$ok-soft",
+                              "cornerRadius": 999,
+                              "padding": [
+                                3,
+                                10
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "G1L9S2",
+                                  "name": "P",
+                                  "fill": "$ok",
+                                  "content": "7 / 7 ✓",
+                                  "fontFamily": "$font",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "kSEfn",
+                      "name": "Row",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "stroke": "$line",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "gap": 16,
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "l7Vn0",
+                          "name": "C0",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": 150,
+                          "content": "所在地",
+                          "fontFamily": "$zh",
+                          "fontSize": 13
+                        },
+                        {
+                          "type": "text",
+                          "id": "nrkGz",
+                          "name": "C1",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "臺北市大安區復興南路一段 390 號 5 樓",
+                          "fontFamily": "$zh",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bw9Wz",
+                          "name": "C2",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": 130,
+                          "content": "Applicant + owner",
+                          "fontFamily": "$zh",
+                          "fontSize": 13
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Lfx97",
+                          "name": "C3",
+                          "width": 120,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "AFSe6",
+                              "name": "Pill",
+                              "fill": "$ok-soft",
+                              "cornerRadius": 999,
+                              "padding": [
+                                3,
+                                10
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "nHrAS",
+                                  "name": "P",
+                                  "fill": "$ok",
+                                  "content": "4 / 4 ✓",
+                                  "fontFamily": "$font",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "gjXOD",
+                      "name": "Row",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "stroke": "$line",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "gap": 16,
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "tQaUh",
+                          "name": "C0",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": 150,
+                          "content": "負責人",
+                          "fontFamily": "$zh",
+                          "fontSize": 13
+                        },
+                        {
+                          "type": "text",
+                          "id": "jI5MZ",
+                          "name": "C1",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "陳大文  A123•••789",
+                          "fontFamily": "$zh",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "jgq0V",
+                          "name": "C2",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": 130,
+                          "content": "MOI verified",
+                          "fontFamily": "$zh",
+                          "fontSize": 13
+                        },
+                        {
+                          "type": "frame",
+                          "id": "lLWR4",
+                          "name": "C3",
+                          "width": 120,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "k5R0I",
+                              "name": "Pill",
+                              "fill": "$ok-soft",
+                              "cornerRadius": 999,
+                              "padding": [
+                                3,
+                                10
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "sZmDU",
+                                  "name": "P",
+                                  "fill": "$ok",
+                                  "content": "6 / 6 ✓",
+                                  "fontFamily": "$font",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Qc8NE",
+                      "name": "Row flagged",
+                      "width": "fill_container",
+                      "fill": "$warn-soft",
+                      "stroke": "$line",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "gap": 16,
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "lB0Yc",
+                          "name": "C0",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": 150,
+                          "content": "資本總額",
+                          "fontFamily": "$zh",
+                          "fontSize": 13
+                        },
+                        {
+                          "type": "text",
+                          "id": "BUfo9",
+                          "name": "C1",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "NT$ 1,000,000",
+                          "fontFamily": "$zh",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "c3dYz",
+                          "name": "C2",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": 130,
+                          "content": "Agent draft",
+                          "fontFamily": "$zh",
+                          "fontSize": 13
+                        },
+                        {
+                          "type": "frame",
+                          "id": "nXihe",
+                          "name": "C3",
+                          "width": 120,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "B8Z1VC",
+                              "name": "Pill",
+                              "fill": "$warn-soft",
+                              "cornerRadius": 999,
+                              "padding": [
+                                3,
+                                10
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Q4hXcl",
+                                  "name": "P",
+                                  "fill": "$warn",
+                                  "content": "Flagged",
+                                  "fontFamily": "$font",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "SLxIb",
+                      "name": "Row",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "stroke": "$line",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "gap": 16,
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "jxUAF",
+                          "name": "C0",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": 150,
+                          "content": "董事",
+                          "fontFamily": "$zh",
+                          "fontSize": 13
+                        },
+                        {
+                          "type": "text",
+                          "id": "gNLe8",
+                          "name": "C1",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "陳大文、吳小明",
+                          "fontFamily": "$zh",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "EfUGy",
+                          "name": "C2",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": 130,
+                          "content": "2 attestations",
+                          "fontFamily": "$zh",
+                          "fontSize": 13
+                        },
+                        {
+                          "type": "frame",
+                          "id": "GQudG",
+                          "name": "C3",
+                          "width": 120,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "KLefC",
+                              "name": "Pill",
+                              "fill": "$ok-soft",
+                              "cornerRadius": 999,
+                              "padding": [
+                                3,
+                                10
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "fNdu5",
+                                  "name": "P",
+                                  "fill": "$ok",
+                                  "content": "3 / 3 ✓",
+                                  "fontFamily": "$font",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "N7j7m",
+                      "name": "Row",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "stroke": "$line",
+                      "strokeWidth": {
+                        "bottom": 1
+                      },
+                      "gap": 16,
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Y9FY5T",
+                          "name": "C0",
+                          "fill": "$ink-2",
+                          "textGrowth": "fixed-width",
+                          "width": 150,
+                          "content": "所營事業",
+                          "fontFamily": "$zh",
+                          "fontSize": 13
+                        },
+                        {
+                          "type": "text",
+                          "id": "L4haR",
+                          "name": "C1",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "F119010 · F113050 · ZZ99999",
+                          "fontFamily": "$zh",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "X5HCfx",
+                          "name": "C2",
+                          "fill": "$ink",
+                          "textGrowth": "fixed-width",
+                          "width": 130,
+                          "content": "Applicant",
+                          "fontFamily": "$zh",
+                          "fontSize": 13
+                        },
+                        {
+                          "type": "frame",
+                          "id": "nXgBE",
+                          "name": "C3",
+                          "width": 120,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "ByKgu",
+                              "name": "Pill",
+                              "fill": "$ok-soft",
+                              "cornerRadius": 999,
+                              "padding": [
+                                3,
+                                10
+                              ],
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "GAz8H",
+                                  "name": "P",
+                                  "fill": "$ok",
+                                  "content": "3 / 3 ✓",
+                                  "fontFamily": "$font",
+                                  "fontSize": 12,
+                                  "fontWeight": "500"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "fzRwM",
+              "name": "Decision",
+              "width": 360,
+              "height": "fill_container",
+              "fill": "$surface",
+              "stroke": "$line",
+              "strokeWidth": {
+                "left": 1
+              },
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 24,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "c1rHzl",
+                  "name": "Label",
+                  "fill": "$ink-3",
+                  "content": "DECISION",
+                  "fontFamily": "$font",
+                  "fontSize": 11,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.8
+                },
+                {
+                  "type": "frame",
+                  "id": "hBG6i",
+                  "name": "Revision draft",
+                  "width": "fill_container",
+                  "cornerRadius": 12,
+                  "stroke": "$warn",
+                  "strokeWidth": 1.5,
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "cW3zZ",
+                      "name": "T",
+                      "fill": "$ink",
+                      "content": "Request change · 資本總額",
+                      "fontFamily": "$zh",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "WZZnb",
+                      "name": "Note",
+                      "fill": "$ink-2",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Bank deposit proof shows NT$ 800,000. Please correct the capital amount or upload updated proof.",
+                      "lineHeight": 1.5,
+                      "fontFamily": "$font",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "r87fM",
+                      "name": "Scope",
+                      "fill": "$warn",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Only this field reopens. Everything else stays locked.",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "bOgJc",
+                  "name": "Spacer",
+                  "width": "fill_container",
+                  "height": "fill_container"
+                },
+                {
+                  "type": "frame",
+                  "id": "pwrsd",
+                  "name": "Send revision request",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "$warn",
+                  "cornerRadius": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "i0LtTG",
+                      "name": "L",
+                      "fill": "#FFFFFF",
+                      "content": "Send revision request",
+                      "fontFamily": "$font",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "z1foJe",
+                  "name": "Approve",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "$surface",
+                  "cornerRadius": 12,
+                  "stroke": "$line",
+                  "strokeWidth": 1,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "l5zqhW",
+                      "name": "L",
+                      "fill": "$ink",
+                      "content": "Approve",
+                      "fontFamily": "$font",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "FZHvh",
+                  "name": "Reject with reason",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "$surface",
+                  "cornerRadius": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ja2tD",
+                      "name": "L",
+                      "fill": "#B42318",
+                      "content": "Reject with reason",
+                      "fontFamily": "$font",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "T5SPkR",
+      "x": 0,
+      "y": 2300,
+      "name": "Injected on tcooc-co.gov.taipei",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$bg",
+      "layout": "none",
+      "children": [
+        {
+          "type": "browser",
+          "id": "pyMOh",
+          "x": 0,
+          "y": 0,
+          "name": "Live gov page",
+          "width": 1440,
+          "height": 900,
+          "url": "tcooc-co.gov.taipei/cp.aspx?n=1ddc8c221b97a1bd&s=5BA095ECA5D6FAB3",
+          "scrollY": 1880
+        },
+        {
+          "type": "rectangle",
+          "id": "Y2fHe",
+          "x": 0,
+          "y": 0,
+          "name": "Scrim",
+          "fill": "#0E111633",
+          "width": 980,
+          "height": 900
+        },
+        {
+          "type": "frame",
+          "id": "t5BhG",
+          "x": 980,
+          "y": 0,
+          "name": "Zero Form drawer",
+          "clip": true,
+          "width": 460,
+          "height": 900,
+          "fill": "$surface",
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0E111640",
+            "blur": 40
+          },
+          "layout": "vertical",
+          "gap": 24,
+          "padding": 28,
+          "children": [
+            {
+              "type": "frame",
+              "id": "s0uKH",
+              "name": "Header",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Um2US",
+                  "name": "Brand",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "V0jElt",
+                      "name": "Mark",
+                      "width": 26,
+                      "height": 26,
+                      "fill": "$accent",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "A1gMZ",
+                          "name": "0",
+                          "fill": "#FFFFFF",
+                          "content": "0",
+                          "fontFamily": "$font",
+                          "fontSize": 15,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "O925mL",
+                      "name": "Wordmark",
+                      "fill": "$ink",
+                      "content": "zero form",
+                      "fontFamily": "$font",
+                      "fontSize": 16,
+                      "fontWeight": "700",
+                      "letterSpacing": -0.3
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "HW0Ul",
+                  "name": "Steps",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 3,
+                      "id": "mp1F4",
+                      "name": "Step 1",
+                      "fill": "$accent",
+                      "width": 20,
+                      "height": 6
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 3,
+                      "id": "dmiu0",
+                      "name": "Step 2",
+                      "fill": "$line",
+                      "width": 6,
+                      "height": 6
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 3,
+                      "id": "e5EhPV",
+                      "name": "Step 3",
+                      "fill": "$line",
+                      "width": 6,
+                      "height": 6
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 3,
+                      "id": "A78WMQ",
+                      "name": "Step 4",
+                      "fill": "$line",
+                      "width": 6,
+                      "height": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "isBm9",
+              "name": "Intro",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "lCwMs",
+                  "name": "Context",
+                  "fill": "$ink-3",
+                  "content": "有限公司設立登記 · Taipei City Commerce Office",
+                  "fontFamily": "$zh",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "VPlo1",
+                  "name": "Title",
+                  "fill": "$ink",
+                  "content": "7 forms. Fill once.",
+                  "fontFamily": "$font",
+                  "fontSize": 32,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.8
+                },
+                {
+                  "type": "text",
+                  "id": "YDJxq",
+                  "name": "Body",
+                  "fill": "$ink-2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "We found every form this application needs and merged them into one short set of questions. Anything you've already verified is reused.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "PMvcv",
+              "name": "Stat",
+              "width": "fill_container",
+              "fill": "$bg",
+              "cornerRadius": 14,
+              "padding": 18,
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pqTWc",
+                  "name": "From",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "TYlsZ",
+                      "name": "N",
+                      "fill": "$ink-3",
+                      "content": "58",
+                      "fontFamily": "$font",
+                      "fontSize": 28,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jEgQz",
+                      "name": "L",
+                      "fill": "$ink-3",
+                      "content": "fields on paper",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon",
+                  "id": "Djufn",
+                  "name": "Arrow",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "arrow-right",
+                  "library": "lucide",
+                  "fill": "$ink-3"
+                },
+                {
+                  "type": "frame",
+                  "id": "U6Y6X1",
+                  "name": "To",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "S5JRR",
+                      "name": "N",
+                      "fill": "$accent",
+                      "content": "6",
+                      "fontFamily": "$font",
+                      "fontSize": 28,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "S9ooPr",
+                      "name": "L",
+                      "fill": "$ink-2",
+                      "content": "questions for you",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "uAR14",
+              "name": "Docs",
+              "width": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "vvxV7",
+                  "name": "Docs label",
+                  "fill": "$ink-3",
+                  "content": "WILL BE GENERATED",
+                  "fontFamily": "$font",
+                  "fontSize": 11,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.8
+                },
+                {
+                  "id": "qe2qc",
+                  "type": "ref",
+                  "ref": "OrDpi",
+                  "name": "公司設立登記申請書",
+                  "width": "fill_container",
+                  "descendants": {
+                    "py0Pz": {
+                      "content": "公司設立登記申請書"
+                    },
+                    "x8a7H2": {
+                      "content": "Application letter"
+                    },
+                    "EI0qG": {
+                      "fill": "$bg"
+                    },
+                    "YkfVC": {
+                      "content": "Auto",
+                      "fill": "$ink-2"
+                    }
+                  }
+                },
+                {
+                  "id": "xp7VR",
+                  "type": "ref",
+                  "ref": "OrDpi",
+                  "name": "設立登記表",
+                  "width": "fill_container",
+                  "descendants": {
+                    "py0Pz": {
+                      "content": "設立登記表"
+                    },
+                    "x8a7H2": {
+                      "content": "Registration form · ×2"
+                    },
+                    "EI0qG": {
+                      "fill": "$bg"
+                    },
+                    "YkfVC": {
+                      "content": "Auto",
+                      "fill": "$ink-2"
+                    }
+                  }
+                },
+                {
+                  "id": "qK4ir",
+                  "type": "ref",
+                  "ref": "OrDpi",
+                  "name": "章程",
+                  "width": "fill_container",
+                  "descendants": {
+                    "py0Pz": {
+                      "content": "章程"
+                    },
+                    "x8a7H2": {
+                      "content": "Articles of incorporation"
+                    },
+                    "EI0qG": {
+                      "fill": "$bg"
+                    },
+                    "YkfVC": {
+                      "content": "Auto",
+                      "fill": "$ink-2"
+                    }
+                  }
+                },
+                {
+                  "id": "QncgR",
+                  "type": "ref",
+                  "ref": "OrDpi",
+                  "name": "股東同意書",
+                  "width": "fill_container",
+                  "descendants": {
+                    "py0Pz": {
+                      "content": "股東同意書"
+                    },
+                    "x8a7H2": {
+                      "content": "Shareholder consent"
+                    },
+                    "EI0qG": {
+                      "fill": "$bg"
+                    },
+                    "YkfVC": {
+                      "content": "Auto",
+                      "fill": "$ink-2"
+                    }
+                  }
+                },
+                {
+                  "id": "P0sIzR",
+                  "type": "ref",
+                  "ref": "OrDpi",
+                  "name": "董事願任同意書",
+                  "width": "fill_container",
+                  "descendants": {
+                    "py0Pz": {
+                      "content": "董事願任同意書"
+                    },
+                    "x8a7H2": {
+                      "content": "Director consent · ×2"
+                    },
+                    "EI0qG": {
+                      "fill": "$bg"
+                    },
+                    "YkfVC": {
+                      "content": "Auto",
+                      "fill": "$ink-2"
+                    }
+                  }
+                },
+                {
+                  "id": "zVBxo",
+                  "type": "ref",
+                  "ref": "OrDpi",
+                  "name": "建物所有權人同意書",
+                  "width": "fill_container",
+                  "descendants": {
+                    "py0Pz": {
+                      "content": "建物所有權人同意書"
+                    },
+                    "x8a7H2": {
+                      "content": "Building owner consent"
+                    },
+                    "EI0qG": {
+                      "fill": "$bg"
+                    },
+                    "YkfVC": {
+                      "content": "Auto",
+                      "fill": "$ink-2"
+                    }
+                  }
+                },
+                {
+                  "id": "ckn0R",
+                  "type": "ref",
+                  "ref": "OrDpi",
+                  "name": "公司名稱預查",
+                  "width": "fill_container",
+                  "descendants": {
+                    "py0Pz": {
+                      "content": "公司名稱預查"
+                    },
+                    "x8a7H2": {
+                      "content": "Name reservation · on file"
+                    },
+                    "EI0qG": {
+                      "fill": "$ok-soft"
+                    },
+                    "YkfVC": {
+                      "content": "Verified",
+                      "fill": "$ok"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "cZ6ms",
+              "name": "Spacer",
+              "width": "fill_container",
+              "height": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "fXY8j",
+              "name": "Footer",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "id": "S8z0QZ",
+                  "type": "ref",
+                  "ref": "tl5qq",
+                  "name": "CTA",
+                  "width": "fill_container"
+                },
+                {
+                  "type": "text",
+                  "id": "Jmgr0",
+                  "name": "Welcome",
+                  "fill": "$ink-3",
+                  "content": "Welcome back, 陳大文 — your verified profile is ready",
+                  "fontFamily": "$zh",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "bg": {
+      "type": "color",
+      "value": "#F5F5F2"
+    },
+    "surface": {
+      "type": "color",
+      "value": "#FFFFFF"
+    },
+    "ink": {
+      "type": "color",
+      "value": "#0E1116"
+    },
+    "ink-2": {
+      "type": "color",
+      "value": "#4A5160"
+    },
+    "ink-3": {
+      "type": "color",
+      "value": "#8A909C"
+    },
+    "line": {
+      "type": "color",
+      "value": "#E6E6E1"
+    },
+    "accent": {
+      "type": "color",
+      "value": "#2B50FF"
+    },
+    "accent-soft": {
+      "type": "color",
+      "value": "#EEF1FF"
+    },
+    "ok": {
+      "type": "color",
+      "value": "#0F8A4F"
+    },
+    "ok-soft": {
+      "type": "color",
+      "value": "#E7F5ED"
+    },
+    "warn": {
+      "type": "color",
+      "value": "#B45309"
+    },
+    "warn-soft": {
+      "type": "color",
+      "value": "#FDF1E2"
+    },
+    "font": {
+      "type": "string",
+      "value": "Inter"
+    },
+    "zh": {
+      "type": "string",
+      "value": "Noto Sans TC"
+    },
+    "mono": {
+      "type": "string",
+      "value": "JetBrains Mono"
+    }
+  },
+  "fileToken": "6e515dbf-e367-4563-81d1-4034d59cee80"
+}
