@@ -9,7 +9,7 @@
 
 A local company-incorporation demo: reuse profile facts, answer three missing questions, review uploaded evidence, and generate six PDFs from one confirmed snapshot. Identity and registry sources are simulated; official forms are partially populated.
 
-[Demo video](demo/zero-form-demo.webm) · [Quick start](#quick-start) · [Chrome extension](#chrome-extension) · [Engine reference](docs/ENGINE.md) · [Pixel verification](docs/VERIFICATION.md) · [Semantic test results](bench/review/haiku-live-results/README.md)
+[Demo video](demo/zero-form-demo.webm) · [Quick start](#quick-start) · [Chrome extension](#chrome-extension) · [Engine reference](docs/ENGINE.md) · [Pixel verification](docs/VERIFICATION.md) · [Semantic test results](bench/review/haiku-live-results/README.md) · [Mismatch checks](docs/SEMANTIC-VERIFICATION.md)
 
 </div>
 

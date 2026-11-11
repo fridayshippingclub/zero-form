@@ -140,7 +140,7 @@ function render() {
       ${externalReview ? `<section>
         <h3 class="section-title">佐證附件 · Supporting evidence <span class="muted">與確認資料比對 · Compared with signed facts</span></h3>
         <div class="card evidence-table" tabindex="0" aria-label="佐證核對表，可橫向捲動 / Evidence checks, scroll horizontally"><table class="facts evidence-facts"><thead><tr><th>項目 · Check</th><th>預期 · Expected</th><th>文件內容 · In document</th><th>結果／來源 · Result / source</th></tr></thead><tbody>
-          ${externalReview.checks.map((check) => `<tr><td><div class="fe">${esc(evidenceKind(check.kind))}</div><div>${esc(evidenceField(check.field))}</div></td>
+          ${externalReview.checks.slice().sort((a, b) => Number(a.status === 'passed') - Number(b.status === 'passed')).map((check) => `<tr><td><div class="fe">${esc(evidenceKind(check.kind))}</div><div>${esc(evidenceField(check.field))}</div></td>
             <td class="val">${checkValue(check.expected)}</td><td class="val">${checkValue(check.actual, '未提供 / Not available')}</td>
             <td><span class="badge ${check.status === 'passed' ? 'ok' : 'warn'}">${esc(evidenceStatus(check.status))}</span>${check.source ? `<div style="margin-top:6px"><a href="${esc(check.source.url)}" target="_blank" rel="noopener">來源 · 第 ${esc(check.source.page)} 頁<br>Source · page ${esc(check.source.page)}</a></div>` : ''}</td></tr>`).join('')}
         </tbody></table></div>
