@@ -83,10 +83,11 @@ function render() {
     <div>
       <div class="ref"><span class="mono">${esc(app.id)}</span><span class="pill ${esc(app.status)}">${esc(STATUS[app.status] ? t(...STATUS[app.status]) : app.status)}</span></div>
       <h1>${esc(company)}</h1>
+      <div class="story">${t(`${TOTAL_FORMS} 份必備表單：${verify.docs.length} 份由確認資料產生，${TOTAL_FORMS - verify.docs.length} 份已存檔（名稱預查）`, `${TOTAL_FORMS} required forms: ${verify.docs.length} generated from the signed facts, ${TOTAL_FORMS - verify.docs.length} already on file (name reservation)`)}</div>
     </div>
     <div class="snap">
-      確認版本 / Snapshot <b>v${app.v}</b> · <span class="mono" title="${esc(app.hash)}">sha256:${esc(short(app.hash))}</span><br>
-      ${app.prev ? `前版 / previous: <span class="mono" title="${esc(app.prev)}">${esc(short(app.prev))}</span> · ` : ''}確認時間 / signed ${esc(when(app.signedAt))}
+      ${t('確認版本', 'Snapshot')} <b>v${app.v}</b> · <span class="mono" title="${esc(app.hash)}">sha256:${esc(short(app.hash))}</span><br>
+      ${app.prev ? `${t('前版', 'previous')}: <span class="mono" title="${esc(app.prev)}">${esc(short(app.prev))}</span> · ` : ''}${t('確認時間', 'signed')} ${esc(when(app.signedAt))}
     </div>
   </div>
 
@@ -101,13 +102,14 @@ function render() {
           ${verify.checks.map((c) => `<div class="card check ${c.ok ? '' : 'bad'}" data-check="${esc(c.key)}">
             <div class="ic">${c.ok ? ICON.ok : ICON.bad}</div><div class="lbl">${esc(verificationLabel(c))}</div><div class="det">${esc(verificationDetail(c))}</div></div>`).join('')}
         </div>
+        ${evidenceSummary(externalReview)}
       </section>
 
       <section>
         <h3 class="section-title">${t('資料事實', 'Facts')} <span class="muted">${t(`${keys.length} 項 → ${TOTAL_FORMS} 份表單`, `${keys.length} facts → ${TOTAL_FORMS} forms`)}<br>${t('點選欄位要求修正', 'Select a row to request a change')}</span></h3>
         <div class="card">
           <table class="facts data-facts">
-            <thead><tr><th style="width:21%">${t('欄位', 'Field')}</th><th style="width:29%">${t('內容', 'Value')}</th><th>${t('來源', 'Source')}</th><th style="width:130px">${t('沿用', 'Used in')}</th></tr></thead>
+            <thead><tr><th style="width:21%">${t('欄位', 'Field')}</th><th style="width:29%">${t('內容', 'Value')}</th><th>${t('來源', 'Source')}</th><th style="width:120px">${t('沿用', 'Used in')}</th><th class="act"></th></tr></thead>
             <tbody>
               ${keys.map((k) => {
                 const f = fields[k] ?? { label: k, en: '' };
@@ -120,6 +122,7 @@ function render() {
                   <td class="val">${fmt(k, app.data[k], f)} ${isChanged ? `<span class="badge warn">${t('已修改', 'Changed')}</span>` : ''}</td>
                   <td><div class="src">${esc(sourceLabel(pv.source))} ${pv.verified ? `<span class="badge ok">${ICON.shield} ${t('已核對', 'Verified')}</span>` : `<span class="badge self">${t('自行填寫', 'Self-declared')}</span>`}</div></td>
                   <td class="used"><span class="bar"><i style="width:${Math.round((n / TOTAL_FORMS) * 100)}%"></i></span>${n}/${TOTAL_FORMS} ${t('份', 'forms')}</td>
+                  <td class="act">${app.status === 'submitted' ? `<button class="req-btn" type="button" aria-label="${t('要求修正此欄', 'Request a change to this field')}">${st.sel === k ? t('已選取', 'Selected') : t('要求修正', 'Request fix')}</button>` : ''}</td>
                 </tr>`;
               }).join('')}
             </tbody>
@@ -151,11 +154,22 @@ function render() {
 
     <aside class="side">
       <div class="card decision">${decisionPanel(app, fields, failed, evidenceReady)}</div>
-      <div class="demo"><button id="tamper">${t('模擬竄改', 'Simulate tampering')}</button><span class="sep">·</span><button id="reset">${t('重設展示', 'Reset demo')}</button></div>
+      <div class="demo"><span class="dl">${t('展示控制', 'Demo controls')}</span><button id="tamper" class="${failed.some((c) => c.key === 'integrity') ? 'on' : ''}">${failed.some((c) => c.key === 'integrity') ? t('已模擬竄改', 'Tampering simulated') : t('模擬竄改', 'Simulate tampering')}</button><button id="reset">${t('重設展示', 'Reset demo')}</button></div>
     </aside>
   </div>`;
 
   if (focused) { const t = document.getElementById('note'); if (t) { t.focus(); t.setSelectionRange(caret, caret); } }
+}
+
+function evidenceSummary(review) {
+  if (!review?.checks?.length) return '';
+  const kinds = [...new Set(review.checks.map((c) => c.kind))];
+  const passed = review.checks.filter((c) => c.status === 'passed').length;
+  const ok = passed === review.checks.length;
+  return `<div class="card evsum"><b>${t('佐證文件', 'Evidence')}</b>
+    ${kinds.map((kind) => { const url = review.checks.find((c) => c.kind === kind && c.source?.url)?.source.url;
+      return url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${ICON.doc}${esc(evidenceKind(kind))} ↗</a>` : `<span class="muted">${ICON.doc}${esc(evidenceKind(kind))}</span>`; }).join('')}
+    <span class="res ${ok ? 'ok' : 'warn'}">${ok ? ICON.ok : ICON.bad}${t(`${passed}/${review.checks.length} 項相符`, `${passed}/${review.checks.length} match`)}</span></div>`;
 }
 
 function decisionPanel(app, fields, failed, evidenceReady = true) {

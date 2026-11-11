@@ -70,3 +70,32 @@ h1{font-size:38px;line-height:1.12;letter-spacing:-1.1px;margin:0;transition:opa
 .row{display:flex;gap:12px}
 .foot{font-size:12px;color:var(--ink3);text-align:center;margin:0}
 @media (max-width:900px){.pages{grid-template-columns:1fr}.legend{grid-template-columns:1fr 1fr}h1{font-size:30px}}
+
+/* v2 layout (CSS only, so setup.js stays untouched): the intro's children join main's flow so the
+   primary CTA sits above the fold and the "fields → facts → to type" scoreboard can stick under the header. */
+:root{--ok:#0F7B47}
+.intro{display:contents}
+.intro .eyebrow{order:0}
+.intro h1{order:1;margin-top:-12px}
+.intro p{order:2;margin-top:-12px}
+.cta{order:3;align-items:flex-start}
+.cta .mode{order:2}
+.cta .btn{order:1}
+.cta{flex-direction:row;flex-wrap:wrap;align-items:center;gap:12px}
+.cta .err{order:3;width:100%}
+.eq{order:4;position:sticky;top:60px;z-index:4;margin:0 -28px;padding:12px 28px;background:#F5F5F2F2;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.eq b{font-size:30px}
+.status{order:5}
+.pages{order:6}
+.legend{order:7}
+.live{order:8}
+.foot{order:9;text-align:left}
+.btn.dark{background:var(--accent);color:#fff}
+.btn.blue:hover,.btn.dark:hover{background:#1F42E6}
+.mode button.on{background:var(--accent-soft);color:var(--accent)}
+.fact .askp{background:none;color:var(--warn);border:1px solid #E9C9A3}
+.fact .src{background:none;border:1px solid #CDE6D7}
+.fact.ask{border-color:#E9C9A3;box-shadow:none}
+.bar{padding:0 28px}
+.bar .brand img{display:block}
+@media (max-width:900px){.bar .muted{display:none}.eq{gap:10px}.eq b{font-size:24px}.cta{flex-direction:column;align-items:stretch}}
