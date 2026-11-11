@@ -1,0 +1,189 @@
+{
+  "source_sha256": "4aa9f2b8bb5d10cc7a8af4e8a3cfbef300e1176603f1437ee5e64fcbf51d8520",
+  "mode": "llm",
+  "status": "complete",
+  "fields": {
+    "Company-Name": "大大科技",
+    "Capital-TWD": "10000",
+    "Certified-On": "2026-11-11"
+  },
+  "observations": [
+    {
+      "field": "Company-Name",
+      "value": "大大科技",
+      "status": "observed",
+      "confidence": "model_selected_source_grounded",
+      "source": {
+        "page": 1,
+        "bbox": [
+          285.0,
+          179.509844,
+          52.0,
+          13.0
+        ],
+        "text": "大大科技",
+        "span_id": "p1-s4"
+      },
+      "sources": [
+        {
+          "page": 1,
+          "bbox": [
+            285.0,
+            179.509844,
+            52.0,
+            13.0
+          ],
+          "text": "大大科技",
+          "span_id": "p1-s4"
+        }
+      ],
+      "page": 1,
+      "quote": "大大科技",
+      "bbox": [
+        285.0,
+        179.509844,
+        52.0,
+        13.0
+      ]
+    },
+    {
+      "field": "Capital-TWD",
+      "value": 10000,
+      "status": "observed",
+      "confidence": "model_selected_source_grounded",
+      "source": {
+        "page": 1,
+        "bbox": [
+          68.0,
+          245.509844,
+          110.5,
+          13.0
+        ],
+        "text": "已收足股款（TWD）",
+        "span_id": "p1-s5"
+      },
+      "sources": [
+        {
+          "page": 1,
+          "bbox": [
+            68.0,
+            245.509844,
+            110.5,
+            13.0
+          ],
+          "text": "已收足股款（TWD）",
+          "span_id": "p1-s5"
+        },
+        {
+          "page": 1,
+          "bbox": [
+            285.0,
+            245.509844,
+            39.0,
+            13.0
+          ],
+          "text": "1 萬元",
+          "span_id": "p1-s6"
+        }
+      ],
+      "page": 1,
+      "quote": "已收足股款（TWD）",
+      "bbox": [
+        68.0,
+        245.509844,
+        110.5,
+        13.0
+      ]
+    },
+    {
+      "field": "Certified-On",
+      "value": "2026-11-11",
+      "status": "observed",
+      "confidence": "model_selected_source_grounded",
+      "source": {
+        "page": 1,
+        "bbox": [
+          68.0,
+          311.509844,
+          39.0,
+          13.0
+        ],
+        "text": "簽證日",
+        "span_id": "p1-s7"
+      },
+      "sources": [
+        {
+          "page": 1,
+          "bbox": [
+            68.0,
+            311.509844,
+            39.0,
+            13.0
+          ],
+          "text": "簽證日",
+          "span_id": "p1-s7"
+        },
+        {
+          "page": 1,
+          "bbox": [
+            285.0,
+            311.509844,
+            65.0,
+            13.0
+          ],
+          "text": "2026/11/11",
+          "span_id": "p1-s8"
+        }
+      ],
+      "page": 1,
+      "quote": "簽證日",
+      "bbox": [
+        68.0,
+        311.509844,
+        39.0,
+        13.0
+      ]
+    },
+    {
+      "field": "Status",
+      "value": null,
+      "status": "unknown",
+      "confidence": "unknown",
+      "source": null,
+      "sources": [],
+      "page": null,
+      "quote": null,
+      "bbox": null,
+      "reason": "no_explicit_report_disposition"
+    }
+  ],
+  "llm": {
+    "available": true,
+    "provider": "anthropic",
+    "model": "claude-haiku-5-5",
+    "usage": {
+      "input_tokens": 1519,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 628,
+      "output_tokens_details": {
+        "thinking_tokens": 493
+      },
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "succeeded": true
+  },
+  "coordinate_system": "PDF points, top-left; bbox=[x,y,width,height]",
+  "page_limit": 10,
+  "original_preserved": true,
+  "normalized_capital": {
+    "value": 10000,
+    "currency": "TWD"
+  }
+}

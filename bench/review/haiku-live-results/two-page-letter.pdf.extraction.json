@@ -1,0 +1,167 @@
+{
+  "source_sha256": "fe2b27c6120f8a79ec304a3beee7387d077ec1361000db33152463a00a1248eb",
+  "mode": "llm",
+  "status": "complete",
+  "fields": {
+    "Company-Name": "大大科技",
+    "Capital-TWD": "10000",
+    "Certified-On": "2026-11-11"
+  },
+  "observations": [
+    {
+      "field": "Company-Name",
+      "value": "大大科技",
+      "status": "observed",
+      "confidence": "model_selected_source_grounded",
+      "source": {
+        "page": 2,
+        "bbox": [
+          58.0,
+          161.509844,
+          169.0,
+          13.0
+        ],
+        "text": "本案受查公司為 大大科技 。",
+        "span_id": "p2-s8"
+      },
+      "sources": [
+        {
+          "page": 2,
+          "bbox": [
+            58.0,
+            161.509844,
+            169.0,
+            13.0
+          ],
+          "text": "本案受查公司為 大大科技 。",
+          "span_id": "p2-s8"
+        }
+      ],
+      "page": 2,
+      "quote": "本案受查公司為 大大科技 。",
+      "bbox": [
+        58.0,
+        161.509844,
+        169.0,
+        13.0
+      ]
+    },
+    {
+      "field": "Capital-TWD",
+      "value": 10000,
+      "status": "observed",
+      "confidence": "model_selected_source_grounded",
+      "source": {
+        "page": 2,
+        "bbox": [
+          58.0,
+          221.509844,
+          188.5,
+          13.0
+        ],
+        "text": "本案確認之實收資本：NTD 10000",
+        "span_id": "p2-s9"
+      },
+      "sources": [
+        {
+          "page": 2,
+          "bbox": [
+            58.0,
+            221.509844,
+            188.5,
+            13.0
+          ],
+          "text": "本案確認之實收資本：NTD 10000",
+          "span_id": "p2-s9"
+        }
+      ],
+      "page": 2,
+      "quote": "本案確認之實收資本：NTD 10000",
+      "bbox": [
+        58.0,
+        221.509844,
+        188.5,
+        13.0
+      ]
+    },
+    {
+      "field": "Certified-On",
+      "value": "2026-11-11",
+      "status": "observed",
+      "confidence": "model_selected_source_grounded",
+      "source": {
+        "page": 2,
+        "bbox": [
+          58.0,
+          281.509844,
+          169.0,
+          13.0
+        ],
+        "text": "查核報告簽證日：2026-11-11",
+        "span_id": "p2-s10"
+      },
+      "sources": [
+        {
+          "page": 2,
+          "bbox": [
+            58.0,
+            281.509844,
+            169.0,
+            13.0
+          ],
+          "text": "查核報告簽證日：2026-11-11",
+          "span_id": "p2-s10"
+        }
+      ],
+      "page": 2,
+      "quote": "查核報告簽證日：2026-11-11",
+      "bbox": [
+        58.0,
+        281.509844,
+        169.0,
+        13.0
+      ]
+    },
+    {
+      "field": "Status",
+      "value": null,
+      "status": "unknown",
+      "confidence": "unknown",
+      "source": null,
+      "sources": [],
+      "page": null,
+      "quote": null,
+      "bbox": null,
+      "reason": "no_explicit_report_disposition"
+    }
+  ],
+  "llm": {
+    "available": true,
+    "provider": "anthropic",
+    "model": "claude-haiku-5-5",
+    "usage": {
+      "input_tokens": 1563,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 257,
+      "output_tokens_details": {
+        "thinking_tokens": 133
+      },
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "succeeded": true
+  },
+  "coordinate_system": "PDF points, top-left; bbox=[x,y,width,height]",
+  "page_limit": 10,
+  "original_preserved": true,
+  "normalized_capital": {
+    "value": 10000,
+    "currency": "TWD"
+  }
+}

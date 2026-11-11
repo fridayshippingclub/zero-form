@@ -1,0 +1,10 @@
+{
+  "status": "approved",
+  "docs": 6,
+  "allDocsMatch": true,
+  "checks": 12,
+  "selfReviewUnknownBlocked": true,
+  "selfReviewReady": "ready_to_submit",
+  "liveLLM": false,
+  "errors": []
+}

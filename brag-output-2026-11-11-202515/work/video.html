@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Zero Form brag, take 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=block" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  *{transition:none!important}
+  html,body{width:1920px;height:1080px;overflow:hidden;background:#F5F5F2}
+  body{position:relative}
+  .layer{position:absolute;inset:0}
+  .cap{position:absolute;left:0;right:0;top:64px;text-align:center;font:700 64px/1.1 Inter,sans-serif;letter-spacing:-2px;color:#0E1116}
+  .cap em{font-style:normal;color:#2B50FF}
+  .cap em.red{color:#D93A3A}
+
+  /* duplicate highlight colours */
+  .d1{background:#FFE58A!important;box-shadow:0 0 0 1px #F5C400}
+  .d2{background:#D9E0FF!important;box-shadow:0 0 0 1px #2B50FF}
+  .d3{background:#FFD6CF!important;box-shadow:0 0 0 1px #E5484D}
+
+  /* scene 1: seven filled forms */
+  #row{position:absolute;left:56px;right:56px;top:225px;display:flex;gap:16px;align-items:flex-start}
+  .card{flex:1;min-width:0;background:#fff;border-radius:12px;box-shadow:0 24px 50px -22px rgba(14,17,22,.25),0 0 0 1px #E6E6E1;padding:16px 14px;min-height:300px}
+  .card .doc{font-size:12.5px;line-height:1.5}
+  .card .doc h1{font-size:14.5px;margin-bottom:10px;letter-spacing:.5px}
+  .card .doc mark{background:none;padding:0 1px;border-radius:2px}
+  #chips{position:absolute;left:0;right:0;top:775px;display:flex;justify-content:center;gap:20px}
+  .chip{display:flex;align-items:center;gap:12px;background:#fff;border-radius:999px;padding:12px 24px 12px 14px;font:600 26px Inter,"Noto Sans TC",sans-serif;color:#0E1116;box-shadow:0 0 0 1px #E6E6E1}
+  .chip i{width:26px;height:26px;border-radius:7px;display:block}
+  .chip b{font-weight:800}
+  .chip .zh{font-weight:500;color:#4A5160}
+  .count{position:absolute;left:0;right:0;top:885px;text-align:center;font:600 40px Inter,sans-serif;color:#4A5160;letter-spacing:-.5px}
+  .count b{color:#0E1116}
+
+  /* scene 2: two forms disagree */
+  .big{position:absolute;top:250px;width:700px;background:#fff;border-radius:16px;box-shadow:0 40px 80px -30px rgba(14,17,22,.28),0 0 0 1px #E6E6E1;padding:28px 30px}
+  .big .tl{font:500 16px Inter,sans-serif;color:#8A909C;margin-bottom:8px}
+  .big .doc{font-size:16px;line-height:1.6}
+  .big .doc h1{font-size:22px;margin-bottom:14px}
+  .big .doc th,.big .doc td{padding:5px 10px}
+  .big .doc mark{background:none}
+  .big .doc mark.bad{border-radius:4px;padding:1px 4px}
+  #neq{position:absolute;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;background:#D93A3A;color:#fff;display:grid;place-items:center;font:700 52px/1 Inter,sans-serif;box-shadow:0 12px 30px -8px rgba(217,58,58,.6)}
+
+  /* logo scenes */
+  .logo{position:absolute;left:50%;top:50%;width:840px;transform:translate(-50%,-50%)}
+  .tag2{position:absolute;left:0;right:0;text-align:center;font:700 72px/1.15 Inter,sans-serif;letter-spacing:-2.4px;color:#0E1116}
+  .tag2 em{font-style:normal;color:#2B50FF}
+
+  /* app + officer window */
+  .win{position:absolute;left:50%;top:214px;width:1280px;height:720px;margin-left:-640px;background:#fff;border-radius:18px;overflow:hidden;
+       box-shadow:0 50px 100px -30px rgba(14,17,22,.28),0 0 0 1px #E6E6E1;transform-origin:50% 0}
+  .win .bar{position:absolute}
+  .win .top{padding-top:22px}
+  .win #app{max-width:1180px;margin:auto;padding:28px 28px 0;display:grid;grid-template-columns:minmax(0,520px) minmax(0,1fr);gap:48px}
+  .win .screen{animation:none;min-height:600px}
+  .win .packet{position:static;max-height:600px;overflow:hidden}
+  .win .fact{padding:11px 16px}
+  .caret{display:inline-block;width:2px;height:30px;background:#2B50FF;vertical-align:middle;margin-left:2px}
+  #offwin iframe{position:absolute;left:0;top:0;width:1440px;height:810px;border:0;transform:scale(.8889);transform-origin:0 0}
+  #cursor{position:absolute;width:34px;height:34px;left:0;top:0;pointer-events:none;filter:drop-shadow(0 3px 4px rgba(0,0,0,.3))}
+</style>
+</head>
+<body>
+<!-- 1 · problem: duplicates -->
+<div class="layer" id="s1">
+  <div class="cap" id="cap1">7 forms ask for the same facts, <em>again and again.</em></div>
+  <div id="row"></div>
+  <div id="chips"></div>
+  <div class="count" id="count"><b>40</b> blanks to fill · only <b>11</b> different facts</div>
+</div>
+<!-- 2 · problem: the typo -->
+<div class="layer" id="s2">
+  <div class="cap" id="cap2"><em class="red">One typo,</em> and staff must cross-check every form by hand.</div>
+  <div class="big" id="bigA" style="left:220px"></div>
+  <div class="big" id="bigB" style="left:1000px"></div>
+  <div id="neq">≠</div>
+</div>
+<!-- 3 · turn -->
+<div class="layer" id="s3">
+  <img class="logo" id="logo3" src="logo-light.svg" style="top:43%">
+  <div class="tag2" id="tag3" style="top:640px">Each fact once. <em>Every form filled.</em></div>
+</div>
+<!-- 4/5 · applicant -->
+<div class="layer" id="s4">
+  <div class="cap" id="cap4"></div>
+  <div class="win" id="win">
+    <div class="bar"><div class="fill" id="progress"></div></div>
+    <header class="top"><div class="brand"><span class="mark">0</span>zero form</div><span class="secure">🔒 Two-step verified</span></header>
+    <div id="app"></div>
+  </div>
+</div>
+<!-- 6 · officer -->
+<div class="layer" id="s6">
+  <div class="cap" id="cap6">Staff review <em>11 verified facts,</em> not 40 fields.</div>
+  <div class="win" id="offwin"><iframe id="off" src="officer.html?mock=1"></iframe>
+    <svg id="cursor" viewBox="0 0 24 24"><path d="M4 2l15 10.5-6.6 1.2 3.9 7.3-2.9 1.5-3.8-7.4L4 20z" fill="#0E1116" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+  </div>
+</div>
+<!-- 7 · outro -->
+<div class="layer" id="s7">
+  <img class="logo" id="logo7" src="logo-light.svg" style="top:36%">
+  <div class="tag2" id="tag7" style="top:560px">Answer once. Confirm once.<br><em>Every government form is filled.</em></div>
+</div>
+
+<script type="module">
+import { FIELDS, FORMS, formBindings, paperFieldCount, money, docBody } from './schema.js';
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const clamp = (x) => Math.max(0, Math.min(1, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const out = (x) => 1 - Math.pow(1 - x, 3);
+const outBack = (x) => { const c = 1.4; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const inOut = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const show = (el, o, y = 0, s = 1) => { el.style.opacity = o; el.style.transform = `translateY(${y}px) scale(${s})`; };
+const layer = (id, a, b, t) => { const on = t >= a && t < b; $(id).style.opacity = on ? 1 : 0; return on; };
+
+// fictional seed data (server.js / demo/record.mjs)
+const BASE = {
+  'person.name': '陳大文', 'person.nationalId': 'A123456789', 'person.phone': '0912-345-678',
+  'person.address': '臺北市大安區仁愛路四段 1 號', 'company.name': '大大科技',
+  'company.items': 'F119010 電子材料批發業、F113050 事務性機器設備批發業',
+  'company.articles_date': '2026-11-11', 'app.date': '2026-11-11',
+};
+const FULL = { ...BASE, 'company.address': '臺北市大安區復興南路一段 390 號 5 樓', 'company.capital': '1000000', 'owner.name': '吳小明' };
+const DOCS = FORMS.filter((f) => !f.onFile);
+const TOTAL = paperFieldCount();
+const timesWritten = (k) => FORMS.reduce((n, f) => n + formBindings(f).filter((b) => b.key === k).length, 0);
+
+// ---------- scene 1: duplicates light up ----------
+const DUP = [['company.name', 'd1', 1.5], ['person.name', 'd2', 3.0], ['company.address', 'd3', 4.5]];
+$('row').innerHTML = FORMS.map((f) => `<div class="card"><div class="doc zh">${docBody(f, FULL, (k, txt) => `<mark data-k="${k}">${esc(txt)}</mark>`)}</div></div>`).join('');
+$('chips').innerHTML = DUP.map(([k, cls]) => `<div class="chip"><i class="${cls}"></i><span class="zh">${FIELDS[k].label}</span>${FIELDS[k].en} <b>×${timesWritten(k)}</b></div>`).join('');
+const cards = [...document.querySelectorAll('#row .card')], chips = [...document.querySelectorAll('.chip')];
+const marksByKey = Object.fromEntries(DUP.map(([k]) => [k, [...document.querySelectorAll(`#row mark[data-k="${k}"]`)]]));
+function scene1(t) {
+  if (!layer('s1', 0, 6.05, t)) return;
+  const ex = seg(t, 5.7, 6.0);
+  const ci = out(seg(t, 0.05, 0.45)); show($('cap1'), ci * (1 - ex), (1 - ci) * 24);
+  cards.forEach((c, i) => { const p = seg(t, 0.4 + i * 0.125, 0.75 + i * 0.125);
+    c.style.opacity = Math.min(1, p * 2.5) * (1 - ex); c.style.transform = `translateY(${(1 - outBack(p)) * 90 - ex * 16}px)`; });
+  DUP.forEach(([k, cls, at], j) => {
+    // light the duplicates one form after another, a 16th apart
+    marksByKey[k].forEach((m) => { const fi = cards.indexOf(m.closest('.card')); m.className = t >= at + fi * 0.0625 ? cls : ''; });
+    const p = out(seg(t, at, at + 0.35)); show(chips[j], p * (1 - ex), (1 - p) * 18);
+  });
+  const cp = out(seg(t, 0.8, 1.2)); show($('count'), cp * (1 - ex), (1 - cp) * 16);
+}
+
+// ---------- scene 2: one typo ----------
+const appForm = FORMS.find((f) => f.id === 'app'), regForm = FORMS.find((f) => f.id === 't70135');
+const typoWrap = (bad) => (k, txt) => `<mark class="${k === 'company.capital' ? 'cap-' + bad : ''}">${esc(txt)}</mark>`;
+$('bigA').innerHTML = `<div class="tl">Application letter</div><div class="doc zh">${docBody(appForm, FULL, typoWrap('a'))}</div>`;
+$('bigB').innerHTML = `<div class="tl">Registration form</div><div class="doc zh">${docBody(regForm, { ...FULL, 'company.capital': '100000' }, typoWrap('b'))}</div>`;
+const capA = document.querySelector('#bigA mark.cap-a'), capB = document.querySelector('#bigB mark.cap-b');
+let neqPos = null;
+function scene2(t) {
+  if (!layer('s2', 6.0, 10.05, t)) return;
+  const ex = seg(t, 9.7, 10.0);
+  const ci = out(seg(t, 6.2, 6.6)); show($('cap2'), ci * (1 - ex), (1 - ci) * 24);
+  [['bigA', -1, 6.05], ['bigB', 1, 6.3]].forEach(([id, dir, a]) => {
+    const p = out(seg(t, a, a + 0.45));
+    $(id).style.opacity = p * (1 - ex); $(id).style.transform = `translateX(${(1 - p) * 120 * dir}px)`;
+  });
+  const hit = t >= 7.5;
+  for (const m of [capA, capB]) { m.classList.toggle('bad', hit); m.style.background = hit ? '#FFE3DF' : 'none'; m.style.boxShadow = hit ? '0 0 0 3px #D93A3A' : 'none'; }
+  if (!neqPos) { const ra = capA.getBoundingClientRect(), rb = capB.getBoundingClientRect(); neqPos = [(ra.right + rb.left) / 2, (ra.top + ra.bottom + rb.top + rb.bottom) / 4]; }
+  const np = seg(t, 7.5, 7.85);
+  $('neq').style.left = neqPos[0] + 'px'; $('neq').style.top = neqPos[1] + 'px';
+  $('neq').style.opacity = Math.min(1, np * 3) * (1 - ex); $('neq').style.transform = `scale(${outBack(np)})`;
+}
+
+// ---------- scene 3: turn ----------
+function logoScene(t, id, logo, tag, a, b) {
+  if (!layer(id, a, b, t)) return;
+  const p = out(seg(t, a + 0.1, a + 0.55)), o = seg(t, b - 0.3, b - 0.05);
+  $(logo).style.opacity = p * (1 - o);
+  $(logo).style.transform = `translate(-50%,-50%) scale(${0.84 + 0.16 * outBack(seg(t, a + 0.1, a + 0.55))})`;
+  const q = out(seg(t, a + 0.55, a + 0.95)); show($(tag), q * (1 - o), (1 - q) * 26);
+}
+
+// ---------- scenes 4/5: the applicant app ----------
+const SRC = { 'person.name': 'MOI identity', 'person.nationalId': 'MOI identity', 'person.phone': 'Verified by SMS', 'person.address': 'Household registration', 'company.name': 'Name reservation 預查 #113045678' };
+const fmtV = (k, v) => k === 'company.name' ? `${v}有限公司` : v;
+function knownView(t) {
+  const rows = Object.keys(SRC).map((k, i) => {
+    const p = out(seg(t, 13.5 + i * 0.25, 13.8 + i * 0.25));
+    return `<div class="fact" style="opacity:${0.25 + 0.75 * p}"><div class="check" style="transform:scale(${outBack(p)});opacity:${p}">✓</div><div class="grow"><div class="k zh">${FIELDS[k].label} · ${FIELDS[k].en}</div><div class="v zh">${esc(fmtV(k, BASE[k]))}</div></div><span class="tag ok" style="opacity:${p}">${esc(SRC[k])}</span></div>`;
+  }).join('');
+  return `<div class="eyebrow">Welcome back, 陳大文</div><h2>We already know this.<br>Still correct?</h2>
+    <div class="facts">${rows}</div><div class="spacer"></div>
+    <button class="btn primary">Yes, use these <span style="opacity:.6">↵</span></button>`;
+}
+const CAPQ = 'company.capital';
+function qView(live, t) {
+  const f = FIELDS[CAPQ], used = FORMS.filter((x) => x.fields.includes(CAPQ));
+  const blink = Math.floor(t * 2) % 2 === 0;
+  return `<div class="qnum">2 of 3 →</div><h2>How much capital are you starting with?</h2>
+    <div class="qlabel zh">${f.label} · ${f.en}</div>
+    <div class="field" style="border-color:#2B50FF"><span class="pre">NT$</span><div style="flex:1;font:500 26px 'Noto Sans TC',Inter,sans-serif;padding:6px 0;min-height:43px">${live ? money(live) : '<span style="color:#C9CCD2">1,000,000</span>'}${blink ? '<i class="caret"></i>' : ''}</div></div>
+    <div class="err"></div>
+    <div class="used"><span class="lbl">Fills ${used.length} of ${FORMS.length} forms:</span>${used.map((x) => `<span class="zh">${x.name.length > 8 ? x.name.slice(0, 7) + '…' : x.name}</span>`).join('')}</div>
+    <div class="spacer"></div>
+    <div class="row"><button class="btn ghost">← Back</button><div class="spacer"></div><button class="btn primary blue" style="width:auto;padding:0 28px">OK ✓</button></div>
+    <div class="kbd">press <span>Enter ↵</span></div>`;
+}
+function packetView(d, cur, live) {
+  const filled = FORMS.reduce((n, f) => n + formBindings(f).filter(({ key }) => d[key]).length, 0);
+  const typed = ['company.address', 'company.capital', 'owner.name'].filter((k) => d[k] && !(k === cur && live)).length;
+  const wrap = (k, txt) => `<mark class="${k === cur && live ? 'on' : txt ? '' : 'empty'}">${txt ? esc(txt) : '　　　'}</mark>`;
+  return `<div class="ph"><b>Your forms, filling live</b><span><b>${filled}</b> of ${TOTAL} fields filled · you typed <b>${typed}</b></span></div>
+    <div class="pgrid">${DOCS.map((f) => `<div class="mini ${live && f.fields.includes(cur) ? 'hit' : ''}"><div class="mt zh">${f.en}</div><div class="doc zh">${docBody(f, d, wrap)}</div></div>`).join('')}</div>`;
+}
+const CAP4 = '<em>Verified facts</em> are reused, never retyped.';
+const CAP5 = 'Each missing fact is <em>asked once.</em>';
+function scene45(t) {
+  if (!layer('s4', 12.95, 19.55, t)) return;
+  const wi = out(seg(t, 13.0, 13.5)), wo = inOut(seg(t, 19.2, 19.5));
+  $('win').style.opacity = Math.min(1, wi * 1.4) * (1 - wo);
+  $('win').style.transform = `translateY(${(1 - wi) * 120 + wo * 30}px) scale(1.12)`;
+  const q = t >= 15.5;
+  $('cap4').innerHTML = q ? CAP5 : CAP4;
+  const ci = q ? out(seg(t, 15.55, 15.9)) : out(seg(t, 13.15, 13.55)), co = q ? seg(t, 19.15, 19.4) : seg(t, 15.3, 15.48);
+  show($('cap4'), ci * (1 - co), (1 - ci) * 22);
+  // screen swap: old out 15.3–15.5, new in 15.5–15.85
+  const so = q ? out(seg(t, 15.5, 15.85)) : 1 - seg(t, 15.3, 15.5);
+  let d, cur = null, live = '';
+  if (!q) d = { ...BASE };
+  else { d = { ...BASE, 'company.address': FULL['company.address'] }; cur = CAPQ; live = t < 16.0 ? '' : '1000000'.slice(0, Math.floor((t - 16.0) / 0.25 + 1e-6) + 1); if (live) d[CAPQ] = live; }
+  $('app').innerHTML = `<section class="screen" style="opacity:${so};transform:translateY(${(1 - so) * 14}px)">${q ? qView(live, t) : knownView(t)}</section><aside class="packet">${packetView(d, cur, live)}</aside>`;
+  $('progress').style.width = (q ? 40 : 12) + '%';
+}
+
+// ---------- scene 6: the real officer console ----------
+let O = null;  // handles inside the iframe
+function scene6(t) {
+  if (!layer('s6', 19.45, 24.05, t)) return;
+  const wi = out(seg(t, 19.5, 20.0)), wo = inOut(seg(t, 23.7, 24.0));
+  $('offwin').style.opacity = Math.min(1, wi * 1.4) * (1 - wo);
+  $('offwin').style.transform = `translateY(${(1 - wi) * 120 + wo * 30}px) scale(1.12)`;
+  const ci = out(seg(t, 19.65, 20.05)), co = seg(t, 23.65, 23.9);
+  show($('cap6'), ci * (1 - co), (1 - ci) * 22);
+  O.checks.forEach((c, i) => { const p = seg(t, 20.0 + i * 0.25, 20.35 + i * 0.25);
+    c.style.opacity = Math.min(1, p * 2); c.style.transform = `translateY(${(1 - outBack(p)) * 26}px) scale(${0.94 + 0.06 * out(p)})`; });
+  // cursor glides to Approve and clicks on the beat at 23.0
+  const m = inOut(seg(t, 22.0, 22.85)), [x0, y0] = [900, 620], [x1, y1] = O.approveAt;
+  const press = t >= 22.9 && t < 23.05;
+  $('cursor').style.transform = `translate(${x0 + (x1 - x0) * m}px,${y0 + (y1 - y0) * m}px) scale(${press ? 0.85 : 1})`;
+  $('cursor').style.opacity = seg(t, 21.8, 22.0);
+  const done = t >= 23.0;
+  O.approve.textContent = done ? '✓ Approved' : 'Approve';
+  O.approve.style.background = done ? '#0F8A4F' : '';
+  O.approve.style.transform = press ? 'scale(.97)' : '';
+  O.pill.className = `pill ${done ? 'approved' : 'submitted'}`; O.pill.textContent = done ? 'Approved' : 'Submitted';
+}
+
+// ---------- outro ----------
+window.render = (t) => {
+  scene1(t); scene2(t);
+  logoScene(t, 's3', 'logo3', 'tag3', 10.0, 13.0);
+  scene45(t); scene6(t);
+  logoScene(t, 's7', 'logo7', 'tag7', 24.0, 28.6);
+};
+window.ready = (async () => {
+  await document.fonts.ready;
+  await document.fonts.load('500 26px "Noto Sans TC"', '臺北市大安區復興南路吳小明陳大文有限公司設立登記申請書預查');
+  await Promise.all([...document.images].map((i) => i.complete ? 0 : new Promise((r) => (i.onload = i.onerror = r))));
+  // wait for the officer console to render its mock submission
+  const f = $('off');
+  for (let i = 0; i < 100 && !f.contentDocument?.querySelector('#approve'); i++) await new Promise((r) => setTimeout(r, 100));
+  const doc = f.contentDocument;
+  const st = doc.createElement('style'); st.textContent = '*{transition:none!important;animation:none!important}'; doc.head.appendChild(st);
+  await doc.fonts.ready;
+  const approve = doc.querySelector('#approve'), r = approve.getBoundingClientRect();
+  O = { checks: [...doc.querySelectorAll('.check')], approve, pill: doc.querySelector('.pill'), approveAt: [(r.left + r.width * 0.55) * 0.8889, (r.top + r.height * 0.55) * 0.8889] };
+  window.render(0);
+  return true;
+})();
+</script>
+</body>
+</html>

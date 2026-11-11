@@ -1,0 +1,167 @@
+{
+  "source_sha256": "9c0c69c090bceb78e7681e48bbf388ba7bea21980846b462a4b4d90a32a6985f",
+  "mode": "llm",
+  "status": "complete",
+  "fields": {
+    "Company-Name": "大大科技",
+    "Capital-TWD": "10000",
+    "Certified-On": "2026-11-11"
+  },
+  "observations": [
+    {
+      "field": "Company-Name",
+      "value": "大大科技",
+      "status": "observed",
+      "confidence": "model_selected_source_grounded",
+      "source": {
+        "page": 1,
+        "bbox": [
+          55.0,
+          167.310626,
+          108.0,
+          12.0
+        ],
+        "text": "受查公司：大大科技",
+        "span_id": "p1-s3"
+      },
+      "sources": [
+        {
+          "page": 1,
+          "bbox": [
+            55.0,
+            167.310626,
+            108.0,
+            12.0
+          ],
+          "text": "受查公司：大大科技",
+          "span_id": "p1-s3"
+        }
+      ],
+      "page": 1,
+      "quote": "受查公司：大大科技",
+      "bbox": [
+        55.0,
+        167.310626,
+        108.0,
+        12.0
+      ]
+    },
+    {
+      "field": "Capital-TWD",
+      "value": 10000,
+      "status": "observed",
+      "confidence": "model_selected_source_grounded",
+      "source": {
+        "page": 1,
+        "bbox": [
+          55.0,
+          281.310626,
+          300.0,
+          12.0
+        ],
+        "text": "經本次展示資料彙整，實收資本為新臺幣 10,000 元整。",
+        "span_id": "p1-s5"
+      },
+      "sources": [
+        {
+          "page": 1,
+          "bbox": [
+            55.0,
+            281.310626,
+            300.0,
+            12.0
+          ],
+          "text": "經本次展示資料彙整，實收資本為新臺幣 10,000 元整。",
+          "span_id": "p1-s5"
+        }
+      ],
+      "page": 1,
+      "quote": "經本次展示資料彙整，實收資本為新臺幣 10,000 元整。",
+      "bbox": [
+        55.0,
+        281.310626,
+        300.0,
+        12.0
+      ]
+    },
+    {
+      "field": "Certified-On",
+      "value": "2026-11-11",
+      "status": "observed",
+      "confidence": "model_selected_source_grounded",
+      "source": {
+        "page": 1,
+        "bbox": [
+          55.0,
+          338.310626,
+          234.0,
+          12.0
+        ],
+        "text": "本報告簽證日期：民國 115 年 11 月 11 日",
+        "span_id": "p1-s6"
+      },
+      "sources": [
+        {
+          "page": 1,
+          "bbox": [
+            55.0,
+            338.310626,
+            234.0,
+            12.0
+          ],
+          "text": "本報告簽證日期：民國 115 年 11 月 11 日",
+          "span_id": "p1-s6"
+        }
+      ],
+      "page": 1,
+      "quote": "本報告簽證日期：民國 115 年 11 月 11 日",
+      "bbox": [
+        55.0,
+        338.310626,
+        234.0,
+        12.0
+      ]
+    },
+    {
+      "field": "Status",
+      "value": null,
+      "status": "unknown",
+      "confidence": "unknown",
+      "source": null,
+      "sources": [],
+      "page": null,
+      "quote": null,
+      "bbox": null,
+      "reason": "no_explicit_report_disposition"
+    }
+  ],
+  "llm": {
+    "available": true,
+    "provider": "anthropic",
+    "model": "claude-haiku-5-5",
+    "usage": {
+      "input_tokens": 1340,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 397,
+      "output_tokens_details": {
+        "thinking_tokens": 259
+      },
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "succeeded": true
+  },
+  "coordinate_system": "PDF points, top-left; bbox=[x,y,width,height]",
+  "page_limit": 10,
+  "original_preserved": true,
+  "normalized_capital": {
+    "value": 10000,
+    "currency": "TWD"
+  }
+}
