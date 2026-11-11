@@ -39,7 +39,7 @@ def render_report(path, company, amount, certified):
     ]
     for text,y in zip(paragraphs,[520,492,438,410]):c.drawString(65,y,text)
     c.setFont('DemoKai',12)
-    c.drawString(295,245,'展示單位：零表單展示工作室')
+    c.drawString(295,245,'展示單位：零表單展示用會計師事務所')
     c.drawString(295,215,f'中華民國 {day.year-1911} 年 {day.month} 月 {day.day} 日')
     c.setFillColor(HexColor('#6f7572'));c.setFont('DemoKai',10)
     c.drawCentredString(297.64,55,'展示樣張・非正式簽證')

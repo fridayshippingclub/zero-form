@@ -2,7 +2,7 @@
   "schema_version": 1,
   "evidence_kind": "external_document_observations",
   "pdf": "capital-audit-report.pdf",
-  "sha256": "a164d52cc808550557d9b8c53e70dfd5db1cebd48cc90f3a51e8def11332ebce",
+  "sha256": "e0bb9d5294e78202add43668b52f7369ed893b68bc18fca91728a949c217f0b0",
   "document.type": "capital_audit_report",
   "document.demo_only": true,
   "company.legal_name": "大大科技",

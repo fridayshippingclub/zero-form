@@ -64,8 +64,9 @@ def assess(attachments, revision, application=None):
             continue
         f = a['fields']
         status = f.get('Status')
-        provided_report = kind == 'capital_verification' and status == 'provided'
-        add(kind, 'demo_report_presence' if provided_report else 'document_status', 'provided' if provided_report else 'approved', status,
+        received_report = kind == 'capital_verification' and a.get('received') is True and status is None
+        provided_report = kind == 'capital_verification' and (status == 'provided' or received_report)
+        add(kind, 'report_presence' if received_report else 'demo_report_presence' if provided_report else 'document_status', 'provided' if provided_report else 'approved', 'provided' if received_report else status,
             'passed' if status == 'approved' or provided_report else 'rejected' if status == 'rejected' else 'needs_confirmation', a)
         for label, expected in [('Company-Name', expected_application['company_name'])] + (
             [('Capital-TWD', expected_application['capital_twd'])] if kind == 'capital_verification' else
@@ -87,7 +88,7 @@ def assess(attachments, revision, application=None):
                 'passed' if valid and certified == articles else 'mismatch' if valid else 'needs_confirmation', a)
             ordered = valid_date(articles) and valid_date(application_date) and articles <= application_date
             add(kind, 'demo_rule: company.articles_date <= application.date',
-                {'on_or_before': application_date}, articles, 'passed' if ordered else 'needs_confirmation', a)
+                {'on_or_before': application_date}, articles, 'passed' if ordered else 'mismatch' if valid_date(articles) and valid_date(application_date) else 'needs_confirmation', a)
         if kind != 'capital_verification' or 'Issued-On' in f:
             actual = f.get('Issued-On')
             try:
