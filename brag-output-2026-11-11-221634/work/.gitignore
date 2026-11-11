@@ -1,0 +1,5 @@
+stills/
+*.png
+!docs/*.png
+*.wav
+video-silent.mp4

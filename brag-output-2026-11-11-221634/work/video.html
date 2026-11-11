@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Zero Form brag, staff workload</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=block" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;transition:none!important}
+  html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#F5F5F2;font-family:Inter,"Noto Sans TC",sans-serif;color:#0E1116}
+  .layer{position:absolute;inset:0;opacity:0}
+  em{font-style:normal;color:#2B50FF}
+  .cap{position:absolute;left:0;right:0;top:54px;text-align:center;font:700 54px/1.1 Inter,sans-serif;letter-spacing:-1.6px}
+  /* scene 1: the desk */
+  #desk{position:absolute;left:212px;top:172px;width:1496px;height:840px}
+  .doc{position:absolute;width:280px;height:396px;background:#fff;border-radius:4px;box-shadow:0 18px 40px -18px rgba(14,17,22,.35),0 0 0 1px #E2E2DC;overflow:hidden}
+  .doc img{width:100%;height:100%;display:block}
+  .doc .tag{position:absolute;left:8px;bottom:8px;font:600 13px Inter,sans-serif;background:#0E1116;color:#fff;padding:4px 9px;border-radius:6px}
+  .doc .tag.ev{background:#B4540A}
+  .bx{position:absolute;border-radius:2px}
+  #chip{position:absolute;left:50%;top:574px;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:#fff;border-radius:999px;padding:12px 28px 12px 14px;font:600 30px Inter,sans-serif;box-shadow:0 0 0 1px #E2E2DC,0 18px 40px -14px rgba(14,17,22,.4);white-space:nowrap;z-index:5}
+  #chip i{width:30px;height:30px;border-radius:8px;flex:none}
+  #chip b{color:#E5484D}
+  /* scene 2 / 6: logo */
+  .logo{position:absolute;left:50%;top:40%;width:780px;transform:translate(-50%,-50%)}
+  .tag2{position:absolute;left:0;right:0;top:600px;text-align:center;font:700 64px/1.15 Inter,sans-serif;letter-spacing:-2px}
+  /* scenes 3-4: real UI in a window */
+  .win{position:absolute;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 50px 100px -40px rgba(14,17,22,.45),0 0 0 1px #E2E2DC}
+  .win .chrome{height:40px;background:#F0F0EC;border-bottom:1px solid #E2E2DC;display:flex;align-items:center;gap:8px;padding:0 16px;font:500 15px Inter,sans-serif;color:#6B7280}
+  .win .chrome s{width:12px;height:12px;border-radius:50%;background:#D9D9D3;display:block}
+  .win .chrome span{margin-left:14px}
+  .win .vp{position:absolute;left:0;top:40px;transform-origin:0 0}
+  .win iframe{position:absolute;inset:0;border:0;display:block;background:#fff}
+  .side{position:absolute;left:120px;top:250px;width:680px}
+  .step{font:600 22px Inter,sans-serif;color:#2B50FF;letter-spacing:.4px;text-transform:uppercase;margin-bottom:22px;display:flex;align-items:center;gap:12px}
+  .step i{width:12px;height:12px;border-radius:50%;background:#2B50FF}
+  .big{font:700 60px/1.08 Inter,sans-serif;letter-spacing:-2px}
+  .sub{font:500 30px/1.35 Inter,sans-serif;color:#4A5160;margin-top:26px}
+  .ring{position:absolute;border-radius:12px;border:4px solid #E5484D;box-shadow:0 0 0 8px rgba(229,72,77,.15);pointer-events:none}
+  .ring.ok{border-color:#0F8A4F;box-shadow:0 0 0 8px rgba(15,138,79,.15)}
+  #cursor{position:absolute;left:0;top:0;width:34px;height:34px;z-index:20;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35))}
+  .clickfx{position:absolute;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;border:3px solid #2B50FF;z-index:19}
+  /* scene 5: workload table */
+  #tbl{position:absolute;left:50%;top:230px;width:1440px;margin-left:-720px}
+  .tr{display:grid;grid-template-columns:420px 1fr 90px 1fr;align-items:center;padding:30px 40px;border-radius:18px;font-size:38px}
+  .tr.h{font:600 24px Inter,sans-serif;color:#6B7280;text-transform:uppercase;letter-spacing:.6px;padding-bottom:12px}
+  .tr.r{background:#fff;box-shadow:0 0 0 1px #E2E2DC,0 18px 40px -26px rgba(14,17,22,.35);margin-bottom:18px}
+  .tr .k{font:600 34px Inter,sans-serif;color:#4A5160}
+  .tr .was{color:#9AA0AA;font-weight:600;position:relative;width:max-content}
+  .tr .was:after{content:"";position:absolute;left:-4px;right:var(--strike,100%);top:52%;height:4px;background:#E5484D;border-radius:2px}
+  .tr .arr{color:#C4C7CE;font-weight:500;text-align:center}
+  .tr .now{font-weight:800;color:#0E1116}
+  .tr .now small{display:block;font:500 22px Inter,sans-serif;color:#0F8A4F;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="layer" id="s1"><div class="cap" id="cap1"></div><div id="desk"></div><div id="chip"></div></div>
+<div class="layer" id="s2"><img class="logo" id="logo2" src="logo-light.svg"><div class="tag2" id="tag2">Zero Form checks it <em>before</em> it reaches staff.</div></div>
+<div class="layer" id="s3">
+  <div class="side"><div class="step"><i></i>Applicant · before submitting</div><div class="big" id="big3"></div><div class="sub" id="sub3"></div></div>
+  <div class="win" id="win3" style="left:880px;top:70px;width:920px;height:950px"><div class="chrome"><s></s><s></s><s></s><span>Zero Form · Review before you submit</span></div>
+    <div class="vp" id="vp3" style="width:736px;height:728px;transform:scale(1.25)">
+      <iframe id="fA" src="site/app-05-uploaded.html" style="width:736px;height:728px"></iframe>
+      <iframe id="fB" src="site/app-06-blocked.html" style="width:736px;height:728px"></iframe>
+      <iframe id="fC" src="site/app-09-passed.html" style="width:736px;height:728px"></iframe>
+    </div>
+    <div class="ring" id="ring3"></div>
+  </div>
+</div>
+<div class="layer" id="s4"><div class="cap" id="cap4"></div>
+  <div class="win" id="win4" style="left:168px;top:150px;width:1584px;height:900px"><div class="chrome"><s></s><s></s><s></s><span>Zero Form · Officer console</span></div>
+    <div class="vp" style="width:1440px;height:782px;transform:scale(1.1)"><iframe id="fO" src="site/officer.html" style="width:1440px;height:782px"></iframe></div>
+    <div class="ring ok" id="ring4"></div>
+  </div>
+</div>
+<div class="layer" id="s5"><div class="cap" id="cap5">A reviewer's workload, <em>per application.</em></div>
+  <div id="tbl">
+    <div class="tr h"><span></span><span>Before</span><span></span><span style="color:#2B50FF">With Zero Form</span></div>
+    <div class="tr r"><span class="k">Documents to open</span><span class="was">10 PDFs</span><span class="arr">→</span><span class="now">1 screen</span></div>
+    <div class="tr r"><span class="k">Values to compare</span><span class="was">42 blanks</span><span class="arr">→</span><span class="now">12 facts<small>17 checks already run</small></span></div>
+    <div class="tr r"><span class="k">Typos caught by</span><span class="was">the reviewer</span><span class="arr">→</span><span class="now">the applicant<small>before it's submitted</small></span></div>
+  </div>
+</div>
+<div class="layer" id="s6"><img class="logo" id="logo6" src="logo-light.svg"><div class="tag2" id="tag6">Staff review the decision,<br><em>not the paperwork.</em></div></div>
+<svg id="cursor" viewBox="0 0 24 24"><path d="M4 2l15 10.5-6.6 1.3 3.9 7.4-3 1.5-3.9-7.4L4 20z" fill="#0E1116" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+<div class="clickfx" id="clickfx"></div>
+<script type="module">
+const $ = (id) => document.getElementById(id);
+const clamp = (x) => Math.max(0, Math.min(1, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const out = (x) => 1 - Math.pow(1 - x, 3);
+const io = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const outBack = (x) => { const c = 1.6; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const show = (el, o, y = 0) => { el.style.opacity = o; el.style.transform = `translateY(${y}px)`; };
+const lerp = (a, b, p) => a + (b - a) * p;
+
+// ---------- scene 1: the 10 real documents on a reviewer's desk ----------
+const FIELDS = await (await fetch('fields.json')).json();
+const COL = { 'company.name': '#E0A800', 'company.address': '#E5484D', 'company.capital': '#0F8A4F', 'person.name': '#2B50FF' };
+const OTHER = '#8E4EC6';
+const DOCS = [
+  ['c00001', 'Name reservation'], ['app', 'Application letter'], ['t70126', 'Articles'], ['t70130', 'Shareholder consent'], ['t70132', 'Director consent'],
+  ['t70124', 'Owner consent'], ['t70135', 'Registration form'], ['capital_verification', 'Capital audit report', 1], ['address_approval', 'Address precheck', 1], ['name_approval', 'Name approval', 1],
+];
+// Evidence PDFs: boxes from pdftotext -bbox on the real uploaded PDFs (percent of an A4 page).
+const EVB = {
+  capital_verification: [{ fact: 'company.name', box: [10.4, 21.2, 20.6, 2.3] }, { fact: 'company.capital', box: [26.6, 24.8, 11.0, 2.3] }],
+  address_approval: [{ fact: 'company.name', box: [19.2, 24.8, 8.4, 2.1] }, { fact: 'company.address', box: [14.6, 30.2, 34.2, 2.1] }],
+  name_approval: [{ fact: 'company.name', box: [24.8, 26.2, 10.2, 2.4] }],
+};
+$('desk').innerHTML = DOCS.map(([id, name, ev], i) => {
+  const fields = ev ? EVB[id] : FIELDS.find((f) => f.id === id).fields;
+  const bx = fields.map((f) => `<div class="bx" data-f="${f.fact}" style="left:${f.box[0] - 0.6}%;top:${f.box[1] - 0.5}%;width:${f.box[2] + 1.2}%;height:${f.box[3] + 1}%"></div>`).join('');
+  return `<div class="doc" style="left:${(i % 5) * 304}px;top:${Math.floor(i / 5) * 420}px"><img src="docs/${id}.png">${bx}<span class="tag ${ev ? 'ev' : ''}">${ev ? 'Evidence · ' : ''}${name}</span></div>`;
+}).join('');
+const docs = [...document.querySelectorAll('.doc')];
+const allBx = [...document.querySelectorAll('.bx')];
+const SPOT = [['company.name', 3.5, 'Company name'], ['company.address', 5.0, 'Registered address'], ['company.capital', 6.5, 'Capital']];
+const countOf = (k) => allBx.filter((b) => b.dataset.f === k).length;
+const CAP1 = [[0.15, 2.9, 'One company registration: <em>10 documents.</em>'], [3.05, 8.9, 'Staff check every fact against every copy. <em>By hand.</em>']];
+
+// ---------- scenes 3-4: real UI frames ----------
+const fr = (id) => $(id).contentWindow, fd = (id) => $(id).contentDocument;
+const rectIn = (id, sel, i = 0) => { const el = fd(id).querySelectorAll(sel)[i]; if (!el) throw new Error(`missing ${sel} in ${id}`); const r = el.getBoundingClientRect(), y = fr(id).scrollY; return { x: r.left, y: r.top + y, w: r.width, h: r.height }; };
+let P = {};
+function prepFrames() {
+  for (const id of ['fA', 'fB', 'fC', 'fO']) {
+    const st = fd(id).createElement('style'); st.textContent = '*{animation:none!important;transition:none!important}html,body{scrollbar-width:none}::-webkit-scrollbar{display:none}.bar{display:none}';
+    fd(id).head.appendChild(st);
+  }
+  for (const id of ['fA', 'fB', 'fC']) { const d = fd(id).querySelector('.factsum'); if (d) d.open = false; fd(id).querySelectorAll('.note.left').forEach((n) => n.remove()); fr(id).scrollTo(0, 0); }
+  // open the "Show checks" details only on the blocked report (the mismatch row is first)
+  P.runBtn = rectIn('fA', '[data-go="selfReview"]');
+  P.blockedCard = rectIn('fB', '.self-review');
+  P.mismatch = rectIn('fB', '.review-check');
+  P.passCard = rectIn('fC', '.self-review');
+  P.signBtn = rectIn('fC', '[data-go="sign"]');
+  P.capEdit = rectIn('fB', '.factsum summary');
+  fr('fO').zf.set('submitted');
+  P.checks = [...fd('fO').querySelectorAll('[data-check]')];
+  P.evsum = fd('fO').querySelector('.evsum');
+  P.docsSec = rectIn('fO', '.docs');
+  P.approve = rectIn('fO', '#approve');
+}
+const S3 = 1.25, W3 = { x: 880, y: 110 }, S4 = 1.1, W4 = { x: 168, y: 190 };
+const toScreen3 = (r, scroll) => ({ x: W3.x + r.x * S3, y: W3.y + (r.y - scroll) * S3, w: r.w * S3, h: r.h * S3 });
+const toScreen4 = (r, scroll) => ({ x: W4.x + r.x * S4, y: W4.y + (r.y - scroll) * S4, w: r.w * S4, h: r.h * S4 });
+
+// cursor path: list of [t, x, y]; click times
+let CUR = [], CLICKS = [];
+const cursorAt = (t) => {
+  if (!CUR.length || t < CUR[0][0]) return null;
+  for (let i = 0; i < CUR.length - 1; i++) {
+    const [t0, x0, y0] = CUR[i], [t1, x1, y1] = CUR[i + 1];
+    if (t < t1) { const p = io(seg(t, t0, t1)); return [lerp(x0, x1, p), lerp(y0, y1, p)]; }
+  }
+  return CUR.at(-1).slice(1);
+};
+
+const lastScroll = {};
+const live = (id, sel) => { const b = fd(id).querySelector(sel).getBoundingClientRect(); return { x: b.left, y: b.top, w: b.width, h: b.height }; };
+const scrollFrame = (id, y) => { y = Math.round(y); if (lastScroll[id] !== y) { fr(id).scrollTo(0, y); lastScroll[id] = y; } };
+let officerState = '';
+const setOfficer = (s) => { if (officerState !== s) { fr('fO').zf.set(s); officerState = s; P.checks = [...fd('fO').querySelectorAll('[data-check]')]; P.evsum = fd('fO').querySelector('.evsum'); } };
+
+window.render = (t) => {
+  // ---------- scene 1 (0-9) ----------
+  const on1 = t < 9.05; $('s1').style.opacity = on1 ? 1 - seg(t, 8.75, 9.0) : 0;
+  if (on1) {
+    const c = CAP1.find(([a, b]) => t >= a - 0.15 && t < b) || CAP1[0];
+    $('cap1').innerHTML = c[2];
+    const ci = out(seg(t, c[0], c[0] + 0.35)), co = seg(t, c[1] - 0.25, c[1] - 0.05);
+    show($('cap1'), ci * (1 - co), (1 - ci) * 18);
+    docs.forEach((d, i) => {
+      const a = seg(t, 0.5 + i * 0.125, 0.85 + i * 0.125);
+      d.style.opacity = Math.min(1, a * 2);
+      d.style.transform = `translateY(${(1 - outBack(a)) * -70}px) rotate(${(1 - out(a)) * (i % 2 ? 3 : -3)}deg)`;
+    });
+    const spot = SPOT.find(([, at], j) => t >= at && t < (SPOT[j + 1]?.[1] ?? 8.0));
+    const all = t >= 8.0;
+    allBx.forEach((b) => {
+      const k = b.dataset.f, col = COL[k] || OTHER;
+      let o = 0, lit = false;
+      if (spot && spot[0] === k) { o = out(seg(t, spot[1] + (docs.indexOf(b.parentElement) * 0.0625), spot[1] + 0.2 + docs.indexOf(b.parentElement) * 0.0625)); lit = true; }
+      if (all) o = out(seg(t, 8.0, 8.25));
+      b.style.opacity = o; b.style.outline = `${lit ? 3 : 2}px solid ${col}`; b.style.background = col + (lit ? '38' : '26');
+    });
+    docs.forEach((d) => { const hit = spot && d.querySelector(`[data-f="${spot[0]}"]`); d.style.filter = spot && !hit ? 'opacity(.45)' : 'none'; });
+    if (spot || all) {
+      const at = all ? 8.0 : spot[1];
+      $('chip').innerHTML = all ? `<span><b>42 blanks</b> + 3 evidence PDFs, cross-checked by hand</span>`
+        : `<i style="background:${COL[spot[0]]}"></i><span>${spot[2]} · <b>${countOf(spot[0])} copies</b> to compare</span>`;
+      const p = out(seg(t, at, at + 0.2)); $('chip').style.opacity = p; $('chip').style.transform = `translateX(-50%) translateY(${(1 - p) * 12}px) scale(${0.96 + 0.04 * p})`;
+    } else $('chip').style.opacity = 0;
+  }
+
+  // ---------- scene 2 (9-12.5): the turn ----------
+  const on2 = t >= 9.0 && t < 12.55; $('s2').style.opacity = on2 ? 1 - seg(t, 12.2, 12.45) : 0;
+  if (on2) {
+    const a = seg(t, 9.0, 9.45);
+    $('logo2').style.opacity = out(a); $('logo2').style.transform = `translate(-50%,-50%) scale(${0.85 + 0.15 * outBack(a)})`;
+    const b = out(seg(t, 9.5, 9.9)); show($('tag2'), b, (1 - b) * 24);
+  }
+
+  // ---------- scene 3 (12.5-18.5): applicant self-review ----------
+  const on3 = t >= 12.45 && t < 18.55; $('s3').style.opacity = on3 ? seg(t, 12.45, 12.7) * (1 - seg(t, 18.25, 18.5)) : 0;
+  if (on3) {
+    const w = out(seg(t, 12.5, 12.95)); $('win3').style.transform = `translateY(${(1 - w) * 50}px)`;
+    const blocked = t >= 14.0 && t < 16.75, passed = t >= 16.75;
+    $('fA').style.visibility = !blocked && !passed ? 'visible' : 'hidden';
+    $('fB').style.visibility = blocked ? 'visible' : 'hidden';
+    $('fC').style.visibility = passed ? 'visible' : 'hidden';
+    // scroll: A shows the run button; B scrolls to the mismatch; C to the passed card + sign button
+    const sA = 0, sB = Math.max(0, P.blockedCard.y - 150), sC = 0;
+    scrollFrame('fA', sA);
+    scrollFrame('fB', lerp(Math.max(0, sB - 160), sB, io(seg(t, 14.0, 14.5))));
+    scrollFrame('fC', sC);
+    // copy
+    const big = t < 14.0 ? 'Before anything is submitted…' : t < 16.75 ? 'An extra zero? <em>Caught.</em>' : 'Fixed by the applicant.<br><em>Staff never see it.</em>';
+    const sub = t < 14.0 ? 'Self-review reads the 3 uploaded PDFs and compares them with the application.' : t < 16.75 ? 'Capital says NT$10,000,000. The audit report says 1,000,000. Signing stays locked.' : '12 of 12 checks pass. Only now can it be signed.';
+    const t0 = t < 14.0 ? 12.6 : t < 16.75 ? 14.0 : 16.75;
+    $('big3').innerHTML = big; $('sub3').innerHTML = sub;
+    const p = out(seg(t, t0, t0 + 0.35)), q = out(seg(t, t0 + 0.15, t0 + 0.5));
+    show($('big3'), p, (1 - p) * 18); show($('sub3'), q, (1 - q) * 14);
+    // ring on the mismatch, then on the passing card
+    const ring = $('ring3');
+    if (blocked) {
+      const r = live('fB', '.review-check');
+      const rp = out(seg(t, 14.5, 14.75));
+      Object.assign(ring.style, { left: r.x * S3 - 8 + 'px', top: 40 + r.y * S3 - 8 + 'px', width: r.w * S3 + 16 + 'px', height: r.h * S3 + 16 + 'px', opacity: rp, transform: `scale(${1.06 - 0.06 * rp})` });
+      ring.className = 'ring';
+    } else if (passed) {
+      const r = live('fC', '.self-review');
+      const rp = out(seg(t, 17.0, 17.25));
+      Object.assign(ring.style, { left: r.x * S3 - 8 + 'px', top: 40 + r.y * S3 - 8 + 'px', width: r.w * S3 + 16 + 'px', height: r.h * S3 + 16 + 'px', opacity: rp * (1 - seg(t, 17.6, 17.8)), transform: `scale(${1.06 - 0.06 * rp})` });
+      ring.className = 'ring ok';
+    } else ring.style.opacity = 0;
+  }
+
+  // ---------- scene 4 (18.5-25.5): officer console ----------
+  const on4 = t >= 18.45 && t < 25.55; $('s4').style.opacity = on4 ? seg(t, 18.45, 18.7) * (1 - seg(t, 25.25, 25.5)) : 0;
+  if (on4) {
+    setOfficer(t >= 23.5 ? 'approved' : 'submitted');
+    const w = out(seg(t, 18.5, 18.95)); $('win4').style.transform = `translateY(${(1 - w) * 50}px)`;
+    const capA = t < 22.6;
+    $('cap4').innerHTML = capA ? 'Staff open <em>one screen.</em> Every check already run.' : 'One click to <em>approve.</em>';
+    const c0 = capA ? 18.6 : 22.6, ci = out(seg(t, c0, c0 + 0.35)), co = capA ? seg(t, 22.3, 22.5) : 0;
+    show($('cap4'), ci * (1 - co), (1 - ci) * 18);
+    if (officerState === 'submitted') {
+      P.checks.forEach((c, i) => { const p = seg(t, 19.0 + i * 0.25, 19.3 + i * 0.25); c.style.opacity = Math.min(1, p * 2); c.style.transform = `scale(${0.9 + 0.1 * outBack(p)})`; });
+      if (P.evsum) { const p = out(seg(t, 20.25, 20.55)); P.evsum.style.opacity = p; P.evsum.style.transform = `translateY(${(1 - p) * 10}px)`; }
+    }
+    // scroll down to show 12 facts, 7 matching documents and evidence checks, then back up
+    const down = Math.max(0, P.docsSec.y - 300);
+    const sy = lerp(0, down, io(seg(t, 20.75, 21.6))) * (1 - io(seg(t, 22.2, 22.9)));
+    scrollFrame('fO', sy);
+    const ring = $('ring4');
+    const showDocs = seg(t, 21.6, 21.8) * (1 - seg(t, 22.05, 22.2));
+    if (showDocs > 0) {
+      const r = toScreen4(P.docsSec, sy);
+      Object.assign(ring.style, { left: r.x - W4.x - 8 + 'px', top: 40 + (r.y - W4.y) - 8 + 'px', width: r.w + 16 + 'px', height: r.h + 16 + 'px', opacity: showDocs });
+    } else ring.style.opacity = 0;
+  }
+
+  // ---------- cursor (scenes 3-4) ----------
+  const cp = cursorAt(t);
+  const curOn = (t >= 12.9 && t < 18.3) || (t >= 22.7 && t < 25.3);
+  $('cursor').style.opacity = cp && curOn ? 1 : 0;
+  if (cp) $('cursor').style.transform = `translate(${cp[0] - 4}px,${cp[1] - 2}px)`;
+  const ck = CLICKS.find(([at]) => t >= at && t < at + 0.4);
+  if (ck) { const p = seg(t, ck[0], ck[0] + 0.4); Object.assign($('clickfx').style, { left: ck[1] + 'px', top: ck[2] + 'px', opacity: 1 - p, transform: `scale(${0.4 + p})` }); }
+  else $('clickfx').style.opacity = 0;
+
+  // ---------- scene 5 (25.5-30.5): workload table ----------
+  const on5 = t >= 25.45 && t < 30.55; $('s5').style.opacity = on5 ? seg(t, 25.45, 25.7) * (1 - seg(t, 30.25, 30.5)) : 0;
+  if (on5) {
+    const ci = out(seg(t, 25.55, 25.9)); show($('cap5'), ci, (1 - ci) * 18);
+    const rows = [...document.querySelectorAll('.tr')];
+    rows.forEach((r, i) => {
+      const at = i === 0 ? 25.75 : 26.0 + (i - 1) * 0.5;
+      const p = out(seg(t, at, at + 0.35)); r.style.opacity = p; r.style.transform = `translateY(${(1 - p) * 24}px)`;
+      const was = r.querySelector('.was'); if (was) was.style.setProperty('--strike', `${(1 - out(seg(t, at + 0.5, at + 0.75))) * 100}%`);
+      const now = r.querySelector('.now'); if (now) { const q = out(seg(t, at + 0.5, at + 0.8)); now.style.opacity = q; now.style.transform = `translateX(${(1 - q) * 16}px)`; }
+    });
+  }
+
+  // ---------- scene 6 (30.5-34): outro ----------
+  const on6 = t >= 30.5; $('s6').style.opacity = on6 ? 1 : 0;
+  if (on6) {
+    const a = seg(t, 30.5, 30.95);
+    $('logo6').style.opacity = out(a); $('logo6').style.transform = `translate(-50%,-50%) scale(${0.85 + 0.15 * outBack(a)})`;
+    const b = out(seg(t, 31.0, 31.4)); show($('tag6'), b, (1 - b) * 24);
+  }
+};
+
+window.ready = (async () => {
+  await document.fonts.ready;
+  await Promise.all([...document.images].map((i) => i.complete ? 0 : new Promise((r) => (i.onload = i.onerror = r))));
+  await Promise.all(['fA', 'fB', 'fC', 'fO'].map((id) => new Promise((res) => { const f = $(id); if (f.contentDocument?.readyState === 'complete' && f.contentDocument.body?.childElementCount) res(); else f.onload = res; })));
+  for (let i = 0; i < 100 && !fr('fO').zf; i++) await new Promise((r) => setTimeout(r, 50));
+  await Promise.all(['fA', 'fB', 'fC', 'fO'].map((id) => fd(id).fonts.ready));
+  prepFrames();
+  // cursor path, in video pixels
+  // buttons may sit in the sticky footer: measure them in the viewport after scrolling
+  const vrect = (id, sel, scroll) => { scrollFrame(id, scroll); const r = fd(id).querySelector(sel).getBoundingClientRect(); return { x: W3.x + r.left * S3, y: W3.y + r.top * S3, w: r.width * S3, h: r.height * S3 }; };
+  const runB = vrect('fA', '[data-go="selfReview"]', 0);
+  const sign = vrect('fC', '[data-go="sign"]', 0);
+  const appr = toScreen4(P.approve, 0);
+  const cx = (r) => r.x + r.w / 2, cy = (r) => r.y + r.h / 2;
+  CUR = [[12.9, 1500, 1000], [13.4, cx(runB), cy(runB)], [14.0, cx(runB), cy(runB)], [14.6, 1700, 980], [17.4, 1700, 980], [17.95, cx(sign), cy(sign)],
+    [22.6, 1820, 1000], [22.7, 1820, 1000], [23.4, cx(appr), cy(appr)]];
+  CLICKS = [[13.5, cx(runB), cy(runB)], [18.0, cx(sign), cy(sign)], [23.5, cx(appr), cy(appr)]];
+  window.render(0); return true;
+})();
+</script>
+</body>
+</html>

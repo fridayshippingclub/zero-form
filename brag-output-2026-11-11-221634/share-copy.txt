@@ -1,0 +1,1 @@
+One Taipei company registration hands a reviewer 10 documents and 42 blanks to cross-check by hand. Zero Form runs those checks before submission, so the applicant fixes their own typo, and staff open one screen with every check already green. Staff review the decision, not the paperwork.

@@ -1,0 +1,449 @@
+{
+ "app": {
+  "id": "TPE-2026-362374",
+  "status": "submitted",
+  "decision": null,
+  "v": 1,
+  "hash": "2556b7d1e80ecc4dab61e69e76b65a3c190540eaf29f44546343354d27d61c58",
+  "prev": null,
+  "signedAt": "2026-11-11T14:15:35.680Z",
+  "data": {
+   "company.name": "大大科技",
+   "company.items": "F119010 電子材料批發業、F113050 事務性機器設備批發業",
+   "person.name": "陳大文",
+   "person.nationalId": "A123456789",
+   "person.address": "臺北市大安區仁愛路四段 1 號",
+   "company.reservation_no": "113045678",
+   "company.address": "臺北市大安區復興南路一段 390 號 5 樓",
+   "company.capital": "1000000",
+   "person.phone": "0912-345-678",
+   "app.date": "2026-11-11",
+   "company.articles_date": "2026-11-11",
+   "owner.name": "林美華"
+  },
+  "provenance": {
+   "company.name": {
+    "source": "Name reservation 預查 #113045678",
+    "verified": true
+   },
+   "company.items": {
+    "source": "Name reservation 預查 #113045678",
+    "verified": true
+   },
+   "person.name": {
+    "source": "MOI identity",
+    "verified": true
+   },
+   "person.nationalId": {
+    "source": "MOI identity",
+    "verified": true
+   },
+   "person.address": {
+    "source": "Household registration",
+    "verified": true
+   },
+   "company.reservation_no": {
+    "source": "Name reservation 預查 #113045678",
+    "verified": true
+   },
+   "company.address": {
+    "source": "Applicant",
+    "verified": false
+   },
+   "company.capital": {
+    "source": "Applicant",
+    "verified": false
+   },
+   "person.phone": {
+    "source": "Verified by SMS",
+    "verified": true
+   },
+   "app.date": {
+    "source": "System",
+    "verified": true
+   },
+   "company.articles_date": {
+    "source": "Demo articles effective date",
+    "verified": true
+   },
+   "owner.name": {
+    "source": "Applicant",
+    "verified": false
+   }
+  },
+  "usedIn": {
+   "company.name": 7,
+   "company.items": 3,
+   "person.name": 6,
+   "person.nationalId": 2,
+   "person.address": 2,
+   "company.reservation_no": 2,
+   "company.address": 4,
+   "company.capital": 3,
+   "person.phone": 2,
+   "app.date": 5,
+   "company.articles_date": 1,
+   "owner.name": 1
+  }
+ },
+ "verify": {
+  "checks": [
+   {
+    "key": "identity",
+    "label": "Identity",
+    "ok": true,
+    "detail": "SMS code to 0912-•••-678 confirmed this exact snapshot"
+   },
+   {
+    "key": "integrity",
+    "label": "Integrity",
+    "ok": true,
+    "detail": "Hash + server signature match"
+   },
+   {
+    "key": "consistency",
+    "label": "Consistency",
+    "ok": true,
+    "detail": "7 of 7 documents match"
+   },
+   {
+    "key": "evidence",
+    "label": "Evidence",
+    "ok": true,
+    "detail": "Name reservation #113045678 valid"
+   },
+   {
+    "key": "records",
+    "label": "Gov records",
+    "ok": true,
+    "detail": "Household registration match"
+   }
+  ],
+  "docs": [
+   {
+    "id": "c00001",
+    "name": "公司名稱及所營事業登記預查申請表",
+    "ok": true
+   },
+   {
+    "id": "app",
+    "name": "公司設立登記申請書",
+    "ok": true
+   },
+   {
+    "id": "t70126",
+    "name": "章程",
+    "ok": true
+   },
+   {
+    "id": "t70130",
+    "name": "股東同意書",
+    "ok": true
+   },
+   {
+    "id": "t70132",
+    "name": "董事願任同意書",
+    "ok": true
+   },
+   {
+    "id": "t70124",
+    "name": "建物所有權人同意書",
+    "ok": true
+   },
+   {
+    "id": "t70135",
+    "name": "設立登記表",
+    "ok": true
+   }
+  ],
+  "externalReview": {
+   "mode": "demo_only",
+   "evidence_revision": 4,
+   "recommendation": "approve",
+   "checks": [
+    {
+     "kind": "capital_verification",
+     "field": "report_presence",
+     "expected": "provided",
+     "actual": "provided",
+     "status": "passed",
+     "source": {
+      "attachment_id": "d60535e2-1854-4428-b217-17ecfe035f30",
+      "page": 1,
+      "url": "/api/attachments/d60535e2-1854-4428-b217-17ecfe035f30"
+     }
+    },
+    {
+     "kind": "capital_verification",
+     "field": "Company-Name",
+     "expected": "大大科技",
+     "actual": "大大科技",
+     "status": "passed",
+     "source": {
+      "attachment_id": "d60535e2-1854-4428-b217-17ecfe035f30",
+      "page": 1,
+      "url": "/api/attachments/d60535e2-1854-4428-b217-17ecfe035f30",
+      "quote": "公司名稱：大大科技",
+      "bbox": [
+       65,
+       181.479844,
+       117,
+       13
+      ]
+     }
+    },
+    {
+     "kind": "capital_verification",
+     "field": "Capital-TWD",
+     "expected": 1000000,
+     "actual": 1000000,
+     "status": "passed",
+     "source": {
+      "attachment_id": "d60535e2-1854-4428-b217-17ecfe035f30",
+      "page": 1,
+      "url": "/api/attachments/d60535e2-1854-4428-b217-17ecfe035f30",
+      "quote": "資本額：新臺幣 1,000,000 元",
+      "bbox": [
+       65,
+       212.479844,
+       175.5,
+       13
+      ]
+     }
+    },
+    {
+     "kind": "capital_verification",
+     "field": "demo_rule: audit.certified_on = company.articles_date",
+     "expected": "2026-11-11",
+     "actual": "2026-11-11",
+     "status": "passed",
+     "source": {
+      "attachment_id": "d60535e2-1854-4428-b217-17ecfe035f30",
+      "page": 1,
+      "url": "/api/attachments/d60535e2-1854-4428-b217-17ecfe035f30",
+      "quote": "查核簽證日期：2026 年 11 月 11 日",
+      "bbox": [
+       65,
+       243.479844,
+       214.5,
+       13
+      ]
+     }
+    },
+    {
+     "kind": "capital_verification",
+     "field": "demo_rule: company.articles_date <= application.date",
+     "expected": {
+      "on_or_before": "2026-11-11"
+     },
+     "actual": "2026-11-11",
+     "status": "passed",
+     "source": {
+      "attachment_id": "d60535e2-1854-4428-b217-17ecfe035f30",
+      "page": 1,
+      "url": "/api/attachments/d60535e2-1854-4428-b217-17ecfe035f30"
+     }
+    },
+    {
+     "kind": "address_approval",
+     "field": "document_status",
+     "expected": "approved",
+     "actual": "approved",
+     "status": "passed",
+     "source": {
+      "attachment_id": "6886d8cb-247c-4a62-9514-2e8b6be39c2d",
+      "page": 1,
+      "url": "/api/attachments/6886d8cb-247c-4a62-9514-2e8b6be39c2d",
+      "quote": "Status: approved",
+      "bbox": [
+       40,
+       303.081407,
+       88,
+       11
+      ]
+     }
+    },
+    {
+     "kind": "address_approval",
+     "field": "Company-Name",
+     "expected": "大大科技",
+     "actual": "大大科技",
+     "status": "passed",
+     "source": {
+      "attachment_id": "6886d8cb-247c-4a62-9514-2e8b6be39c2d",
+      "page": 1,
+      "url": "/api/attachments/6886d8cb-247c-4a62-9514-2e8b6be39c2d",
+      "quote": "Company-Name: 大大科技",
+      "bbox": [
+       40,
+       213.081407,
+       121,
+       11
+      ]
+     }
+    },
+    {
+     "kind": "address_approval",
+     "field": "Address",
+     "expected": "臺北市大安區復興南路一段 390 號 5 樓",
+     "actual": "臺北市大安區復興南路一段 390 號 5 樓",
+     "status": "passed",
+     "source": {
+      "attachment_id": "6886d8cb-247c-4a62-9514-2e8b6be39c2d",
+      "page": 1,
+      "url": "/api/attachments/6886d8cb-247c-4a62-9514-2e8b6be39c2d",
+      "quote": "Address: 臺北市大安區復興南路一段 390 號 5 樓",
+      "bbox": [
+       40,
+       258.081407,
+       247.5,
+       11
+      ]
+     }
+    },
+    {
+     "kind": "address_approval",
+     "field": "document.issued_on",
+     "expected": "valid issue date",
+     "actual": "2026-11-11",
+     "status": "passed",
+     "source": {
+      "attachment_id": "6886d8cb-247c-4a62-9514-2e8b6be39c2d",
+      "page": 1,
+      "url": "/api/attachments/6886d8cb-247c-4a62-9514-2e8b6be39c2d",
+      "quote": "Issued-On: 2026-11-11",
+      "bbox": [
+       40,
+       348.081407,
+       115.5,
+       11
+      ]
+     }
+    },
+    {
+     "kind": "name_approval",
+     "field": "document_status",
+     "expected": "approved",
+     "actual": "approved",
+     "status": "passed",
+     "source": {
+      "attachment_id": "8c367b1c-0255-412a-9681-51dd21fc8a38",
+      "page": 1,
+      "url": "/api/attachments/8c367b1c-0255-412a-9681-51dd21fc8a38",
+      "quote": "Status: approved",
+      "bbox": [
+       52,
+       702.682969,
+       72,
+       9
+      ]
+     }
+    },
+    {
+     "kind": "name_approval",
+     "field": "Company-Name",
+     "expected": "大大科技",
+     "actual": "大大科技",
+     "status": "passed",
+     "source": {
+      "attachment_id": "8c367b1c-0255-412a-9681-51dd21fc8a38",
+      "page": 1,
+      "url": "/api/attachments/8c367b1c-0255-412a-9681-51dd21fc8a38",
+      "quote": "Company-Name: 大大科技",
+      "bbox": [
+       52,
+       685.682969,
+       99,
+       9
+      ]
+     }
+    },
+    {
+     "kind": "name_approval",
+     "field": "document.issued_on",
+     "expected": "valid issue date",
+     "actual": "2026-11-11",
+     "status": "passed",
+     "source": {
+      "attachment_id": "8c367b1c-0255-412a-9681-51dd21fc8a38",
+      "page": 1,
+      "url": "/api/attachments/8c367b1c-0255-412a-9681-51dd21fc8a38",
+      "quote": "Issued-On: 2026-11-11",
+      "bbox": [
+       52,
+       719.682969,
+       94.5,
+       9
+      ]
+     }
+    }
+   ],
+   "notice": "Simulated review only. No identity verification or government submission."
+  },
+  "mode": "demo_only"
+ },
+ "fields": {
+  "person.name": {
+   "label": "負責人姓名",
+   "en": "Representative",
+   "type": "text"
+  },
+  "person.nationalId": {
+   "label": "身分證字號",
+   "en": "National ID",
+   "type": "nationalId"
+  },
+  "person.phone": {
+   "label": "聯絡電話",
+   "en": "Phone",
+   "type": "phone"
+  },
+  "person.address": {
+   "label": "住址",
+   "en": "Home address",
+   "type": "address"
+  },
+  "company.name": {
+   "label": "公司名稱",
+   "en": "Company name",
+   "type": "text",
+   "suffix": "有限公司"
+  },
+  "company.reservation_no": {
+   "label": "預查編號",
+   "en": "Name reservation number",
+   "type": "text",
+   "readOnly": true
+  },
+  "company.address": {
+   "label": "公司所在地",
+   "en": "Registered address",
+   "type": "address"
+  },
+  "company.capital": {
+   "label": "資本總額",
+   "en": "Capital (NT$)",
+   "type": "money"
+  },
+  "company.items": {
+   "label": "所營事業",
+   "en": "Business items",
+   "type": "text"
+  },
+  "company.articles_date": {
+   "label": "章程訂立日期",
+   "en": "Articles date",
+   "type": "date"
+  },
+  "owner.name": {
+   "label": "建物所有權人",
+   "en": "Building owner",
+   "type": "text"
+  },
+  "app.date": {
+   "label": "申請日期",
+   "en": "Application date",
+   "type": "date"
+  }
+ }
+}
