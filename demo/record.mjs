@@ -33,7 +33,7 @@ const caption = (text) => page.evaluate((t) => {
   if (!el) { el = document.createElement('div'); el.id = 'zf-cap'; el.style.cssText = 'position:fixed;left:24px;bottom:24px;z-index:2147483647;max-width:420px;background:#0E1116;color:#fff;font:600 17px/1.4 Inter,system-ui,sans-serif;padding:14px 18px;border-radius:12px;box-shadow:0 10px 30px #0006'; document.documentElement.appendChild(el); }
   el.textContent = t;
 }, text);
-const app = async () => { for (let i = 0; i < 50; i++) { const f = page.frames().find((x) => x.url().startsWith(APP)); if (f) { await f.waitForSelector('main section'); return f; } await wait(200); } throw new Error('drawer frame not found'); };
+const app = async () => { for (let i = 0; i < 50; i++) { const f = page.frames().find((x) => x.url().startsWith(APP) || x.url().startsWith('http://localhost:5173')); if (f) { await f.waitForSelector('main section'); return f; } await wait(200); } throw new Error('drawer frame not found'); };
 const openDrawer = async (cap) => {
   await page.goto(GOV, { waitUntil: 'domcontentloaded' }); await wait(1500);
   await page.locator('button.start').scrollIntoViewIfNeeded(); await page.evaluate(() => window.scrollBy(0, -120));
