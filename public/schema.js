@@ -74,3 +74,19 @@ export const rocDate = (iso) => {
   return `中華民國 ${d.getFullYear() - 1911} 年 ${d.getMonth() + 1} 月 ${d.getDate()} 日`;
 };
 export const money = (v) => Number(String(v).replace(/,/g, '')).toLocaleString('en-US');
+
+// ---------- documents: one renderer for every form (server hashes it, browser previews it live) ----------
+export const fmt = (k, v) => k === 'company.capital' ? `NT$ ${money(v)}` : k === 'app.date' ? rocDate(v) : k === 'company.name' ? `${v}有限公司` : v;
+const SENTENCES = {
+  app: (d) => `茲申請 ${d['company.name']}有限公司 設立登記，檢附相關文件，請 鑒核。`,
+  t70126: (d) => `第一條 本公司依照公司法規定組織之，定名為 ${d['company.name']}有限公司。第二條 本公司所營事業如下：${d['company.items']}。第三條 本公司設於 ${d['company.address']}。第四條 本公司資本總額為新臺幣 ${d['company.capital$']} 元。`,
+  t70130: (d) => `茲同意設立 ${d['company.name']}有限公司，訂定公司章程，並選任 ${d['person.name']}、${d['person.name']} 為董事。`,
+  t70132: (d) => `本人同意擔任 ${d['company.name']}有限公司董事。　立同意書人：${d['person.name']}`,
+  t70124: (d) => `本人（房屋所有權人 ${d['owner.name']}）所有座落於 ${d['company.address']} 之房屋，同意 ${d['company.name']}有限公司 登記為所在地。`,
+};
+// wrap(key, text) lets the browser highlight values; the server passes identity so hashes stay stable.
+export function docBody(form, data, wrap = (_k, t) => t) {
+  const d = new Proxy({}, { get: (_, k) => k === 'company.capital$' ? wrap('company.capital', money(data['company.capital'])) : wrap(k, data[k] ?? '') });
+  const rows = form.fields.map((k) => `<tr><th>${FIELDS[k].label}</th><td>${wrap(k, data[k] ? fmt(k, data[k]) : '')}</td></tr>`).join('');
+  return `<h1>${form.name}</h1>${SENTENCES[form.id] ? `<p class="s">${SENTENCES[form.id](d)}</p>` : ''}<table>${rows}</table>`;
+}
