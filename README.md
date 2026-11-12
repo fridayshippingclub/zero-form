@@ -19,6 +19,8 @@ A local company-incorporation demo: reuse profile facts, answer three missing qu
 
 [![Zero Form demo](demo/zero-form-final-preview.gif)](demo/zero-form-final.mp4)
 
+**Launch video (30 s):** [`demo/zero-form-launch.mp4`](demo/zero-form-launch.mp4), made with raea from this recording ([source](launch/)).
+
 One continuous run, end to end, ending on the seven official PDFs filled from one signed snapshot ([MP4](demo/zero-form-final.mp4) · [WebM](demo/zero-form-final.webm); regenerate with `node demo/record-final.mjs`).
 
 - **Agency setup:** Claude reads the 7 official PDFs live, highlights every field, merges them (47 fields → 11 facts → 3 to type) and the mapping is published.

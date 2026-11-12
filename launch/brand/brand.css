@@ -1,0 +1,24 @@
+/* Zero Form brand kit, by hand from assets/brand/README.md (no website to read): ink, accent, paper, confirmation green; Inter. */
+@font-face { font-family: "Inter"; font-weight: 400; src: url("/media/fonts/Inter-Regular.ttf"); }
+@font-face { font-family: "Inter"; font-weight: 600; src: url("/media/fonts/Inter-SemiBold.ttf"); }
+@font-face { font-family: "Inter"; font-weight: 700; src: url("/media/fonts/Inter-Bold.ttf"); }
+@font-face { font-family: "Inter"; font-weight: 800; src: url("/media/fonts/Inter-ExtraBold.ttf"); }
+:root {
+  --brand-accent: #2B50FF;
+  --brand-background: #F5F5F2;
+  --brand-text: #0E1116;
+  --brand-color-1: #2B50FF;
+  --brand-color-2: #0E1116;
+  --brand-color-3: #0F8A4F;
+  --brand-color-4: #6B7280;
+  --brand-surface: #FFFFFF;
+  --brand-danger: #D93025;
+  --brand-font-heading: "Inter", sans-serif;
+  --brand-font: "Inter", sans-serif;
+  --brand-h1-size: 132px; --brand-h1-weight: 800; --brand-h1-line: 1.02; --brand-h1-tracking: -0.035em;
+  --brand-h2-size: 92px;  --brand-h2-weight: 800; --brand-h2-line: 1.05; --brand-h2-tracking: -0.03em;
+  --brand-p-size: 52px;   --brand-p-weight: 600;  --brand-p-line: 1.25;
+  --brand-num-size: 300px;
+  --brand-radius: 28px;
+  --brand-shadow-lg: 0 30px 80px rgba(14,17,22,0.16), 0 6px 18px rgba(14,17,22,0.08);
+}
